@@ -5,8 +5,8 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css"
+import Slider from 'react-animated-slider';
+import horizontalCss from 'react-animated-slider/build/horizontal.css';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,50 +17,50 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    //height: '100vh',
+    display: 'flex',
+    textAlign: 'center',
+    //flexDirection: 'column',
+    //position: 'absolute',
+    //top: '50%',
+    //left: '50%',
+    //transform: 'translate(-50 %, -50 %)'
+  }
 }));
 
 
 function App() {
+  const content = [
+    {
+      image: 'assets/3.jpg',
+      title: 'Course 1',
+      description: 'Course about a bout bla bal bal.',
+      button: 'Join now'
+    }
+  ];
+
   const classes = useStyles();
   return (
     <div>
       <Navbar />
-      <Carousel>
-        <div>
-          <img src="assets/1.jpg" />
-          <p className="legend">Legend 1</p>
-        </div>
-        <div>
-          <img src="assets/2.jpg" />
-          <p className="legend">Legend 2</p>
-        </div>
-        <div>
-          <img src="assets/3.jpg" />
-          <p className="legend">Legend 3</p>
-        </div>
-      </Carousel>
-      <Grid container spacing={3}>
-        <Grid item xs>
-          <Paper className={classes.paper}>xs</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.paper}>xs</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.paper}>xs</Paper>
-        </Grid>
-      </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs>
-          <Paper className={classes.paper}>xs</Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper className={classes.paper}>xs=6</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.paper}>xs</Paper>
-        </Grid>
-      </Grid>
+      <Slider classNames={horizontalCss}>
+        {content.map((item, index) => (
+          <div
+            key={index}
+            style={{ background: `url('${item.image}') no-repeat center center` }}
+            className={classes.center}
+          >
+            <div className="dd">
+              <h1>{item.title}</h1>
+              <p>{item.description}</p>
+              <button>{item.button}</button>
+            </div>
+          </div>
+        ))}
+      </Slider>
     </div>
   )
 }
