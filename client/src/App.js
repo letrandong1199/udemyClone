@@ -2,11 +2,9 @@
 import './App.css';
 import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
-import ProductCardV from './components/ProductCardV';
+import HomeSection from './components/HomeSection';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 
@@ -50,32 +48,124 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     backgroundColor: 'rgb(55, 51, 51)',
     color: 'whitesmoke',
-    padding: '20px'
+    padding: '35px'
   },
   homeSection: {
     backgroundColor: 'rgb(240, 238, 230)',
     padding: '10px',
-    justifyContent: 'center'
+    justifyContent: 'space-arounds'
   }
 }));
 
+const courses = [
+  {
+    title: 'Course 1',
+    thumb: 'assets/1.jpg',
+    author: 'Author 1',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 2',
+    thumb: 'assets/2.jpg',
+    author: 'Author 2',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 1',
+    thumb: 'assets/1.jpg',
+    author: 'Author 1',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 2',
+    thumb: 'assets/2.jpg',
+    author: 'Author 2',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 1',
+    thumb: 'assets/1.jpg',
+    author: 'Author 1',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 2',
+    thumb: 'assets/2.jpg',
+    author: 'Author 2',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  }
+]
 
+const courses2 = [
+  {
+    title: 'Course 1',
+    thumb: 'assets/1.jpg',
+    author: 'Author 1',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 2',
+    thumb: 'assets/2.jpg',
+    author: 'Author 2',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 1',
+    thumb: 'assets/1.jpg',
+    author: 'Author 1',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 2',
+    thumb: 'assets/2.jpg',
+    author: 'Author 2',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 1',
+    thumb: 'assets/1.jpg',
+    author: 'Author 1',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  },
+  {
+    title: 'Course 2',
+    thumb: 'assets/2.jpg',
+    author: 'Author 2',
+    description: 'Here is a short description for this course. Blab blab blab blab.',
+    price: 19,
+    rating: 3
+  }
+]
 
 function App() {
-
-
-  const classes = useStyles();
   return (
     <div>
       <Navbar />
       <Carousel />
-      <Typography variant="h6" className={classes.bigTitle}>Most view courses</Typography>
-      <Grid container
-        spacing={3}
-        className={classes.homeSection}
-      >
-        <ProductCardV />
-      </Grid>
+      <HomeSection title="Most view course" courses={courses} />
+      <HomeSection title="Most view recent" courses={courses2} />
       <Typography>Hello</Typography>
     </div>
   )
