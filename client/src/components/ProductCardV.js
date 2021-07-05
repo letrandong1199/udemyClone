@@ -10,7 +10,7 @@ import React from 'react'
 const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: '10px',
-        maxWidth: 345,
+        maxWidth: 300,
         //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
         boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)'
     },
@@ -22,9 +22,15 @@ const useStyles = makeStyles((theme) => ({
     price: {
         position: 'absolute',
         bottom: '20px',
-        left: '20px',
-        backgroundColor: "rgba(255, 255, 255, 0.5)"
+        right: '20px',
+        borderRadius: '10px',
+        padding: '10px',
+        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        fontWeight: 'bold'
     },
+    rating: {
+        margin: '12px',
+    }
 }));
 
 
@@ -46,6 +52,7 @@ function ProductCardV() {
             />
             <Rating
                 name="hover-feedback"
+                className={classes.rating}
                 value={value}
                 precision={0.5}
                 onChange={(event, newValue) => {
