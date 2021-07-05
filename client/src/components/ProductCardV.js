@@ -3,6 +3,9 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import IconButton from '@material-ui/core/IconButton';
 import Rating from '@material-ui/lab/Rating';
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react'
@@ -10,7 +13,7 @@ import React from 'react'
 const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: '10px',
-        maxWidth: 300,
+        maxWidth: 275,
         //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
         boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)'
     },
@@ -34,26 +37,26 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function ProductCardV() {
+function ProductCardV(props) {
     const classes = useStyles();
     const [value, setValue] = React.useState(3);
     const [hover, setHover] = React.useState(-1);
     return (
-        <Card className={classes.root} >
+        <Card className={classes.root}>
             <CardHeader
-                title="Course 1"
-                subheader="Author Name"
+                title={props.course.title}
+                subheader={props.course.author}
             />
             <CardMedia
                 className={classes.media}
-                image="assets/3.jpg"
-                title="3"
-                children={<Typography className={classes.price}>19$</Typography>}
+                image={props.course.thumb}
+                title={props.course.title}
+                children={<Typography className={classes.price}>{props.course.price}$</Typography>}
             />
             <Rating
                 name="hover-feedback"
                 className={classes.rating}
-                value={value}
+                value={props.course.rating}
                 precision={0.5}
                 onChange={(event, newValue) => {
                     setValue(newValue);
@@ -64,9 +67,14 @@ function ProductCardV() {
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Here is a short description for this course. Blab blab balb blab.
+                    {props.course.description}
                 </Typography>
             </CardContent>
+            <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                    <FavoriteIcon />
+                </IconButton>
+            </CardActions>
 
         </Card >
     )
