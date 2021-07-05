@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         background: 'white', //'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
         boxShadow: '0 3px 5px 2px rgba(75, 75, 75, .3)', //'0 3px 5px 2px rgba(255, 105, 135, .3)'
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        position: 'fixed'
+
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -138,7 +140,7 @@ function Navbar() {
 
     return (
         <div>
-            <AppBar position="sticky" className={classes.root}>
+            <AppBar className={classes.root}>
                 <Toolbar>
                     <ButtonBase className={classes.logoButton}>
                         <ReactLogo className={classes.logo} />
