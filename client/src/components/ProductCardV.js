@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: '10px',
         maxWidth: 275,
         //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
-        boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)'
+        boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)',
+        margin: '10px'
     },
     media: {
         height: 0,
