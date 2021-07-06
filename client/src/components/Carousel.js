@@ -23,13 +23,26 @@ const content = [
         title: 'Course 1',
         description: 'Course about a bout bla bal bal.',
         button: 'Join now'
+    },
+    {
+        image: 'assets/2.jpg',
+        title: 'Course 2',
+        description: 'Course about a bout bla bal bal.',
+        button: 'Explore'
+    },
+    {
+        image: 'assets/2.jpg',
+        title: 'Course 3',
+        description: 'Course about a bout bla bal bal.',
+        button: 'Join now'
     }
+
 ];
 
 function Carousel() {
     const classes = useStyles();
     return (
-        <Slider classNames={horizontalCss}>
+        <Slider classNames={horizontalCss} >
             {content.map((item, index) => (
                 <div
                     key={index}

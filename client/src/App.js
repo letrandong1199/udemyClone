@@ -3,9 +3,15 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import HomeSection from './components/HomeSection';
+import Footer from './components/Footer';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Button from '@material-ui/core/Button';
+import CallIcon from '@material-ui/icons/Call';
+import EmailIcon from '@material-ui/icons/Email';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -166,8 +172,9 @@ function App() {
       <Carousel />
       <HomeSection title="Most view course" courses={courses} />
       <HomeSection title="Most view recent" courses={courses2} />
-      <Typography>Hello</Typography>
-    </div>
+      <Footer />
+
+    </div >
   )
 }
 
