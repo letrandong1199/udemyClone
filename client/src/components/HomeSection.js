@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'rgb(240, 238, 230)',
         padding: '10px',
         //width: 'calc(100% + 12px)',
-        justifyContent: 'left',
+        justifyContent: 'space-around',
         //marginTop: '10px',
         //marginBottom: '10px'
 
@@ -80,7 +80,7 @@ function HomeSection(props) {
 
     const classes = useStyles();
     const list_courses = props.courses.map((course, index) => {
-        return <Grid item xs={6} sm={3} key={index}><ProductCardV course={course} /></Grid>
+        return <Grid item key={index}><ProductCardV course={course} /></Grid>
     })
     return (
         <div>
