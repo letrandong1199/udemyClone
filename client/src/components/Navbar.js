@@ -16,6 +16,8 @@ import MenuList from '@material-ui/core/MenuList';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
+import RegisterAndLogin from './RegisterAndLogin';
+import Popover from '@material-ui/core/Popover';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -103,12 +105,31 @@ const useStyles = makeStyles((theme) => ({
             display: 'flex',
         },
     },
+    popoverRegisterAndLogin: {
+        width: '100%',
+        backgroundColor: 'rgba(81,81,81,0.5',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 }));
 
 function Navbar() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const openRegister = Boolean(anchorEl);
+    const id = openRegister ? 'simple-popover' : undefined;
+
+    const handleClickRegister = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseRegister = () => {
+        setAnchorEl(null);
+    };
 
     const handleProfileMenuOpen = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -189,9 +210,28 @@ function Navbar() {
                             )}
                         </Popper>
                     </div>
-                    <Button className={classes.regisButton}>Register</Button>
+                    <Button className={classes.regisButton} onClick={handleClickRegister}>Register</Button>
                 </Toolbar>
             </AppBar>
+            <Popover
+                id={id}
+                open={openRegister}
+                anchorReference="none"
+                //anchorPosition={{ top: 0, left: 1000 }}
+                // anchorEl={anchorEl}
+                onClose={handleCloseRegister}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                style={{}}
+            >
+                <RegisterAndLogin />
+            </Popover>
         </div>
     );
 }

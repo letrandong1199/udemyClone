@@ -12,6 +12,20 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import CallIcon from '@material-ui/icons/Call';
 import EmailIcon from '@material-ui/icons/Email';
+import Paper from '@material-ui/core/Paper'
+import TextField from '@material-ui/core/TextField'
+import AccountCircle from '@material-ui/icons/AccountCircle'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
+import VpnKeyRoundedIcon from '@material-ui/icons/VpnKeyRounded';
+import Card from '@material-ui/core/Card';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
+import Popover from '@material-ui/core/Popover';
+import Home from './Home';
+import RegisterAndLogin from './components/RegisterAndLogin';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -60,121 +74,74 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'rgb(240, 238, 230)',
     padding: '10px',
     justifyContent: 'space-arounds'
+  },
+  loginSection: {
+    //margin: '50px',
+    //maxWidth: '1000px',
+    //top: '500px',
+    //left: '500px',
+    //marginLeft: '200px',
+    //marginRight: '200px',
+    // padding: 20,
+    padding: theme.spacing(3),
+    margin: 'auto',
+    maxWidth: 700,
+    minHeight: 500,
+  },
+  input: {
+    //position: 'relative',
+    //width: '555px',
+    height: '60px',
+    fontSize: '40px',
+    borderRadius: '20px !important',
+    //margin: '20px',
+    //marginLeft: theme.spacing(2),
+    //marginRight: theme.spacing(2),
+    //width: '25ch',
+  },
+  button: {
+
+    //width: '100%',
+    height: '50px',
+    margin: 10,
   }
 }));
 
-const courses = [
-  {
-    title: 'Course 1',
-    thumb: 'assets/1.jpg',
-    author: 'Author 1',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
+const useStylesReddit = makeStyles((theme) => ({
+  root: {
+    borderRadius: 20,
   },
-  {
-    title: 'Course 2',
-    thumb: 'assets/2.jpg',
-    author: 'Author 2',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 1',
-    thumb: 'assets/1.jpg',
-    author: 'Author 1',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 2',
-    thumb: 'assets/2.jpg',
-    author: 'Author 2',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 1',
-    thumb: 'assets/1.jpg',
-    author: 'Author 1',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 2',
-    thumb: 'assets/2.jpg',
-    author: 'Author 2',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  }
-]
+}));
 
-const courses2 = [
-  {
-    title: 'Course 1',
-    thumb: 'assets/1.jpg',
-    author: 'Author 1',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 2',
-    thumb: 'assets/2.jpg',
-    author: 'Author 2',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 1',
-    thumb: 'assets/1.jpg',
-    author: 'Author 1',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 2',
-    thumb: 'assets/2.jpg',
-    author: 'Author 2',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 1',
-    thumb: 'assets/1.jpg',
-    author: 'Author 1',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  },
-  {
-    title: 'Course 2',
-    thumb: 'assets/2.jpg',
-    author: 'Author 2',
-    description: 'Here is a short description for this course. Blab blab blab blab.',
-    price: 19,
-    rating: 3
-  }
-]
+function RedditTextField(props) {
+  const classes = useStylesReddit();
+
+  return <TextField InputProps={{ classes, disableUnderline: true }} {...props} />;
+}
+
+
+
+
+
 
 function App() {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const openRegister = Boolean(anchorEl);
+  const id = openRegister ? 'simple-popover' : undefined;
+
+  const handleClickRegister = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseRegister = () => {
+    setAnchorEl(null);
+  };
   return (
     <div>
-      <Navbar />
-      <Carousel />
-      <HomeSection title="Most view course" courses={courses} />
-      <HomeSection title="Most view recent" courses={courses2} />
-      <Footer />
-
-    </div >
+      <Home />
+    </div>
   )
 }
 
