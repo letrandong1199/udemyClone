@@ -26,6 +26,7 @@ import Box from '@material-ui/core/Box';
 import Popover from '@material-ui/core/Popover';
 import Home from './Home';
 import RegisterAndLogin from './components/RegisterAndLogin';
+import DetailCourse from './DetailCourse';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -126,21 +127,10 @@ function RedditTextField(props) {
 
 function App() {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const openRegister = Boolean(anchorEl);
-  const id = openRegister ? 'simple-popover' : undefined;
-
-  const handleClickRegister = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCloseRegister = () => {
-    setAnchorEl(null);
-  };
   return (
     <div>
-      <Home />
+      <DetailCourse />
     </div>
   )
 }
