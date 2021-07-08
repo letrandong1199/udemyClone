@@ -65,6 +65,15 @@ const useStyles = makeStyles((theme) => ({
         //width: '100%',
         height: '50px',
         margin: 10,
+    },
+    Tab: {
+        '& .MuiTabs-indicator': {
+            color: '#000',
+            backgroundColor: '#000',
+            width: '100%',
+            margin: 10,
+            //position: 'relative'
+        }
     }
 }));
 
@@ -99,6 +108,8 @@ function a11yProps(index) {
     };
 }
 
+
+
 function RegisterAndLogin(props) {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -106,20 +117,28 @@ function RegisterAndLogin(props) {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    const tabsActions = React.useRef();
+    React.useEffect(() => {
+        window.dispatchEvent(new CustomEvent('resize'));
+        if (tabsActions.current) {
+            tabsActions.current.updateIndicator();
+        }
+    }, [tabsActions]);
     return (
         <Paper className={classes.loginSection}>
             <Tabs value={value}
+                action={tabsActions}
                 onChange={handleChange}
                 aria-label="login"
-                centered
-                selectionFollowsFocus
+                centered="true"
                 indicatorColor="primary"
-                textColor="primary">
+                textColor="primary"
+            >
                 <Tab label="Register" {...a11yProps(0)} />
                 <Tab label="Login" {...a11yProps(1)} />
             </Tabs>
             <TabPanel value={value} index={0}>
-                <Grid container spacing={3} zeroMinWidth alignItems='center' alignContent='center' justifyContent='space-around' direction="row" >
+                <Grid container spacing={3} alignItems='center' alignContent='center' justifyContent='space-around' direction="row" >
                     <Grid item xs={12} justifyContent='center' container>
                         <Button
                             startIcon={<MailOutlineRoundedIcon />}
@@ -131,7 +150,7 @@ function RegisterAndLogin(props) {
                     </Grid>
                     <Grid item xs={12}>
                         <form style={{ maxWidth: 580, width: '100%', margin: 'auto' }}>
-                            <TextField id="txt-fullname" variant="outlined" require fullWidth label="Full name"
+                            <TextField id="txt-fullname" variant="outlined" require="true" fullWidth label="Full name"
                                 style={{ marginBottom: 16 }}
                                 InputProps={{
                                     startAdornment: (
@@ -141,7 +160,7 @@ function RegisterAndLogin(props) {
                                     ),
                                 }}></TextField>
 
-                            <TextField id="txt-uname" variant="outlined" require fullWidth label="Username"
+                            <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
                                 style={{ marginBottom: 16 }}
                                 InputProps={{
                                     startAdornment: (
@@ -151,7 +170,7 @@ function RegisterAndLogin(props) {
                                     ),
                                 }}></TextField>
 
-                            <TextField id="txt-pass" variant="outlined" require fullWidth label="Password"
+                            <TextField id="txt-pass" variant="outlined" require="true" fullWidth label="Password"
                                 type="password"
                                 InputProps={{
                                     startAdornment: (
@@ -174,7 +193,7 @@ function RegisterAndLogin(props) {
                 </Grid>
             </TabPanel >
             <TabPanel value={value} index={1}>
-                <Grid container spacing={3} zeroMinWidth alignItems='center' alignContent='center' justifyContent='space-around' direction="row" >
+                <Grid container spacing={3} alignItems='center' alignContent='center' justifyContent='space-around' direction="row" >
                     <Grid item xs={12} justifyContent='center' container>
                         <Button
                             startIcon={<MailOutlineRoundedIcon />}
@@ -186,7 +205,7 @@ function RegisterAndLogin(props) {
                     </Grid>
                     <Grid item xs={12}>
                         <form style={{ maxWidth: 580, width: '100%', margin: 'auto' }}>
-                            <TextField id="txt-uname" variant="outlined" require fullWidth label="Username"
+                            <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
                                 style={{ marginBottom: 16 }}
                                 InputProps={{
                                     startAdornment: (
@@ -196,7 +215,7 @@ function RegisterAndLogin(props) {
                                     ),
                                 }}></TextField>
 
-                            <TextField id="txt-pass" variant="outlined" require fullWidth label="Password"
+                            <TextField id="txt-pass" variant="outlined" require="true" fullWidth label="Password"
                                 type="password"
                                 InputProps={{
                                     startAdornment: (

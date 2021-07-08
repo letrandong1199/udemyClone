@@ -18,9 +18,12 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import RegisterAndLogin from './RegisterAndLogin';
 import Popover from '@material-ui/core/Popover';
+import Fade from '@material-ui/core/Fade'
+import Collapse from '@material-ui/core/Collapse';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        zIndex: 1,
         flexGrow: 1,
         background: 'white', //'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
         boxShadow: '0 3px 5px 2px rgba(75, 75, 75, .3)', //'0 3px 5px 2px rgba(255, 105, 135, .3)'
@@ -114,22 +117,10 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Navbar() {
+function ProfileButton(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const openRegister = Boolean(anchorEl);
-    const id = openRegister ? 'simple-popover' : undefined;
-
-    const handleClickRegister = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseRegister = () => {
-        setAnchorEl(null);
-    };
 
     const handleProfileMenuOpen = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -160,6 +151,100 @@ function Navbar() {
     }, [open]);
 
     return (
+        <div className={classes.sectionDesktop}>
+            <IconButton
+                ref={anchorRef}
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+            >
+                <AccountCircle color="inherit" />
+            </IconButton>
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                    <MenuItem onClick={handleClose}>My account</MenuItem>
+                                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
+        </div>
+    )
+}
+
+function RegisterButton(props) {
+    const classes = useStyles();
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const openRegister = Boolean(anchorEl);
+    const id = openRegister ? 'simple-popover' : undefined;
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    return (
+        <div>
+
+            <Button className={classes.regisButton} onClick={handleClick}>Register</Button>
+            <Popover
+                id={id}
+                open={openRegister}
+                anchorReference="none"
+                //anchorPosition={{ top: 0, left: 1000 }}
+                // anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                className={classes.popoverRegisterAndLogin}
+            >
+                <RegisterAndLogin />
+            </Popover>
+            {/*<Popper open={open} anchorEl={anchorEl} placement={placement} transition>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                        timeout={3500}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <RegisterAndLogin />
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+                </Popper>*/}
+
+
+        </div >
+    )
+}
+
+function Navbar() {
+    const classes = useStyles();
+
+    return (
         <div>
             <AppBar className={classes.root}>
                 <Toolbar>
@@ -181,57 +266,11 @@ function Navbar() {
                     </div>
 
                     <Button className={classes.catg}>Categories <ExpandMoreIcon /></Button>
-                    <div className={classes.sectionDesktop}>
-                        <IconButton
-                            ref={anchorRef}
-                            aria-controls={open ? 'menu-list-grow' : undefined}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle color="inherit" />
-                        </IconButton>
-                        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-                            {({ TransitionProps, placement }) => (
-                                <Grow
-                                    {...TransitionProps}
-                                    style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-                                >
-                                    <Paper>
-                                        <ClickAwayListener onClickAway={handleClose}>
-                                            <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                                <MenuItem onClick={handleClose}>My account</MenuItem>
-                                                <MenuItem onClick={handleClose}>Logout</MenuItem>
-                                            </MenuList>
-                                        </ClickAwayListener>
-                                    </Paper>
-                                </Grow>
-                            )}
-                        </Popper>
-                    </div>
-                    <Button className={classes.regisButton} onClick={handleClickRegister}>Register</Button>
+                    <ProfileButton />
+                    <RegisterButton />
                 </Toolbar>
             </AppBar>
-            <Popover
-                id={id}
-                open={openRegister}
-                anchorReference="none"
-                //anchorPosition={{ top: 0, left: 1000 }}
-                // anchorEl={anchorEl}
-                onClose={handleCloseRegister}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                className={classes.popoverRegisterAndLogin}
-            >
-                <RegisterAndLogin />
-            </Popover>
+
         </div>
     );
 }
