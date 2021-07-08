@@ -84,18 +84,19 @@ function HomeSection(props) {
     })
     return (
         <div>
-            <div className={classes.bigTitle}>
+            <Grid className={classes.bigTitle}>
                 <Typography variant="h5">
-                    {props.title}</Typography>
-            </div>
-            <div>
+                    {props.title}
+                </Typography>
+            </Grid>
+            <Grid>
                 <Grid container
                     spacing={0}
                     className={classes.homeSection}
                 >
                     {list_courses}
                 </Grid>
-            </div>
+            </Grid>
         </div>
     )
 }
