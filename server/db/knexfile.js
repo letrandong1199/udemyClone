@@ -28,7 +28,8 @@ module.exports = {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      url: process.env.DATABASE_URI,
+      //url: process.env.DATABASE_URI + `?ssl=true`,
+      //ssl: true,
     },
     pool: {
       min: 2,
