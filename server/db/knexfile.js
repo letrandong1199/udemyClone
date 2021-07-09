@@ -1,16 +1,20 @@
 // Update with your config settings.
 require("dotenv").config();
 module.exports = {
-  development: {
-    client: 'sqlite3',
+
+   development: {
+    client: "pg",
     connection: {
-      filename: './data/lessons.db3',
+      host: "localhost",
+      database: "knex_tutorial",
+      user: "postgres",
+      password: "admin",
     },
-    useNullAsDefault: true,
-    pool: {
-      afterCreate: (conn, done) => {
-        conn.run('PRAGMA foreign_keys = ON', done);
-      },
+    migrations: {
+      directory: './migrations',
+    },
+    seeds: {
+      directory: './seeds',
     },
   },
   production: {
