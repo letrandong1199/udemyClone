@@ -1,9 +1,9 @@
 // Update with your config settings.
 require("dotenv").config();
 module.exports = {
-  development: {
+  production: {
     client: "pg",
-    connection: process.env.DB_URI,
+    connection: process.env.DATABASE_URL,
     
     pool: {
       min: 2,
