@@ -9,21 +9,17 @@ module.exports = {
       user: "postgres",
       password: "admin",
     },
-    pool: {
-      min: 2,
-      max: 10,
-    },
     migrations: {
       directory: "./migrations",
     },
     seeds: {
-      directory: "./seeds/",
+      directory: "./seeds",
     },
   },
   production: {
     client: "pg",
     connection: {
-      connectionString: process.env.DATABASE_URI,
+      connectionString: process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: false },
     },
     pool: {
@@ -31,10 +27,10 @@ module.exports = {
       max: 10,
     },
     migrations: {
-      directory: "./migrations",
+      directory: __dirname + "/migrations",
     },
     seeds: {
-      directory: "./seeds/",
+      directory: __dirname + "/seeds",
     },
   },
 };
