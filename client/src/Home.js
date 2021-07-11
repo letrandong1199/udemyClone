@@ -4,6 +4,9 @@ import Navbar from './components/Navbar';
 import Carousel from './components/Carousel';
 import HomeSection from './components/HomeSection';
 import Footer from './components/Footer';
+import Card from '@material-ui/core/Card';
+
+import React from 'react';
 
 const courses = [
     {
@@ -46,14 +49,6 @@ const courses = [
         price: 19,
         rating: 3
     },
-    {
-        title: 'Course 2',
-        thumb: 'assets/2.jpg',
-        author: 'Author 2',
-        description: 'Here is a short description for this course. Blab blab blab blab.',
-        price: 19,
-        rating: 3
-    }
 ]
 
 const courses2 = [
@@ -97,16 +92,10 @@ const courses2 = [
         price: 19,
         rating: 3
     },
-    {
-        title: 'Course 2',
-        thumb: 'assets/2.jpg',
-        author: 'Author 2',
-        description: 'Here is a short description for this course. Blab blab blab blab.',
-        price: 19,
-        rating: 3
-    },
 
 ]
+
+
 
 function Home() {
     return (
