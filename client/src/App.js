@@ -108,22 +108,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const useStylesReddit = makeStyles((theme) => ({
-  root: {
-    borderRadius: 20,
-  },
-}));
-
-function RedditTextField(props) {
-  const classes = useStylesReddit();
-
-  return <TextField InputProps={{ classes, disableUnderline: true }} {...props} />;
-}
-
-
-
-
-
 
 function App() {
   const classes = useStyles();

@@ -6,7 +6,7 @@ import EmailIcon from '@material-ui/icons/Email';
 
 function Footer() {
     return (
-        <Grid container style={{ backgroundColor: 'rgb(55, 51, 51)', color: 'white', padding: '25px' }}>
+        <Grid container style={{ backgroundColor: /*'rgb(55, 51, 51)',*/ 'rgb(235, 243, 255)', color: 'rgb(60, 60, 59)', padding: '25px' }}>
             <Grid item xs>
                 <Grid item xs={6}>
                     <Typography variant="h6" color="inherit">Greetings</Typography>

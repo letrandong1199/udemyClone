@@ -5,7 +5,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
-
+import Grow from '@material-ui/core/Grow';
+import Card from '@material-ui/core/Card';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 
 const useStyles = makeStyles((theme) => ({
     bigTitle: {
@@ -13,10 +15,12 @@ const useStyles = makeStyles((theme) => ({
         //marginBottom: '10px',
         //width: '100%',
         textAlign: 'center',
-        backgroundColor: 'rgb(55, 51, 51)',
-        color: 'whitesmoke',
-        //color: 'rgb(60, 60, 59)',
-        padding: '35px',
+        backgroundColor: /*'rgb(55, 51, 51)',*/ 'rgb(235, 243, 255)',
+        //color: '',
+        color: 'rgb(60, 60, 59)',
+        padding: '45px',
+        //fontWeight: 'bold',
+        //fontSize: '24px',
         //borderBottom: '3px solid rgb(60, 60, 59)',
         //lineHeight: '1.1em',
         // marginBottom: '10px',
@@ -50,10 +54,10 @@ const useStyles = makeStyles((theme) => ({
 
     homeSection: {
         position: 'relative',
-        backgroundColor: 'rgb(240, 238, 230)',
+        backgroundColor: 'rgb(245, 245, 245)', //'rgb(240, 238, 230)',
         padding: '10px',
         //width: 'calc(100% + 12px)',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         //marginTop: '10px',
         //marginBottom: '10px'
 
@@ -80,12 +84,20 @@ function HomeSection(props) {
 
     const classes = useStyles();
     const list_courses = props.courses.map((course, index) => {
-        return <Grid item key={index}><ProductCardV course={course} /></Grid>
+        return <Grid item key={index}>
+            <ProductCardV course={course} />
+
+        </Grid>
     })
+    const [checked, setChecked] = React.useState(false);
+
+    const handleChange = () => {
+        setChecked((prev) => !prev);
+    };
     return (
         <div>
             <Grid className={classes.bigTitle}>
-                <Typography variant="h5">
+                <Typography variant="h5" style={{ fontWeight: 'bold' }}>
                     {props.title}
                 </Typography>
             </Grid>
