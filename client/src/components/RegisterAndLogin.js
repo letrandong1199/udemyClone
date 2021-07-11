@@ -119,9 +119,12 @@ function RegisterAndLogin(props) {
     };
     const tabsActions = React.useRef();
     React.useEffect(() => {
-        window.dispatchEvent(new CustomEvent('resize'));
+
         if (tabsActions.current) {
-            tabsActions.current.updateIndicator();
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent('resize'));
+                tabsActions.current.updateIndicator();
+            }, 175);
         }
     }, [tabsActions]);
     return (
