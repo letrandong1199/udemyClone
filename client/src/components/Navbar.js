@@ -20,16 +20,21 @@ import RegisterAndLogin from './RegisterAndLogin';
 import Popover from '@material-ui/core/Popover';
 import Fade from '@material-ui/core/Fade'
 import Collapse from '@material-ui/core/Collapse';
+import Slide from '@material-ui/core/Slide';
+import PropTypes from 'prop-types';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        zIndex: 1,
+        zIndex: 1100,
         flexGrow: 1,
         background: 'white', //'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-        boxShadow: '0 3px 5px 2px rgba(75, 75, 75, .3)', //'0 3px 5px 2px rgba(255, 105, 135, .3)'
+        //boxShadow: '0 3px 5px 2px rgba(75, 75, 75, .3)', //'0 3px 5px 2px rgba(255, 105, 135, .3)'
         justifyContent: 'space-between',
-        position: 'static'
-
+        position: 'fixed',
+        //backgroundColor: 'transparent'
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -41,11 +46,14 @@ const useStyles = makeStyles((theme) => ({
     regisButton: {
         position: 'relative',
         flexGrow: '-1',
-        color: 'rgb(75, 75, 75)',
+        color: /*'rgb(0, 86, 210)', 'rgb(75, 75, 75)',*/ 'whitesmoke',
         marginRight: '50px',
         marginLeft: '50px',
-        backgroundColor: 'rgb(255, 202, 24)',
-        border: '1px solid rgb(255, 202, 24)'
+        backgroundColor: /*'rgb(255, 202, 24)',*/ 'rgb(0, 86, 210)',
+        border: '1px solid rgb(0, 86, 210)', //rgb(255, 202, 24)
+        '&:hover': {
+            color: 'rgb(0, 86, 210)',
+        },
     },
     search: {
         position: 'relative',
@@ -84,14 +92,14 @@ const useStyles = makeStyles((theme) => ({
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
         transition: theme.transitions.create('width'),
-        width: '100%',
+        //width: '100%',
         [theme.breakpoints.up('md')]: {
-            width: '20ch',
+            width: '50ch',
         },
     },
     logoButton: {
-        width: '200px',
-        height: '50px',
+        maxWidth: '100px',
+        height: '30px',
         marginTop: '10px',
         marginBottom: '10px'
     },
@@ -161,7 +169,7 @@ function ProfileButton(props) {
             >
                 <AccountCircle color="inherit" />
             </IconButton>
-            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition>
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition style={{ zIndex: 1500, marginTop: 10 }}>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
@@ -199,7 +207,6 @@ function RegisterButton(props) {
 
     return (
         <div>
-
             <Button className={classes.regisButton} onClick={handleClick}>Register</Button>
             <Popover
                 id={id}
@@ -241,37 +248,89 @@ function RegisterButton(props) {
     )
 }
 
+function ElevationScroll(props) {
+    const { children } = props;
+    // Note that you normally won't need to set the window ref as useScrollTrigger
+    // will default to window.
+    // This is only being set here because the demo is in an iframe.
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 0,
+    });
+    console.log(trigger ? 'static' : 'fixed');
+    return React.cloneElement(children, {
+        backgroundColor: trigger ? 'white' : 'transparent',
+    });
+}
+
+ElevationScroll.propTypes = {
+    children: PropTypes.element.isRequired,
+};
+
+function HideOnScroll(props) {
+    const { children } = props;
+    // Note that you normally won't need to set the window ref as useScrollTrigger
+    // will default to window.
+    // This is only being set here because the demo is in an iframe.
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 4,
+    });
+    console.log(trigger);
+    return (
+        <Slide appear={false} direction="down" in={!trigger}>
+            {children}
+        </Slide>
+    );
+}
+
+HideOnScroll.propTypes = {
+    children: PropTypes.element.isRequired,
+};
+
 function Navbar() {
     const classes = useStyles();
 
     return (
         <div>
-            <AppBar className={classes.root}>
-                <Toolbar>
-                    <ButtonBase className={classes.logoButton}>
-                        <ReactLogo className={classes.logo} />
-                    </ButtonBase>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </div>
+            <Paper style={{ width: '100%', minHeight: '64px' }} />
+            <CssBaseline />
+            <HideOnScroll>
 
-                    <Button className={classes.catg}>Categories <ExpandMoreIcon /></Button>
-                    <ProfileButton />
-                    <RegisterButton />
-                </Toolbar>
-            </AppBar>
+                <AppBar className={classes.root} elevation={1}>
+                    <Toolbar>
+                        <Grid container justifyContent="space-between" alignItems="center">
+                            <Grid item xs>
+                                <ButtonBase className={classes.logoButton}>
+                                    <ReactLogo className={classes.logo} />
+                                </ButtonBase>
+                            </Grid>
+                            <Grid item xs>
+                                <div className={classes.search}>
+                                    <div className={classes.searchIcon}>
+                                        <SearchIcon />
+                                    </div>
+                                    <InputBase
+                                        placeholder="Search…"
+                                        classes={{
+                                            root: classes.inputRoot,
+                                            input: classes.inputInput,
+                                        }}
+                                        inputProps={{ 'aria-label': 'search' }}
+                                    />
+                                </div>
+                            </Grid>
+                            <Grid item xs>
+                                <Button className={classes.catg}>Categories <ExpandMoreIcon /></Button>
+                            </Grid>
+                            <Grid item xs><ProfileButton /></Grid>
+                            <Grid item xs><RegisterButton /></Grid>
 
-        </div>
+                        </Grid>
+                    </Toolbar>
+                </AppBar>
+            </HideOnScroll>
+        </div >
     );
 }
 
