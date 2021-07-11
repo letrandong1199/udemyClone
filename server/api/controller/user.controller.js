@@ -7,4 +7,10 @@ router.post("/user", async (req, res) => {
   const message = await userService.createOneUser(req.body);
   res.json({ message }).end();
 });
+router.post("/authenticate-user", async (req, res) => {
+  console.log(req.body);
+  const message = await userService.signIn(req.body);
+  res.json({ message }).end();
+});
+
 module.exports = router;
