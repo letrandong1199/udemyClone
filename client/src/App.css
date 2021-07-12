@@ -39,7 +39,7 @@
 
 button {
 	appearance: none;
-	filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+	/*filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));*/
 	transition: background .5s ease, color .5s ease;
 	border: none;
 	background: #ffd800;

@@ -102,8 +102,8 @@ function Home() {
         <div>
             <Navbar />
             <Carousel />
-            <HomeSection title="Most view course" courses={courses} />
-            <HomeSection title="Most view recent" courses={courses2} />
+            <HomeSection title="Most viewed courses" courses={courses} />
+            <HomeSection title="Most recent courses" courses={courses2} />
             <Footer />
         </div >
     )

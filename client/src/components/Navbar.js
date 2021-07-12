@@ -297,7 +297,7 @@ function Navbar() {
             <CssBaseline />
             <HideOnScroll>
 
-                <AppBar className={classes.root} elevation={1}>
+                <AppBar className={classes.root} disableElevation>
                     <Toolbar>
                         <Grid container justifyContent="space-between" alignItems="center">
                             <Grid item xs>
