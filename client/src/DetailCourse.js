@@ -14,6 +14,12 @@ import { usePalette } from 'react-palette'
 import { Avatar } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -57,22 +63,29 @@ const useStyles = makeStyles((theme) => ({
         display: 'block',
         maxWidth: '100%',
         maxHeight: '100%',
-        boxShadow: '0 0 10px 10px grey',
+        boxShadow: '0 0 10px 10px white inset',
         borderRadius: 10
 
     },
     buttonGroup: {
+        width: '100%',
+        borderRadius: 0,
+        backgroundColor: 'white',
+        paddingLeft: 10,
+        zIndex: 1600,
         top: 0,
         position: 'sticky',
         overflow: 'auto',
         '& .MuiButtonGroup-groupedContained': {
+
             overflow: 'auto',
             minHeight: 50,
-            backgroundColor: 'transparent',
+            backgroundColor: 'white',
+
             textTransform: 'none',
             fontSize: 16,
             border: 0,
-            borderRadius: 4,
+            borderRadius: 0,
             '&:hover': {
                 color: 'rgb(0, 86, 210)',
             }
@@ -94,6 +107,43 @@ const course = {
     categories_tree: ['Computer Science', 'Software Development'],
 };
 
+const temp = <div>
+    <p>
+        <span style={{ fontSize: 18 }}>Quill Rich Text Editor</span>
+    </p>
+    <p>
+        <br />
+    </p>
+    <p>Quill is a free,
+        <a href="https://github.com/quilljs/quill/" target="_blank">open source</a>WYSIWYG editor built for the modern web. With its
+        <a href="http://quilljs.com/docs/modules/" target="_blank">extensible architecture</a>and a
+        <a href="http://quilljs.com/docs/api/" target="_blank">expressive API</a>you can completely customize it to fulfill your needs. Some built in features include:</p>
+    <p>
+        <br />
+    </p>
+    <ul>
+        <li>Fast and lightweight</li>
+        <li>Semantic markup</li>
+        <li>Standardized HTML between browsers</li>
+        <li>Cross browser support including Chrome, Firefox, Safari, and IE 9+</li>
+    </ul>
+    <p>
+        <br />
+    </p>
+    <p>
+        <span style={{ fontSize: 18 }}>Downloads</span>
+    </p>
+    <p>
+        <br />
+    </p>
+    <ul>
+        <li>
+            <a href="https://quilljs.com" target="_blank">Quill.js</a>, the free, open source WYSIWYG editor</li>
+        <li>
+            <a href="https://zenoamaro.github.io/react-quill" target="_blank">React-quill</a>, a React component that wraps Quill.js</li>
+    </ul>
+</div>
+
 function DetailCourse() {
     const classes = useStyles();
     const [value, setValue] = React.useState(3);
@@ -103,24 +153,21 @@ function DetailCourse() {
         event.preventDefault();
         console.log(link);
     }
+    const catgs = course.categories_tree.map((catg, index) => {
+        const link = catg;
+        return <Link onClick={handleClick(link)}>{link}</Link>
+    });
     //background = 'linear-gradient(45deg, rgb(245, 247, 248) 30%,' + data.lightVibrant + '50')'
 
     return (
         <div>
 
             <Navbar />
-            <Card fullWidth style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 20 }}>
+            <Card fullWidth style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
                 <Grid container style={{ marginTop: 20 }}>
                     <Grid item >
-                        <Breadcrumbs separator={<NavigateNextIcon />} aria-label="breadcrumb">
-
-                            <Link color="inherit" href="/" onClick={handleClick}>
-                                Material-UI
-                            </Link>
-                            <Link color="inherit" href="/getting-started/installation/" onClick={handleClick}>
-                                Core
-                            </Link>
-                            <Typography color="textPrimary">Breadcrumb</Typography>
+                        <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
+                            {catgs}
                         </Breadcrumbs>
                     </Grid>
                     <Grid item container style={{ marginTop: 20 }} spacing={2}>
@@ -165,21 +212,62 @@ function DetailCourse() {
                         <Grid item xs={3}>
 
                         </Grid>
-                        <Grid item xs={3}>
-                            <img className={classes.thumbnail} alt='thumb' src={course.thumb}></img>
+                        <Grid item xs={3} style={{ overflow: 'auto' }}>
+
+                            <Card style={{ padding: 10, overflow: 'auto' }}>
+                                <CardMedia>
+                                    <img className={classes.thumbnail} alt='thumb' src={course.thumb}></img>
+                                </CardMedia>
+                                <CardContent>
+                                    <Grid container direction="column" style={{ overflow: 'auto', position: 'sticky' }}>
+                                        <Typography variant="subtitle2">
+                                            What's include:
+                                        </Typography>
+                                        {[1, 2, 3, 4].map((name, index) => <Typography style={{ marginTop: 10 }}
+                                            variant="body2">Feature {name}</Typography>)
+                                        }
+                                    </Grid>
+                                </CardContent>
+
+                            </Card>
                         </Grid>
                     </Grid>
+                    <Button variant="contained" color="primary">Enroll for {course.price ? course.price + '$' : 'free'}</Button>
                 </Grid>
 
             </Card >
 
-            <ButtonGroup size="large" variant="contained" fullWidth aria-label="large button group" className={classes.buttonGroup}>
-                <Button>Description</Button>
-                <Button>Content</Button>
-                <Button>Instructor</Button>
-                <Button>Review</Button>
-                <Button>FAQ</Button>
+            <ButtonGroup size="large" variant="contained" aria-label="large button group" className={classes.buttonGroup}>
+                <Button disableElevation>About</Button>
+                <Button disableElevation>Content</Button>
+                <Button disableElevation>Instructor</Button>
+                <Button disableElevation>Review</Button>
+                <Button disableElevation>FAQ</Button>
             </ButtonGroup>
+            <Card style={{ padding: 30, borderRadius: 0 }}>
+                <Grid container style={{ marginBottom: 20 }}>
+                    <Typography variant="h5" style={{ fontWeight: 'bold', color: 'rgb(55, 58, 60)' }}>
+                        About this course
+                    </Typography>
+                </Grid>
+                <Grid container>
+                    <Grid item xs={8}>
+                        <Typography>
+                            {temp}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+
+                    </Grid>
+                </Grid>
+            </Card>
+            <Card style={{ padding: 30, borderRadius: 0 }}>
+                <Grid container style={{ margin: 40, marginLeft: 0 }}>
+                    <Typography variant="h5" style={{ fontWeight: 'bold' }}>
+                        Course content
+                    </Typography>
+                </Grid>
+            </Card>
             <Container style={{ height: 500 }}>
 
             </Container>
