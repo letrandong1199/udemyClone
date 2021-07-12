@@ -67,6 +67,15 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 10
 
     },
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        flexBasis: '33.33%',
+        flexShrink: 0,
+    },
+    secondaryHeading: {
+        fontSize: theme.typography.pxToRem(15),
+        color: theme.palette.text.secondary,
+    },
     buttonGroup: {
         width: '100%',
         borderRadius: 0,
@@ -153,25 +162,30 @@ function DetailCourse() {
         event.preventDefault();
         console.log(link);
     }
+
     const catgs = course.categories_tree.map((catg, index) => {
         const link = catg;
         return <Link onClick={handleClick(link)}>{link}</Link>
     });
     //background = 'linear-gradient(45deg, rgb(245, 247, 248) 30%,' + data.lightVibrant + '50')'
+    const [expanded, setExpanded] = React.useState(false);
 
+    const handleChange = (panel) => (event, isExpanded) => {
+        setExpanded(isExpanded ? panel : false);
+    };
     return (
         <div>
 
             <Navbar />
             <Card fullWidth style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
-                <Grid container style={{ marginTop: 20 }}>
+
+                <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
                     <Grid item >
                         <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
                             {catgs}
                         </Breadcrumbs>
                     </Grid>
-                    <Grid item container style={{ marginTop: 20 }} spacing={2}>
-
+                    <Grid item container style={{ marginTop: 20, alignItems: 'flex-start' }} spacing={2}>
                         <Grid item container xs={6} direction="column">
                             <Typography variant="h4" style={{ fontWeight: 'bold', color: data.darkVibrant }}>
                                 {course.title}
@@ -209,12 +223,17 @@ function DetailCourse() {
                                 &nbsp;{course.language.join(', ')}
                             </Typography>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={1}>
 
                         </Grid>
-                        <Grid item xs={3} style={{ overflow: 'auto' }}>
+                        <Grid item xs={3}>
+                            <Typography variant="subtitle1">Offered By</Typography>
+                            <img style={{ width: '100%', filter: 'contrast(200%)' }} src='assets/logo-fit.png' />
+                        </Grid>
+                        {/* COMMENTs
+                        <Grid item container xs={3} style={{ overflow: 'auto', alignSelf: 'flex-start', position: 'sticky', top: 0 }}>
 
-                            <Card style={{ padding: 10, overflow: 'auto' }}>
+                            <Card style={{ padding: 10, overflow: 'auto', position: 'sticky', top: 0, alignSelf: 'flex-start' }}>
                                 <CardMedia>
                                     <img className={classes.thumbnail} alt='thumb' src={course.thumb}></img>
                                 </CardMedia>
@@ -231,9 +250,14 @@ function DetailCourse() {
 
                             </Card>
                         </Grid>
+                                    */}
                     </Grid>
-                    <Button variant="contained" color="primary">Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                    <Grid item style={{ marginTop: 20 }}>
+                        <Button variant="contained" color="primary" >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                    </Grid>
                 </Grid>
+
+
 
             </Card >
 
@@ -244,30 +268,131 @@ function DetailCourse() {
                 <Button disableElevation>Review</Button>
                 <Button disableElevation>FAQ</Button>
             </ButtonGroup>
-            <Card style={{ padding: 30, borderRadius: 0 }}>
-                <Grid container style={{ marginBottom: 20 }}>
-                    <Typography variant="h5" style={{ fontWeight: 'bold', color: 'rgb(55, 58, 60)' }}>
-                        About this course
-                    </Typography>
-                </Grid>
-                <Grid container>
-                    <Grid item xs={8}>
-                        <Typography>
-                            {temp}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
+            <Grid container>
+                <Grid item xs={8}>
+                    <Card style={{ padding: 30, borderRadius: 0 }}>
+                        <Grid container style={{ marginBottom: 20 }}>
+                            <Typography variant="h5" style={{ fontWeight: 'bold', color: 'rgb(55, 58, 60)' }}>
+                                <span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>About this course</span>
+                            </Typography>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={8}>
+                                <Typography>
+                                    {temp}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={4}>
 
-                    </Grid>
+                            </Grid>
+                        </Grid>
+                    </Card>
+                    <Card style={{ padding: 30, borderRadius: 0 }}>
+                        <Grid container style={{ marginBottom: 20 }}>
+                            <Typography variant="h5" style={{ fontWeight: 'bold' }}>
+                                <span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>Course content</span>
+                            </Typography>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={8}>
+                                <Card>
+                                    <Accordion style={{ backgroundColor: '#F7F7F7' }} expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel1bh-content"
+                                            id="panel1bh-header"
+                                        >
+                                            <Typography className={classes.heading}>General settings</Typography>
+                                            <Typography className={classes.secondaryHeading}>I am an accordion</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Typography>
+                                                Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
+                                                maximus est, id dignissim quam.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion style={{ backgroundColor: '#F7F7F7' }} expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel2bh-content"
+                                            id="panel2bh-header"
+                                        >
+                                            <Typography className={classes.heading}>Users</Typography>
+                                            <Typography className={classes.secondaryHeading}>
+                                                You are currently not an owner
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Typography>
+                                                Donec placerat, lectus sed mattis semper, neque lectus feugiat lectus, varius pulvinar
+                                                diam eros in elit. Pellentesque convallis laoreet laoreet.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel3bh-content"
+                                            id="panel3bh-header"
+                                        >
+                                            <Typography className={classes.heading}>Advanced settings</Typography>
+                                            <Typography className={classes.secondaryHeading}>
+                                                Filtering has been entirely disabled for whole web server
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Typography>
+                                                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit amet egestas eros,
+                                                vitae egestas augue. Duis vel est augue.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                    <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="panel4bh-content"
+                                            id="panel4bh-header"
+                                        >
+                                            <Typography className={classes.heading}>Personal data</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Typography>
+                                                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer sit amet egestas eros,
+                                                vitae egestas augue. Duis vel est augue.
+                                            </Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={4}>
+
+                            </Grid>
+                        </Grid>
+
+                    </Card>
                 </Grid>
-            </Card>
-            <Card style={{ padding: 30, borderRadius: 0 }}>
-                <Grid container style={{ margin: 40, marginLeft: 0 }}>
-                    <Typography variant="h5" style={{ fontWeight: 'bold' }}>
-                        Course content
-                    </Typography>
+                <Grid item xs={4} style={{ overflow: 'auto', position: 'sticky', top: 50, alignSelf: 'flex-start' }}>
+
+                    <Card style={{ padding: 30, backgroundColor: 'rgb(251, 251, 248)', margin: 20 }} elevation={3}>
+                        <CardMedia>
+                            <img className={classes.thumbnail} alt='thumb' src={course.thumb}></img>
+                        </CardMedia>
+                        <CardContent>
+                            <Grid container direction="column" style={{ overflow: 'auto', position: 'sticky' }}>
+                                <Typography variant="subtitle2">
+                                    What's include:
+                                </Typography>
+                                {[1, 2, 3, 4].map((name, index) => <Typography style={{ marginTop: 10 }}
+                                    variant="body2">Feature {name}</Typography>)
+                                }
+                            </Grid>
+                        </CardContent>
+
+                    </Card>
                 </Grid>
-            </Card>
+            </Grid>
+
             <Container style={{ height: 500 }}>
 
             </Container>
