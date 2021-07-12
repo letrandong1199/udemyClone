@@ -1,5 +1,6 @@
 const Router = require("express");
 const userService = require("../../bussiness/services/user.service");
+const auth = require("../middleware/auth.mdw");
 const router = Router();
 router.post("/user", async (req, res) => {
   console.log("hahahaha");
@@ -10,6 +11,15 @@ router.post("/user", async (req, res) => {
 router.post("/authenticate-user", async (req, res) => {
   console.log(req.body);
   const message = await userService.signIn(req.body);
+  res.json({ message }).end();
+});
+
+router.get("/users", async (req, res) => {
+  const message = await userService.getAllUser();
+  res.json({ message }).end();
+});
+router.delete("/user", auth, async (req, res) => {
+  const message = await userService.deleteOneUser(req.body);
   res.json({ message }).end();
 });
 

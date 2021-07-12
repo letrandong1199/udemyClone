@@ -25,12 +25,12 @@ const createOneUserValidator = {
         IsSuccess: false,
       };
     }
-    if (roleOfUser == null || roleOfUser == "") {
-      return {
-        Code: createOneUserResponseEnum.ROLE_OF_USER_IS_EMPTY,
-        IsSuccess: false,
-      };
-    }
+    // if (roleOfUser == null || roleOfUser == "") {
+    //   return {
+    //     Code: createOneUserResponseEnum.ROLE_OF_USER_IS_EMPTY,
+    //     IsSuccess: false,
+    //   };
+    // }
     return { Code: createOneUserResponseEnum.SUCCESS, IsSuccess: true };
   },
 };
