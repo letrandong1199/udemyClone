@@ -17,9 +17,16 @@ exports.up = function (knex) {
         .references("Id")
         .inTable("Role")
         .defaultTo(1);
+    })
+    .createTable("Categories", function (table) {
+      table.increments("Id").primary();
+      table.string("Name").notNullable();
     });
 };
 
 exports.down = function (knex) {
-  return knex.schema.dropTable("Users").dropTable("Role");
+  return knex.schema
+    .dropTable("Users")
+    .dropTable("Role")
+    .dropTable("Categories");
 };

@@ -6,9 +6,7 @@ module.exports = async (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (token) {
     try {
-      //   console.log(token);
       const payload = jwt.verify(token, process.env.SECRET_KEY);
-      // console.log(payload);
       const Role = await entityRepository("Role").getEntity(payload.Role_Id);
       console.log(Role[0].Name);
       if (Role[0].Name != "Admin") {

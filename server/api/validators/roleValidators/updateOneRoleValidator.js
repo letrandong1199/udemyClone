@@ -1,5 +1,5 @@
 const updateOneRoleResponseEnum = require("../enums/roleEnums/updateOneRoleResponseEnum");
-module.exports = updateOneUserValidator = {
+module.exports = updateOneRoleValidator = {
   validate(id, name) {
     if (id == null || id == "") {
       return { Code: updateOneRoleResponseEnum.ID_IS_EMPTY, IsSuccess: false };

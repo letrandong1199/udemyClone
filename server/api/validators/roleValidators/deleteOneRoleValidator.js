@@ -1,5 +1,5 @@
 const deleteOneRoleResponseEnum = require("../enums/roleEnums/deleteOneRoleResponseEnum");
-module.exports = deleteOneUserValidator = {
+module.exports = deleteOneRoleValidator = {
   validate(id) {
     if (id == null || id == "") {
       return {
