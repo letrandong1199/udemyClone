@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const userController = require("./api/controller/user.controller");
+const roleController = require("./api/controller/role.controller");
 require("dotenv").config();
 
 const app = express();
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user-controller", userController);
+app.use("/api/role-controller", roleController);
 
 app.get("/err", function (req, res) {
   throw new Error("Error!!!");

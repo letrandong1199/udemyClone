@@ -2,20 +2,86 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const operatorType = require("../../utils/enums/operatorType");
-const createOneUserValidator = require("../../api/validators/createOneUserValidator");
-const signInValidator = require("../../api/validators/signInValidator");
-const deleteOneUserValidator = require("../../api/validators/deleteOneUserValidator");
+const createOneUserValidator = require("../../api/validators/userValidators/createOneUserValidator");
+const signInValidator = require("../../api/validators/userValidators/signInValidator");
+const deleteOneUserValidator = require("../../api/validators/userValidators/deleteOneUserValidator");
 
-const createOneUserResponseEnum = require("../../api/validators/enums/createOneUserResponseEnum");
-const signInResponseEnum = require("../../api/validators/enums/signInResponseEnum");
-const deleteOneUserResponseEnum = require("../../api/validators/enums/deleteOneUserResponseEnum");
+const createOneUserResponseEnum = require("../../api/validators/enums/userEnums/createOneUserResponseEnum");
+const signInResponseEnum = require("../../api/validators/enums/userEnums/signInResponseEnum");
+const deleteOneUserResponseEnum = require("../../api/validators/enums/userEnums/deleteOneUserResponseEnum");
 
 const userRepository = require("../../repositories/user.repository");
 const roleRepository = require("../../repositories/role.repository");
 const _entityRepository = require("../../repositories/entity.repository");
-const getAllUserResponseEnum = require("../../api/validators/enums/getAllUserResponseEnum");
+const getAllUserResponseEnum = require("../../api/validators/enums/userEnums/getAllUserResponseEnum");
+const updateOneUserValidator = require("../../api/validators/userValidators/updateOneUserValidator");
+const updateOneUserResponseEnum = require("../../api/validators/enums/userEnums/updateOneUserResponseEnum");
+const getOneUserResponseEnum = require("../../api/validators/enums/userEnums/getOneUserResponseEnum");
+const getOneUserValidator = require("../../api/validators/userValidators/getOneUserValidator");
 require("dotenv").config();
 const userService = {
+  //Get one user
+  async getOneUser(request) {
+    try {
+      const resultValidator = getOneUserValidator.validate(request.params.id);
+      if (!resultValidator.IsSuccess) {
+        return { Code: getOneUserResponseEnum.Code };
+      }
+      const user = await _entityRepository("Users").getEntity(
+        request.params.id
+      );
+      if (user.length == 0) {
+        return { Code: getOneUserResponseEnum.ID_IS_INVALID };
+      }
+      const userResponse = {
+        Id: user[0].Id,
+        Email: user[0].Email,
+        Full_Name: user[0].Full_Name,
+        Password: user[0].Password,
+      };
+      return {
+        Code: getOneUserResponseEnum.SUCCESS,
+        resultResponse: userResponse,
+      };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  //Update one user
+  async updateOneUser(request) {
+    try {
+      const resultValidator = updateOneUserValidator.validate(
+        request.params.id,
+        request.body.fullname,
+        request.body.password
+      );
+      console.log(request.body);
+      if (!resultValidator.IsSuccess) {
+        return { Code: resultValidator.Code };
+      }
+      const user = await _entityRepository("Users").getEntity(
+        request.params.id
+      );
+      console.log(user);
+      if (user.length == 0) {
+        return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
+      }
+      user[0].Full_Name = request.body.fullname;
+      user[0].Password = bcrypt.hashSync(request.body.password);
+      if (
+        (await _entityRepository("Users").updateEntity(
+          request.params.id,
+          user[0]
+        )) === operatorType.FAIL.UPDATE
+      ) {
+        return { Code: updateOneUserResponseEnum.SERVER_ERROR };
+      }
+      return { Code: updateOneUserResponseEnum.SUCCESS, newUser: user[0] };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
   //Get all User
   async getAllUser() {
     try {
@@ -67,7 +133,7 @@ const userService = {
       }
       const user = await userRepository.getUserByEmail(request.email);
       console.log(user);
-      if (user[0] == null) {
+      if (user.length == 0) {
         return { Code: deleteOneUserResponseEnum.EMAIL_IS_NOT_EXIST };
       }
       if (
@@ -95,7 +161,6 @@ const userService = {
         return { Code: resultValidator.Code };
       }
       var user = await userRepository.getUserByEmail(request.email);
-      console.log(`Useerrrrrrrrrrrr`, user);
       if (user != "") {
         return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
       }
@@ -132,14 +197,17 @@ const userService = {
         return { Code: resultValidator.Code };
       }
       const user = await userRepository.getUserByEmail(request.email);
-      console.log(user);
-      if (user == "") {
+      if (user.length == 0) {
         return { Code: signInResponseEnum.WRONG_EMAIL };
       }
       if (!bcrypt.compareSync(request.password, user[0].Password)) {
         return { Code: signInResponseEnum.WRONG_PASSWORD };
       }
-      const payload = { User_Id: user[0].Id, Email: user[0].Email };
+      const payload = {
+        User_Id: user[0].Id,
+        Email: user[0].Email,
+        Role_Id: user[0].Role_Id,
+      };
       return {
         Code: signInResponseEnum.SUCCESS,
         token: jwt.sign(payload, process.env.SECRET_KEY, {

@@ -19,6 +19,15 @@ module.exports = (nameEntity) => {
         .where("Id", id)
         .catch(() => operatorType.FAIL.READ);
     },
+    //UPDATE BY ID
+    updateEntity(id, entity) {
+      return db(nameEntity)
+        .where("Id", id)
+        .update(entity)
+        .catch(() => {
+          return operatorType.FAIL.UPDATE;
+        });
+    },
     //DELETE
     deleteEntity(id) {
       return db(nameEntity)

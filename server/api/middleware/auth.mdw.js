@@ -6,18 +6,20 @@ module.exports = async (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (token) {
     try {
+      //   console.log(token);
       const payload = jwt.verify(token, process.env.SECRET_KEY);
-      console.log(payload);
-      if (
-        (await entityRepository("Role").getEntity(payload.User_Id)) ===
-        operatorType.FAIL.READ
-      ) {
-        return res.json({ Code: "Unauthorized" }).end();
+      // console.log(payload);
+      const Role = await entityRepository("Role").getEntity(payload.Role_Id);
+      console.log(Role[0].Name);
+      if (Role[0].Name != "Admin") {
+        return res.json({ message: "Unauthorize" }).end();
       }
+      next();
     } catch (e) {
       console.log(e);
-      return res.json({ message: "Somethingwrong" });
+      return res.json({ message: "Invalid_token" });
     }
+  } else {
+    return res.json({ message: "Token is not found" }).end();
   }
-  next();
 };

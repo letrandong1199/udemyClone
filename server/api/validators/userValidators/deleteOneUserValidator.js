@@ -1,4 +1,4 @@
-const deleteOneUserResponseEnum = require("./enums/deleteOneUserResponseEnum");
+const deleteOneUserResponseEnum = require("../enums/userEnums/deleteOneUserResponseEnum");
 module.exports = deleteOneUserValidator = {
   validate(email) {
     if (email == null || email == "") {

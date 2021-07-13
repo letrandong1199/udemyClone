@@ -1,4 +1,4 @@
-const signInResponseEnum = require("./enums/signInResponseEnum");
+const signInResponseEnum = require("../enums/userEnums/signInResponseEnum");
 module.exports = signInValidator = {
   validate(email, password) {
     if (email == null || email == "") {

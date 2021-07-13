@@ -9,17 +9,24 @@ router.post("/user", async (req, res) => {
   res.json({ message }).end();
 });
 router.post("/authenticate-user", async (req, res) => {
-  console.log(req.body);
   const message = await userService.signIn(req.body);
   res.json({ message }).end();
 });
 
-router.get("/users", async (req, res) => {
+router.get("/users", auth, async (req, res) => {
   const message = await userService.getAllUser();
+  res.json({ message }).end();
+});
+router.get("/user/:id", async (req, res) => {
+  const message = await userService.getOneUser(req);
   res.json({ message }).end();
 });
 router.delete("/user", auth, async (req, res) => {
   const message = await userService.deleteOneUser(req.body);
+  res.json({ message }).end();
+});
+router.put("/user/:id", auth, async (req, res) => {
+  const message = await userService.updateOneUser(req);
   res.json({ message }).end();
 });
 

@@ -1,4 +1,4 @@
-const createOneResponseUserEnum = require("./enums/createOneUserResponseEnum");
+const createOneUserResponseEnum = require("../enums/userEnums/createOneUserResponseEnum");
 const createOneUserValidator = {
   validate(email, fullname, password, roleOfUser) {
     if (fullname == null || fullname == "") {

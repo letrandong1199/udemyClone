@@ -1,4 +1,4 @@
-module.exports = signInResponseEnum = {
+module.exports = {
   SUCCESS: "signin_success",
   EMAIL_IS_EMPTY: "username_is_empty",
   PASSWORD_IS_EMPTY: "password_is_empty",

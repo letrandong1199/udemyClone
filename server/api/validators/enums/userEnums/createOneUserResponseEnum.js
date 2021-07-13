@@ -1,4 +1,4 @@
-module.exports = createOneUserResponseEnum = {
+module.exports = {
   SUCCESS: "signup_success",
   NAME_ISEMPTY: "name_is_empty",
   EMAIL_IS_EMPTY: "email_is_empty",
