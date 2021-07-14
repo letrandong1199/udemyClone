@@ -1,32 +1,10 @@
 /* eslint-disable no-undef */
 import './App.css';
-import Navbar from './components/Navbar';
-import Carousel from './components/Carousel';
-import HomeSection from './components/HomeSection';
-import Footer from './components/Footer';
-import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import CallIcon from '@material-ui/icons/Call';
-import EmailIcon from '@material-ui/icons/Email';
-import Paper from '@material-ui/core/Paper'
-import TextField from '@material-ui/core/TextField'
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
-import VpnKeyRoundedIcon from '@material-ui/icons/VpnKeyRounded';
-import Card from '@material-ui/core/Card';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import PropTypes from 'prop-types';
-import Box from '@material-ui/core/Box';
-import Popover from '@material-ui/core/Popover';
-import Home from './Home';
-import RegisterAndLogin from './components/RegisterAndLogin';
-import DetailCourse from './DetailCourse';
+import Home from './pages/Home';
+import DetailCourse from './pages/DetailCourse';
+import { unstable_createMuiStrictModeTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import React from 'react';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -111,11 +89,21 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const classes = useStyles();
+  const [dark, setDark] = React.useState(false)
 
+  const theme = unstable_createMuiStrictModeTheme({
+    palette: {
+      type: dark ? 'dark' : 'light',
+    },
+  })
+  const handleToggle = () => {
+    setDark(!dark);
+    console.log(dark);
+  }
   return (
-    <div>
-      <DetailCourse />
-    </div>
+    <MuiThemeProvider theme={theme}>
+      <Home handleToggle={handleToggle} />
+    </MuiThemeProvider>
   )
 }
 

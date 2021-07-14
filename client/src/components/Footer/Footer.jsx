@@ -3,27 +3,29 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CallIcon from '@material-ui/icons/Call';
 import EmailIcon from '@material-ui/icons/Email';
+import { useStyles } from './styles';
 
 function Footer() {
+    const classes = useStyles();
     return (
-        <Grid container style={{ backgroundColor: /*'rgb(55, 51, 51)',*/ 'rgb(235, 243, 255)', color: 'rgb(60, 60, 59)', padding: '25px' }}>
+        <Grid container className={classes.root}>
             <Grid item xs>
                 <Grid item xs={6}>
                     <Typography variant="h6" color="inherit">Greetings</Typography>
-                    <p style={{ fontStyle: 'italic', fontSize: '15px' }}>Welcome to my website hehe</p>
+                    <Typography className={classes.body}>Welcome to my website hehe</Typography>
                 </Grid>
             </Grid>
             <Grid item xs>
                 <Grid item xs={6}>
                     <Typography variant="h6" color="inherit">About</Typography>
-                    <p style={{ fontStyle: 'italic', fontSize: '15px' }}>This is a part of my final project in university</p>
+                    <Typography className={classes.body}>This is a part of my final project in university</Typography>
                 </Grid>
             </Grid>
             <Grid item xs>
                 <Grid item xs={6}>
                     <Typography variant="h6" color="inherit">Contact</Typography>
-                    <Button color="inherit" style={{ fontStyle: 'italic', fontSize: '12px' }}><CallIcon /><span style={{ textTransform: 'none', marginLeft: '5px' }}>+84 3277681</span></Button>
-                    <Button color="inherit" style={{ fontStyle: 'italic', fontSize: '12px' }}><EmailIcon /><span style={{ textTransform: 'none', marginLeft: '5px' }}>zzf7ktx@gmail.com</span></Button>
+                    <Button color="inherit" className={classes.button}><CallIcon /><span style={{ textTransform: 'none', marginLeft: '5px' }}>+84 3277681</span></Button>
+                    <Button color="inherit" className={classes.button}><EmailIcon /><span style={{ textTransform: 'none', marginLeft: '5px' }}>zzf7ktx@gmail.com</span></Button>
                 </Grid>
             </Grid>
         </Grid>

@@ -3,7 +3,10 @@ import horizontalCss from 'react-animated-slider/build/horizontal.css';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import carouselCss from './Carousel.css';
+import Button from '@material-ui/core/Button';
+import { useStyles } from './styles';
 
+/*
 const useStyles = makeStyles((theme) => ({
     center: {
         justifyContent: 'center',
@@ -87,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
             left: '-100%',
         },
         '&.current': {
-            left: 0,
+            left: '0',
         },
         '&.next': {
             left: '100%',
@@ -98,10 +101,10 @@ const useStyles = makeStyles((theme) => ({
             '&.previous, &.next': {
                 left: 0,
                 visibility: 'visible',
-                '& .MuiTypography-subtitle1': {
+                '& .MuiTypography-subtitle': {
                     transitionDelay: '1.1s',
                 },
-                '& .MuiButton': {
+                '& button': {
                     transitionDelay: '1.3s',
                 }
 
@@ -116,15 +119,22 @@ const useStyles = makeStyles((theme) => ({
             '& .MuiTypography-subtitle1': {
                 transitionDelay: '.3s',
             },
-            '& .MuiButton': {
+            '& button': {
                 transitionDelay: '.2s',
-            }
+            },
+            '& current, & animateIn': {
+                '& button, & .MuiTypography-subtitle1, & .MuiTypography-h1': {
+                    transform: 'translateX(0)',
+                    transitionDelay: '.9s',
+                    opacity: 1,
+                },
+            },
         },
 
     }
 }
 ));
-
+*/
 const content = [
     {
         image: 'assets/3.jpg',
@@ -150,17 +160,17 @@ const content = [
 function Carousel() {
     const classes = useStyles();
     return (
-        <Slider classNames={carouselCss} autoplay={2000}>
+        <Slider classNames={classes} autoplay={20000}>
             {content.map((item, index) => (
                 <div
                     key={index}
                     style={{ background: `url('${item.image}') no-repeat center center` }}
-                    className={carouselCss.slide}
+                    className={classes.slide}
                 >
                     <div className={classes.inner}>
-                        <h1>{item.title}</h1>
-                        <p>{item.description}</p>
-                        <button>{item.button}</button>
+                        <Typography variant="h1">{item.title}</Typography>
+                        <Typography variant="body1">{item.description}</Typography>
+                        <Button variant="contained" color="secondary">{item.button}</Button>
                     </div>
                 </div>
             ))}

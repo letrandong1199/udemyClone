@@ -76,12 +76,12 @@ const useStyles = makeStyles((theme) => ({
         }
     }
 }));
-
-function TabPanel(props) {
+const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
 
     return (
         <div
+            ref={ref}
             role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
@@ -93,7 +93,7 @@ function TabPanel(props) {
             )}
         </div>
     );
-}
+});
 
 TabPanel.propTypes = {
     children: PropTypes.node,
