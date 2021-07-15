@@ -8,14 +8,13 @@ import { useStyles } from './styles';
 
 
 function HomeSection(props) {
-    const classes = useStyles();
+    const classes = useStyles(props);
     const list_courses = props.courses.map((course, index) => {
         return <Grid item key={index}>
             <ProductCardV course={course} />
 
         </Grid>
     })
-
     return (
         <Fragment>
             <Grid className={classes.bigTitle}>

@@ -17,7 +17,7 @@ import MenuList from '@material-ui/core/MenuList';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
-import RegisterAndLogin from '../RegisterAndLogin/RegisterAndLogin';
+import RegisterAndLogin from '../RegisterAndLogin/RegisterAndLogin.jsx';
 import Popover from '@material-ui/core/Popover';
 import Slide from '@material-ui/core/Slide';
 import PropTypes from 'prop-types';
@@ -220,6 +220,7 @@ function Navbar(props) {
                                     aria-label="open drawer"
                                     edge="start"
                                     onClick={handleDrawerToggle}
+                                    size="small"
                                 >
                                     <MenuIcon />
                                 </IconButton>
@@ -248,8 +249,9 @@ function Navbar(props) {
                             <Hidden xsDown>
                                 <Button onClick={props.handleToggleDark} className={classes.categoriesButton}>Categories <ExpandMoreIcon /></Button>
                                 <ProfileButton />
-                                <RegisterButton />
+
                             </Hidden>
+                            <RegisterButton />
                         </Grid>
                     </Toolbar>
                 </AppBar>
