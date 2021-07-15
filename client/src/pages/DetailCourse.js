@@ -1,11 +1,10 @@
 import Container from '@material-ui/core/Container';
-import Navbar from './components/Navbar';
+import Navbar from '../components/Navbar/Navbar.jsx';
 import Grid from '@material-ui/core/Grid';
-import Footer from './components/Footer';
+import Footer from '../components/Footer/Footer.jsx';
 import Link from '@material-ui/core/Link';
 import { Breadcrumbs } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Card from '@material-ui/core/Card';
 import React from 'react';
 import Rating from '@material-ui/lab/Rating';
@@ -20,8 +19,8 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-
+import { courses } from '../utils/dataSample';
+import { CssBaseline } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: 4,// '10px',
@@ -103,18 +102,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const course = {
-    title: 'Python for Everybody Specialization',
-    thumb: 'assets/3.jpg',
-    author: 'Author 2',
-    description: 'Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.',
-    price: 19,
-    rating: 3,
-    num_rating: 100,
-    num_enrolled: 100,
-    language: ['Eng', 'Vi', 'Jp'],
-    categories_tree: ['Computer Science', 'Software Development'],
-};
+const course = courses()[0];
 
 const temp = <div>
     <p>
@@ -123,18 +111,18 @@ const temp = <div>
     <p>
         <br />
     </p>
-    <p>Quill is a free,
-        <a href="https://github.com/quilljs/quill/" target="_blank">open source</a>WYSIWYG editor built for the modern web. With its
-        <a href="http://quilljs.com/docs/modules/" target="_blank">extensible architecture</a>and a
-        <a href="http://quilljs.com/docs/api/" target="_blank">expressive API</a>you can completely customize it to fulfill your needs. Some built in features include:</p>
+    <p>Quill is a free, &nbsp;
+        <a key='1' href="https://github.com/quilljs/quill/" target="_blank">open source</a>WYSIWYG editor built for the modern web. With its
+        <a key='2' href="http://quilljs.com/docs/modules/" target="_blank">extensible architecture</a>and a
+        <a key='3' href="http://quilljs.com/docs/api/" target="_blank">expressive API</a>you can completely customize it to fulfill your needs. Some built in features include:</p>
     <p>
         <br />
     </p>
     <ul>
-        <li>Fast and lightweight</li>
-        <li>Semantic markup</li>
-        <li>Standardized HTML between browsers</li>
-        <li>Cross browser support including Chrome, Firefox, Safari, and IE 9+</li>
+        <li key='1'>Fast and lightweight</li>
+        <li key='2'>Semantic markup</li>
+        <li key='3'>Standardized HTML between browsers</li>
+        <li key='4'>Cross browser support including Chrome, Firefox, Safari, and IE 9+</li>
     </ul>
     <p>
         <br />
@@ -146,9 +134,9 @@ const temp = <div>
         <br />
     </p>
     <ul>
-        <li>
+        <li key='5'>
             <a href="https://quilljs.com" target="_blank">Quill.js</a>, the free, open source WYSIWYG editor</li>
-        <li>
+        <li key='6'>
             <a href="https://zenoamaro.github.io/react-quill" target="_blank">React-quill</a>, a React component that wraps Quill.js</li>
     </ul>
 </div>
@@ -165,7 +153,7 @@ function DetailCourse() {
 
     const catgs = course.categories_tree.map((catg, index) => {
         const link = catg;
-        return <Link onClick={handleClick(link)}>{link}</Link>
+        return <Link key={index} index={index} onClick={handleClick(link)}>{link}</Link>
     });
     //background = 'linear-gradient(45deg, rgb(245, 247, 248) 30%,' + data.lightVibrant + '50')'
     const [expanded, setExpanded] = React.useState(false);
@@ -177,7 +165,7 @@ function DetailCourse() {
         <div>
 
             <Navbar />
-            <Card fullWidth style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
+            <Card style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
 
                 <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
                     <Grid item >
@@ -228,7 +216,7 @@ function DetailCourse() {
                         </Grid>
                         <Grid item xs={3}>
                             <Typography variant="subtitle1">Offered By</Typography>
-                            <img style={{ width: '100%', filter: 'contrast(200%)' }} src='assets/logo-fit.png' />
+                            <img alt="offered" style={{ width: '100%', filter: 'contrast(200%)' }} src='assets/logo-fit.png' />
                         </Grid>
                         {/* COMMENTs
                         <Grid item container xs={3} style={{ overflow: 'auto', alignSelf: 'flex-start', position: 'sticky', top: 0 }}>
@@ -278,9 +266,7 @@ function DetailCourse() {
                         </Grid>
                         <Grid container>
                             <Grid item xs={8}>
-                                <Typography>
-                                    {temp}
-                                </Typography>
+                                {temp}
                             </Grid>
                             <Grid item xs={4}>
 
@@ -383,7 +369,7 @@ function DetailCourse() {
                                 <Typography variant="subtitle2">
                                     What's include:
                                 </Typography>
-                                {[1, 2, 3, 4].map((name, index) => <Typography style={{ marginTop: 10 }}
+                                {[1, 2, 3, 4].map((name, index) => <Typography key={index} style={{ marginTop: 10 }}
                                     variant="body2">Feature {name}</Typography>)
                                 }
                             </Grid>
@@ -394,7 +380,7 @@ function DetailCourse() {
             </Grid>
 
             <Container style={{ height: 500 }}>
-
+                <p>gff</p>
             </Container>
 
             <Footer />
