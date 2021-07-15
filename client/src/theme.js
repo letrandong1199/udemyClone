@@ -47,7 +47,7 @@ export const darkTheme = unstable_createMuiStrictModeTheme({
         },
         background: {
             default: '#1f1f1f',
-            vibrant: '#1f1f1f',
+            vibrant: 'hsl(240, 15%, 35%)',
         },
 
         type: 'dark',

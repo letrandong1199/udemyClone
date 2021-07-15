@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
-import Home from './pages/Home';
-import DetailCourse from './pages/DetailCourse';
+import Home from './pages/Home/Home.jsx';
+import DetailCourse from './pages/DetailCourse/DetailCourse.jsx';
 import { unstable_createMuiStrictModeTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { lightTheme, darkTheme } from './theme';

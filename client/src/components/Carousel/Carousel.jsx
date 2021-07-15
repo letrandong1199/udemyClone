@@ -10,7 +10,7 @@ import Card from '@material-ui/core/Card';
 function Carousel(props) {
     const content = props.courses;
     const classes = useStyles();
-    const buttonText = Math.random() % 2 === 0 ? 'Explore' : 'John now';
+    const buttonText = () => (Math.random() * 10).toFixed(0) % 2 === 0 ? 'Explore' : 'Join now';
     return (
         <Slider classNames={classes} autoplay={20000}>
             {content.map((item, index) => (
@@ -29,10 +29,10 @@ function Carousel(props) {
                                 </Grid>
 
                                 <Typography style={{ textAlign: 'left' }} variant="body1">{item.description}</Typography>
-                                <Button variant="outlined" color="primary">{buttonText}</Button>
+                                <Button variant="outlined" color="primary">{buttonText()}</Button>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={7} className={classes.card} style={{ width: '100%', background: `url('${item.thumb}') no-repeat center center` }}>
+                        <Grid item xs={12} sm={7} className={classes.cardImage} style={{ background: `url('${item.thumb}') no-repeat center center`, backgroundSize: 'cover' }}>
                             <Card>
 
                             </Card>

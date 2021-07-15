@@ -1,14 +1,14 @@
 import Container from '@material-ui/core/Container';
-import Navbar from '../components/Navbar/Navbar.jsx';
+import Navbar from '../../components/Navbar/Navbar.jsx';
 import Grid from '@material-ui/core/Grid';
-import Footer from '../components/Footer/Footer.jsx';
+import Footer from '../../components/Footer/Footer.jsx';
 import Link from '@material-ui/core/Link';
 import { Breadcrumbs } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React from 'react';
 import Rating from '@material-ui/lab/Rating';
-import { makeStyles } from '@material-ui/core/styles';
+
 import { usePalette } from 'react-palette'
 import { Avatar } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
@@ -19,88 +19,9 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { courses } from '../utils/dataSample';
+import { courses } from '../../utils/dataSample';
 import { CssBaseline } from '@material-ui/core';
-const useStyles = makeStyles((theme) => ({
-    root: {
-        borderRadius: 4,// '10px',
-        maxWidth: 285,
-        minWidth: 260,
-        //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
-        boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)',
-        margin: '10px'
-    },
-    media: {
-        height: 0,
-        paddingTop: '56.25%', // 16:9
-        position: 'relative'
-    },
-    price: {
-        position: 'absolute',
-        bottom: '20px',
-        right: '20px',
-        borderRadius: 4,//'10px',
-        padding: '10px',
-        backgroundColor: "rgba(255, 255, 255, 0.6)",
-        fontWeight: 'bold'
-    },
-    rating: {
-        margin: '12px',
-    },
-    expand: {
-        transform: 'rotate(0deg)',
-        marginLeft: 'auto',
-        transition: theme.transitions.create('transform', {
-            duration: theme.transitions.duration.shortest,
-        }),
-    },
-    expandOpen: {
-        transform: 'rotate(180deg)',
-    },
-    thumbnail: {
-        margin: 'auto',
-        display: 'block',
-        maxWidth: '100%',
-        maxHeight: '100%',
-        boxShadow: '0 0 10px 10px white inset',
-        borderRadius: 10
-
-    },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        flexBasis: '33.33%',
-        flexShrink: 0,
-    },
-    secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
-        color: theme.palette.text.secondary,
-    },
-    buttonGroup: {
-        width: '100%',
-        borderRadius: 0,
-        backgroundColor: 'white',
-        paddingLeft: 10,
-        zIndex: 1600,
-        top: 0,
-        position: 'sticky',
-        overflow: 'auto',
-        '& .MuiButtonGroup-groupedContained': {
-
-            overflow: 'auto',
-            minHeight: 50,
-            backgroundColor: 'white',
-
-            textTransform: 'none',
-            fontSize: 16,
-            border: 0,
-            borderRadius: 0,
-            '&:hover': {
-                color: 'rgb(0, 86, 210)',
-            }
-        },
-    }
-}));
-
+import { useStyles } from './styles';
 
 const course = courses()[0];
 

@@ -5,7 +5,7 @@ export const useStyles = makeStyles((theme) => ({
         position: "relative",
         width: "100%",
         height: "400px",
-        marginTop: 20,
+        //marginTop: 20,
         overflow: "hidden",
         "& a.previousButton:not(.disabled):hover, & a.nextButton:not(.disabled):hover": {
             transform: "translateY(-50%) scale(1.25)",
@@ -18,7 +18,7 @@ export const useStyles = makeStyles((theme) => ({
         "&:hover": {
             "& a.previousButton svg polygon, & a.nextButton svg polygon": {
                 display: 'block',
-                fill: theme.palette.primary.main,
+                fill: theme.palette.primary.light,
             },
         },
         "& a.previousButton, & a.nextButton": {
@@ -106,6 +106,7 @@ export const useStyles = makeStyles((theme) => ({
         "& button": {
             transition: "all .3s ease",
             transform: "translateY(20px)",
+            textTransform: 'none',
             opacity: 0,
         },
     },
@@ -133,10 +134,16 @@ export const useStyles = makeStyles((theme) => ({
         //left: '50%',
         //WebkitTransform: "translate(-50%, -50%)",
         //transform: 'translate(-50%, -50%)',
+
     },
+    cardImage: {
+        position: 'relative',
+        padding: 20,
+    },
+
     limitLine: {
         overflow: 'hidden',
-        WebkitLineClamp: 3,
+        WebkitLineClamp: 4,
         textOverflow: 'ellipsis',
         wordWrap: 'break-word',
         display: '-webkit-box',
