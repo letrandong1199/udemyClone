@@ -20,6 +20,6 @@ export const useStyles = makeStyles((theme) => ({
                 ? theme.palette.background.vibrant
                 : theme.palette.background.default,
         padding: '10px',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
     },
 }));

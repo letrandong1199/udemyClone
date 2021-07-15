@@ -18,7 +18,7 @@ export const useStyles = makeStyles((theme) => ({
         "&:hover": {
             "& a.previousButton svg polygon, & a.nextButton svg polygon": {
                 display: 'block',
-                fill: theme.palette.primary.main,
+                fill: theme.palette.primary.light,
             },
         },
         "& a.previousButton, & a.nextButton": {

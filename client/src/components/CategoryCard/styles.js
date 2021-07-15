@@ -37,7 +37,7 @@ export const useStyles = makeStyles((theme) => ({
         },
         [theme.breakpoints.up('sm')]: {
             height: 0,
-            paddingTop: '56.25%', // 16:9
+            paddingTop: '100%', // 16:9
         },
     },
     content: {

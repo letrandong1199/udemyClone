@@ -11,7 +11,10 @@ import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import PeopleOutlineRoundedIcon from '@material-ui/icons/PeopleOutlineRounded';
 import AllInclusiveRoundedIcon from '@material-ui/icons/AllInclusiveRounded';
 import { useStyles } from './styles';
-
+import Container from '@material-ui/core/Container';
+import List from '@material-ui/core/List'
+import Card from '@material-ui/core/Card';
+import CardMedia from '@material-ui/core/CardMedia';
 
 const courses1 = courses();
 const courses2 = courses();
@@ -39,6 +42,16 @@ const HomeIntroBanner = () => {
         </Grid>
     )
 }
+const categories = [
+    {
+        title: 'Web development',
+        thumb: 'assets/web-development.jpg'
+    },
+    {
+        title: 'Mobile development',
+        thumb: 'assets/mobile-development.jpg'
+    },
+];
 
 function Home(props) {
     return (
@@ -48,6 +61,7 @@ function Home(props) {
             <HomeIntroBanner />
             <HomeSection title="Most viewed courses" courses={courses1} color="vibrant" />
             <HomeSection title="Most recent courses" courses={courses2} />
+            <HomeSection categories={categories} title="Top categories" color="vibrant" />
             <Footer />
         </div >
     )
