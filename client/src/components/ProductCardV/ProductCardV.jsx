@@ -12,6 +12,7 @@ import Collapse from '@material-ui/core/Collapse';
 import clsx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 import { useStyles } from './styles';
+import Hidden from '@material-ui/core/Hidden';
 
 function ProductCardV(props) {
     const classes = useStyles();
@@ -32,7 +33,7 @@ function ProductCardV(props) {
                 title={props.course.title}
                 children={<Typography className={classes.price}>{props.course.price}$</Typography>}
             />
-            <CardContent disableSpacing>
+            <CardContent disableSpacing className={classes.content}>
                 <Grid container className={classes.header}>
                     <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
                 </Grid>
@@ -54,29 +55,49 @@ function ProductCardV(props) {
                     />
                     <Typography variant="body2">({props.course.num_rating})</Typography>
                 </Grid>
-            </CardContent >
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
+                <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <Typography variant="body2" color="textSecondary" component="p">
                         {props.course.description}
                     </Typography>
-                </CardContent>
-            </Collapse>
-            <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites">
-                    <FavoriteBorderRoundedIcon />
-                </IconButton>
-                <IconButton
-                    className={clsx(classes.expand, {
-                        [classes.expandOpen]: expanded,
-                    })}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="show more"
-                >
-                    <ExpandMoreIcon />
-                </IconButton>
-            </CardActions>
+                </Collapse>
+                <Hidden smUp>
+                    <CardActions disableSpacing>
+                        <IconButton size="small" aria-label="add to favorites">
+                            <FavoriteBorderRoundedIcon />
+                        </IconButton>
+                        <IconButton
+                            className={clsx(classes.expand, {
+                                [classes.expandOpen]: expanded,
+                            })}
+                            onClick={handleExpandClick}
+                            aria-expanded={expanded}
+                            aria-label="show more"
+                            size="small"
+                        >
+                            <ExpandMoreIcon />
+                        </IconButton>
+                    </CardActions>
+                </Hidden>
+
+            </CardContent >
+            <Hidden xsDown>
+                <CardActions disableSpacing>
+                    <IconButton aria-label="add to favorites">
+                        <FavoriteBorderRoundedIcon />
+                    </IconButton>
+                    <IconButton
+                        className={clsx(classes.expand, {
+                            [classes.expandOpen]: expanded,
+                        })}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                    >
+                        <ExpandMoreIcon />
+                    </IconButton>
+                </CardActions>
+            </Hidden>
+
         </Card >
     )
 };

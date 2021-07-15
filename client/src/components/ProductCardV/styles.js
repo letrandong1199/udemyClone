@@ -4,9 +4,14 @@ export const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: 4,// '10px',
         width: 260,
-        minWidth: 260,
+        //minWidth: 260,
         //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
         //boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)',
+        [theme.breakpoints.down('sm')]: {
+            display: 'flex',
+            width: 'auto',
+            flexDirection: 'row',
+        },
         margin: '10px',
         '&:hover': {
             border: '1px solid ' + theme.palette.primary.main,
@@ -24,9 +29,17 @@ export const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold',
     },
     media: {
-        height: 0,
-        paddingTop: '56.25%', // 16:9
+
         position: 'relative',
+        [theme.breakpoints.down('xs')]: {
+            minWidth: 151,
+        },
+        [theme.breakpoints.up('sm')]: {
+            height: 0,
+            paddingTop: '56.25%', // 16:9
+        },
+    },
+    content: {
     },
     price: {
         position: 'absolute',
@@ -39,7 +52,7 @@ export const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold'
     },
     rating: {
-        color: 'rgb(247, 187, 86)',
+        color: theme.palette.primary.secondary,
     },
     expand: {
         transform: 'rotate(0deg)',
