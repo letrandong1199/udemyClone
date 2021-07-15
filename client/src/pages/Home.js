@@ -7,12 +7,13 @@ import React from 'react';
 import { courses } from '../utils/dataSample';
 const courses1 = courses();
 const courses2 = courses();
+const courses3 = courses();
 
 function Home(props) {
     return (
         <div>
             <Navbar handleToggleDark={props.handleToggle} />
-            <Carousel />
+            <Carousel courses={courses3} />
             <HomeSection title="Most viewed courses" courses={courses1} />
             <HomeSection title="Most recent courses" courses={courses2} />
             <Footer />

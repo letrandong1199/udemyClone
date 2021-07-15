@@ -4,7 +4,7 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 export const useStyles = makeStyles((theme) => ({
     '@global': {
         ':root': {
-            '--text-color': 'hsl(240, 15%, 35%)',
+            '--text-color': theme.palette.text.primary,
             '--background-color': theme.palette.background.default,
         },
     },

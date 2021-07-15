@@ -30,15 +30,15 @@ export const useStyles = makeStyles((theme) => ({
     },
     price: {
         position: 'absolute',
-        bottom: '20px',
-        right: '20px',
+        bottom: '16px',
+        left: '16px',
         borderRadius: 4,//'10px',
         padding: '10px',
-        backgroundColor: "rgba(255, 255, 255, 0.6)",
+        backgroundColor: theme.palette.background.paper,
+        opacity: '0.8',
         fontWeight: 'bold'
     },
     rating: {
-        margin: '12px',
         color: 'rgb(247, 187, 86)',
     },
     expand: {

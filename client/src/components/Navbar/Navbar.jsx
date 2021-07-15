@@ -24,6 +24,12 @@ import PropTypes from 'prop-types';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
+import { ListItem, Divider, ListItemIcon, ListItemText, List } from '@material-ui/core';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import MenuIcon from '@material-ui/icons/Menu';
+import Drawer from '@material-ui/core/Drawer';
 
 import { useStyles } from './styles';
 
@@ -171,23 +177,79 @@ HideOnScroll.propTypes = {
     children: PropTypes.element.isRequired,
 };
 
+
+
 function Navbar(props) {
     const classes = useStyles();
+    const [mobileOpen, setMobileOpen] = React.useState(false);
 
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+    const drawer = (
+        <div>
+            <List>
+                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
+                    </ListItem>
+                ))}
+            </List>
+            <Divider />
+            <List>
+                {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                        <ListItemText primary={text} />
+                    </ListItem>
+                ))}
+            </List>
+        </div>
+    );
     return (
         <div className={classes.root}>
             <CssBaseline />
             <HideOnScroll>
-                <AppBar color="default" className={classes.appBar}>
+                <AppBar color="default" className={classes.appBar} elevation={1}>
                     <Toolbar>
                         <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
-                            <ButtonBase className={classes.logoButton}>
-                                <ReactLogo className={classes.logo} />
-                            </ButtonBase>
+                            <Hidden smUp>
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="open drawer"
+                                    edge="start"
+                                    onClick={handleDrawerToggle}
+                                >
+                                    <MenuIcon />
+                                </IconButton>
+                                <Drawer
+                                    variant="temporary"
+                                    anchor='left'
+                                    open={mobileOpen}
+                                    onClose={handleDrawerToggle}
+                                    classes={{
+                                        paper: classes.drawerPaper,
+                                    }}
+                                    ModalProps={{
+                                        keepMounted: true, // Better open performance on mobile.
+                                    }}
+                                >
+                                    {drawer}
+                                </Drawer>
+                            </Hidden>
+                            <Hidden xsDown>
+                                <ButtonBase className={classes.logoButton}>
+                                    <ReactLogo className={classes.logo} />
+                                </ButtonBase>
+                            </Hidden>
+
                             <SearchBar />
-                            <Button onClick={props.handleToggleDark} className={classes.categoriesButton}>Categories <ExpandMoreIcon /></Button>
-                            <ProfileButton />
-                            <RegisterButton />
+                            <Hidden xsDown>
+                                <Button onClick={props.handleToggleDark} className={classes.categoriesButton}>Categories <ExpandMoreIcon /></Button>
+                                <ProfileButton />
+                                <RegisterButton />
+                            </Hidden>
                         </Grid>
                     </Toolbar>
                 </AppBar>

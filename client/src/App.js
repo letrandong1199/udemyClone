@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import DetailCourse from './pages/DetailCourse';
 import { unstable_createMuiStrictModeTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
+import { lightTheme, darkTheme } from './theme';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -101,7 +102,7 @@ function App() {
     console.log(dark);
   }
   return (
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
       <Home handleToggle={handleToggle} />
     </MuiThemeProvider>
   )

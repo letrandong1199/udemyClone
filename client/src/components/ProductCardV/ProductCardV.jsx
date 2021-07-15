@@ -3,7 +3,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import IconButton from '@material-ui/core/IconButton';
 import Rating from '@material-ui/lab/Rating';
 import React from 'react'
@@ -32,7 +32,7 @@ function ProductCardV(props) {
                 title={props.course.title}
                 children={<Typography className={classes.price}>{props.course.price}$</Typography>}
             />
-            <CardContent>
+            <CardContent disableSpacing>
                 <Grid container className={classes.header}>
                     <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
                 </Grid>
@@ -55,8 +55,6 @@ function ProductCardV(props) {
                     <Typography variant="body2">({props.course.num_rating})</Typography>
                 </Grid>
             </CardContent >
-
-
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
                     <Typography variant="body2" color="textSecondary" component="p">
@@ -66,7 +64,7 @@ function ProductCardV(props) {
             </Collapse>
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
-                    <FavoriteIcon />
+                    <FavoriteBorderRoundedIcon />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.expand, {
