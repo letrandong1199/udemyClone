@@ -1,11 +1,10 @@
 /* eslint-disable no-undef */
 import './App.css';
-import Home from './pages/Home/Home.jsx';
-import CourseDetail from './pages/DetailCourse/CourseDetail.jsx';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { lightTheme, darkTheme } from './theme';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import routes from './pages/routes';
 
 /*
 
@@ -88,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 */
-
+import { Suspense } from 'react';
 function App() {
   const [dark, setDark] = React.useState(false)
 
@@ -97,19 +96,22 @@ function App() {
   }
 
   return (
-    <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <Home handleToggle={handleToggle} />
-          </Route>
-          <Route path="/detail/:id">
-            <CourseDetail />
-          </Route>
-        </Switch>
-      </Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
+        <Router>
+          <Switch>
+            <Router>
+              <Switch>
+                {routes.map(({ component, path, ...rest }) => {
+                  return <Route path={path} component={component} {...rest} />
+                })}
+              </Switch>
+            </Router>
+          </Switch>
+        </Router>
 
-    </MuiThemeProvider>
+      </MuiThemeProvider>
+    </Suspense>
   )
 }
 

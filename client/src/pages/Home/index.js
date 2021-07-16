@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import Navbar from '../../components/Navbar/Navbar.jsx';
-import Carousel from '../../components/Carousel/Carousel.jsx';
+//import Carousel from '../../components/Carousel/Carousel.jsx';
 import HomeSection from '../../components/HomeSection/HomeSection.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
 import React from 'react';
@@ -12,6 +12,8 @@ import PeopleOutlineRoundedIcon from '@material-ui/icons/PeopleOutlineRounded';
 import AllInclusiveRoundedIcon from '@material-ui/icons/AllInclusiveRounded';
 import { useStyles } from './styles';
 import useFetch from '../../utils/useFetch';
+import { lazy, Suspense } from 'react';
+const Carousel = lazy(() => import('../../components/Carousel/Carousel.jsx'))
 
 const courses1 = courses();
 const courses2 = courses();
@@ -49,16 +51,18 @@ function Home(props) {
     return (
         <div>
             <Navbar handleToggleDark={props.handleToggle} />
-            {isPending1 && <div>Loading...</div>}
-            {error1 && <div>{error1}</div>}
-            {courses_ && <Carousel courses={courses_} />}
-            <HomeIntroBanner />
-            <HomeSection title="Most viewed courses" courses={courses1} color="vibrant" />
-            <HomeSection title="Most recent courses" courses={courses2} />
-            {isPending && <div>Loading...</div>}
-            {error && <div>{error}</div>}
-            {categories && <HomeSection categories={categories} title="Top categories" color="vibrant" />}
-            <Footer />
+            <Suspense fallback={<div>Loading...</div>}>
+                {isPending1 && <div>Loading...</div>}
+                {error1 && <div>{error1}</div>}
+                {courses_ && <Carousel courses={courses_} />}
+                <HomeIntroBanner />
+                <HomeSection title="Most viewed courses" courses={courses1} color="vibrant" />
+                <HomeSection title="Most recent courses" courses={courses2} />
+                {isPending && <div>Loading...</div>}
+                {error && <div>{error}</div>}
+                {categories && <HomeSection categories={categories} title="Top categories" color="vibrant" />}
+                <Footer />
+            </Suspense>
         </div >
     )
 }

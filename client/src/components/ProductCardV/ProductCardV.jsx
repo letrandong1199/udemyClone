@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
+import { Link } from 'react-router-dom';
 
 function ProductCardV(props) {
     const classes = useStyles();
@@ -25,12 +26,14 @@ function ProductCardV(props) {
 
     return (
         <Card className={classes.root} elevation={3}>
-            <CardMedia
-                className={classes.media}
-                image={props.course.thumb}
-                title={props.course.title}
-                children={<Typography className={classes.price}>{props.course.price}$</Typography>}
-            />
+            <Link to={`/detail/${props.course.id}`}>
+                <CardMedia
+                    className={classes.media}
+                    image={props.course.thumb}
+                    title={props.course.title}
+                    children={<Typography className={classes.price}>{props.course.price}$</Typography>}
+                />
+            </Link>
             <CardContent className={classes.content}>
                 <Grid container className={classes.header}>
                     <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
@@ -39,7 +42,7 @@ function ProductCardV(props) {
                 <Grid container direction="row" alignItems="center">
                     <Typography variant="subtitle1">{props.course.rating.toFixed(1)}</Typography>
                     <Rating
-                        name={"hover-feedback-" + props.name + "-" + props.id}
+                        name={`hover-feedback-${props.name}-${props.id}`}
                         disabled={true}
                         readOnly={true}
                         className={classes.rating}
