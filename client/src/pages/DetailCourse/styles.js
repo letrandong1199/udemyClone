@@ -68,7 +68,6 @@ export const useStyles = makeStyles((theme) => ({
             overflow: 'auto',
             minHeight: 50,
             backgroundColor: 'white',
-
             textTransform: 'none',
             fontSize: 16,
             border: 0,

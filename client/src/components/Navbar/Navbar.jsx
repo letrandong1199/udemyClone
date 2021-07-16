@@ -30,6 +30,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Drawer from '@material-ui/core/Drawer';
+import { Link } from 'react-router-dom';
 
 import { useStyles } from './styles';
 
@@ -67,13 +68,14 @@ const ProfileButton = () => {
     }, [open]);
 
     return (
-        <Fragment className={classes.sectionDesktop}>
+        <Fragment>
             <IconButton
                 ref={anchorRef}
                 aria-controls={open ? 'menu-list-grow' : undefined}
                 aria-haspopup="true"
                 onClick={handleOpen}
                 className={classes.profileButton}
+                title="Profile"
             >
                 <AccountCircle color="inherit" />
             </IconButton>
@@ -188,6 +190,7 @@ function Navbar(props) {
     };
     const drawer = (
         <div>
+            <Link to="/">Home</Link>
             <List>
                 {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
                     <ListItem button key={text}>
@@ -240,8 +243,8 @@ function Navbar(props) {
                                 </Drawer>
                             </Hidden>
                             <Hidden xsDown>
-                                <ButtonBase className={classes.logoButton}>
-                                    <ReactLogo className={classes.logo} />
+                                <ButtonBase id="logo-button" className={classes.logoButton}>
+                                    <Link to="/"><ReactLogo className={classes.logo} /></Link>
                                 </ButtonBase>
                             </Hidden>
 

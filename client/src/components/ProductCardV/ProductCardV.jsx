@@ -16,8 +16,6 @@ import Hidden from '@material-ui/core/Hidden';
 
 function ProductCardV(props) {
     const classes = useStyles();
-    const [value, setValue] = React.useState(3);
-    const [hover, setHover] = React.useState(3);
 
     const [expanded, setExpanded] = React.useState(false);
 
@@ -33,24 +31,19 @@ function ProductCardV(props) {
                 title={props.course.title}
                 children={<Typography className={classes.price}>{props.course.price}$</Typography>}
             />
-            <CardContent disableSpacing className={classes.content}>
+            <CardContent className={classes.content}>
                 <Grid container className={classes.header}>
                     <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
                 </Grid>
                 <Typography variant="body2">{props.course.author}</Typography>
                 <Grid container direction="row" alignItems="center">
-                    <Typography variant="subtitle1">{value.toFixed(1)}</Typography>
+                    <Typography variant="subtitle1">{props.course.rating.toFixed(1)}</Typography>
                     <Rating
-                        name="hover-feedback"
+                        name={"hover-feedback-" + props.name + "-" + props.id}
+                        disabled={true}
+                        readOnly={true}
                         className={classes.rating}
                         value={props.course.rating}
-                        precision={0.5}
-                        onChange={(event, newValue) => {
-                            setValue(newValue);
-                        }}
-                        onChangeActive={(event, newHover) => {
-                            setHover(newHover);
-                        }}
                         size="small"
                     />
                     <Typography variant="body2">({props.course.num_rating})</Typography>

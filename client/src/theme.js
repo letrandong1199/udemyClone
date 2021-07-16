@@ -1,6 +1,5 @@
 import { red } from '@material-ui/core/colors';
 import { unstable_createMuiStrictModeTheme } from '@material-ui/core/styles';
-import { light } from '@material-ui/core/styles/createPalette';
 
 export const lightTheme = unstable_createMuiStrictModeTheme({
     palette: {

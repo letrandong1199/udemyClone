@@ -11,17 +11,15 @@ import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import PeopleOutlineRoundedIcon from '@material-ui/icons/PeopleOutlineRounded';
 import AllInclusiveRoundedIcon from '@material-ui/icons/AllInclusiveRounded';
 import { useStyles } from './styles';
-import Container from '@material-ui/core/Container';
-import List from '@material-ui/core/List'
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
+import useFetch from '../../utils/useFetch';
 
 const courses1 = courses();
 const courses2 = courses();
-const courses3 = courses();
+
 
 const HomeIntroBanner = () => {
     const classes = useStyles();
+
     return (
         <Grid container className={classes.root}>
             <Grid item xs={4}>
@@ -42,26 +40,24 @@ const HomeIntroBanner = () => {
         </Grid>
     )
 }
-const categories = [
-    {
-        title: 'Web development',
-        thumb: 'assets/web-development.jpg'
-    },
-    {
-        title: 'Mobile development',
-        thumb: 'assets/mobile-development.jpg'
-    },
-];
+
 
 function Home(props) {
+    const { data: courses_, isPending: isPending1, error: error1 } = useFetch('http://localhost:8000/courses');
+    const { data: categories, isPending, error } = useFetch('http://localhost:8000/categories');
+
     return (
         <div>
             <Navbar handleToggleDark={props.handleToggle} />
-            <Carousel courses={courses3} />
+            {isPending1 && <div>Loading...</div>}
+            {error1 && <div>{error1}</div>}
+            {courses_ && <Carousel courses={courses_} />}
             <HomeIntroBanner />
             <HomeSection title="Most viewed courses" courses={courses1} color="vibrant" />
             <HomeSection title="Most recent courses" courses={courses2} />
-            <HomeSection categories={categories} title="Top categories" color="vibrant" />
+            {isPending && <div>Loading...</div>}
+            {error && <div>{error}</div>}
+            {categories && <HomeSection categories={categories} title="Top categories" color="vibrant" />}
             <Footer />
         </div >
     )

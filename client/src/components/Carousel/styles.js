@@ -32,7 +32,8 @@ export const useStyles = makeStyles((theme) => ({
             zIndex: 1,
             padding: "10px",
             textDecoration: "none",
-            backfaceVisibility: "hidden"
+            WebkitBackfaceVisibility: "hidden",
+            backfaceVisibility: "hidden",
         },
         "& a.previousButton": { left: "20px" },
         "& a.nextButton": { right: "20px" },
@@ -61,7 +62,7 @@ export const useStyles = makeStyles((theme) => ({
         "&.next": { left: "100%" },
         "&.animateIn, &.animateOut": {
             WebkitTransition: "all 2s ease",
-            transition: "all 2s ease"
+            transition: "all 2s ease",
         },
         "&.animateIn.previous, &.animateIn.next": {
             left: "0",

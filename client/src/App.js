@@ -1,12 +1,13 @@
 /* eslint-disable no-undef */
 import './App.css';
-import { makeStyles } from '@material-ui/core/styles';
 import Home from './pages/Home/Home.jsx';
-import DetailCourse from './pages/DetailCourse/DetailCourse.jsx';
-import { unstable_createMuiStrictModeTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import CourseDetail from './pages/DetailCourse/CourseDetail.jsx';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { lightTheme, darkTheme } from './theme';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
+/*
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,24 +87,28 @@ const useStyles = makeStyles((theme) => ({
     margin: 10,
   }
 }));
-
+*/
 
 function App() {
-  const classes = useStyles();
   const [dark, setDark] = React.useState(false)
 
-  const theme = unstable_createMuiStrictModeTheme({
-    palette: {
-      type: dark ? 'dark' : 'light',
-    },
-  })
   const handleToggle = () => {
     setDark(!dark);
-    console.log(dark);
   }
+
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
-      <Home handleToggle={handleToggle} />
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <Home handleToggle={handleToggle} />
+          </Route>
+          <Route path="/detail/:id">
+            <CourseDetail />
+          </Route>
+        </Switch>
+      </Router>
+
     </MuiThemeProvider>
   )
 }
