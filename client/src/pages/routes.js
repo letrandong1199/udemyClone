@@ -2,19 +2,26 @@ import { lazy } from 'react';
 
 const HomePage = lazy(() => import('./Home'));
 const CourseDetailPage = lazy(() => import('./CourseDetail'));
+const ProfilePage = lazy(() => import('./Profile'));
 
 const routes = [
     {
         path: '/',
-        extract: true,
+        exact: true,
         public: true,
         component: HomePage,
     },
     {
         path: '/detail/:id',
-        extract: true,
+        exact: true,
         public: true,
         component: CourseDetailPage,
+    },
+    {
+        path: '/profile',
+        exact: true,
+        public: true,
+        component: ProfilePage,
     }
 ];
 export default routes;

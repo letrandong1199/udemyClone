@@ -96,8 +96,8 @@ function App() {
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
+    <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
+      <Suspense fallback={<div>Loading...</div>}>
         <Router>
           <Switch>
             <Router>
@@ -110,8 +110,8 @@ function App() {
           </Switch>
         </Router>
 
-      </MuiThemeProvider>
-    </Suspense>
+      </Suspense>
+    </MuiThemeProvider>
   )
 }
 
