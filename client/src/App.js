@@ -3,8 +3,9 @@ import './App.css';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { lightTheme, darkTheme } from './theme';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom';
 import routes from './pages/routes';
+import Navbar from './components/Navbar/Navbar.jsx';
 
 /*
 
@@ -93,25 +94,23 @@ function App() {
 
   const handleToggle = () => {
     setDark(!dark);
+    console.log(dark);
   }
 
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
       <Suspense fallback={<div>Loading...</div>}>
         <Router>
+          <Navbar handleToggle={handleToggle} />
           <Switch>
-            <Router>
-              <Switch>
-                {routes.map(({ component, path, ...rest }) => {
-                  return <Route path={path} component={component} {...rest} />
-                })}
-              </Switch>
-            </Router>
+            {routes.map(({ component, path, ...rest }) => {
+              return <Route path={path} component={component} {...rest} />
+            })}
           </Switch>
         </Router>
 
       </Suspense>
-    </MuiThemeProvider>
+    </MuiThemeProvider >
   )
 }
 

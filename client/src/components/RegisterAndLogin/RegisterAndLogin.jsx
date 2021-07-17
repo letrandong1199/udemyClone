@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { useStyles } from './styles';
 import { useFetch } from '../../utils/useFetch';
+import config from '../../config/config';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -56,7 +57,7 @@ const RegisterTab = ({ value, index }) => {
     const handleClickRegister = () => {
         const user = { uname, name, password, email }
         setIsPending(true);
-        fetch('http://localhost:8000/users')
+        fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`)
             .then(res => {
                 return res.json();
             })
@@ -69,7 +70,7 @@ const RegisterTab = ({ value, index }) => {
                         }
                     }
                 }
-                fetch('http://localhost:8000/users', {
+                fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(user)
@@ -164,13 +165,12 @@ const RegisterTab = ({ value, index }) => {
     )
 };
 
-const LoginTab = ({ value, index }) => {
+const LoginTab = ({ value, index, handleLogin }) => {
     const [uname, setUname] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-    const [isLogin, setIsLogin] = React.useState(false);
     const [error, setError] = React.useState(null);
     const handleClickLogin = () => {
-        fetch('http://localhost:8000/users')
+        fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`)
             .then(res => {
                 return res.json();
             })
@@ -179,11 +179,9 @@ const LoginTab = ({ value, index }) => {
                 for (let user of data) {
                     if (user.uname === uname) {
                         if (user.password === password) {
-                            setIsLogin(true);
-                            console.log('success');
                             window.sessionStorage.setItem('isLogin', true);
                             window.sessionStorage.setItem('user_id', user.id);
-                            return;
+                            return handleLogin();
                         }
                     }
                 }
@@ -285,7 +283,7 @@ function RegisterAndLogin(props) {
                 <Tab label="Login" {...a11yProps(1)} />
             </Tabs>
             <RegisterTab value={value} index={0} />
-            <LoginTab value={value} index={1} />
+            <LoginTab value={value} index={1} handleLogin={props.handleLogin} />
         </Paper >
     )
 };

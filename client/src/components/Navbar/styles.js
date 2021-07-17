@@ -74,8 +74,15 @@ export const useStyles = makeStyles((theme) => ({
     logoButton: {
         maxWidth: '100px',
         height: '30px',
-        marginTop: '10px',
-        marginBottom: '10px'
+        [theme.breakpoints.up('sm')]: {
+            marginTop: '10px',
+            marginBottom: '10px',
+        },
+        [theme.breakpoints.down('xs')]: {
+            margin: 'auto',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+        }
     },
     logo: {
         width: '100%',

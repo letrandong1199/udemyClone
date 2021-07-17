@@ -1,5 +1,4 @@
 import Container from '@material-ui/core/Container';
-import Navbar from '../../components/Navbar/Navbar.jsx';
 import Grid from '@material-ui/core/Grid';
 import Footer from '../../components/Footer/Footer.jsx';
 import Link from '@material-ui/core/Link';
@@ -8,7 +7,6 @@ import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React from 'react';
 import Rating from '@material-ui/lab/Rating';
-
 import { usePalette } from 'react-palette'
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -22,7 +20,9 @@ import { empty_course } from '../../utils/dataSample';
 import { useStyles } from './styles';
 import { useParams } from 'react-router-dom';
 import useFetch from '../../utils/useFetch.js';
-
+import config from '../../config/config';
+import Navbar from '../../components/Navbar/Navbar.jsx';
+import { Link as Links } from 'react-router-dom';
 //const course = courses()[0];
 
 const temp = <div>
@@ -73,7 +73,7 @@ function DetailCourse() {
     }
 
     const [course, setCourse] = React.useState(empty_course);
-    const { data: courses, isPending, error: errorFetch } = useFetch('http://localhost:8000/courses/' + id);
+    const { data: courses, isPending, error: errorFetch } = useFetch(`${config.HOST}:${config.PORT}/${config.COURSE_CONTROLLER}/${id}`);
 
     React.useEffect(() => {
         if (courses) {
@@ -82,12 +82,9 @@ function DetailCourse() {
             setValue(courses.rating)
         }
 
-    }, [isPending])
+    }, [courses])
 
     const { data, loading, error } = usePalette(course.thumb);
-
-
-
 
     const categories = (courses) => courses[0].categories_tree.map((category, index) => {
         return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
@@ -100,10 +97,7 @@ function DetailCourse() {
     };
     return (
         <div>
-
-            <Navbar />
             <Card style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
-
                 <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
                     <Grid item >
                         <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
@@ -178,7 +172,9 @@ function DetailCourse() {
                                     */}
                     </Grid>
                     <Grid item style={{ marginTop: 20 }}>
-                        <Button variant="contained" color="primary" >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                        <Links to="/">
+                            <Button variant="contained" color="primary" >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                        </Links>
                     </Grid>
                 </Grid>
 

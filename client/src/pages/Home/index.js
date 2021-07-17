@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import Navbar from '../../components/Navbar/Navbar.jsx';
 //import Carousel from '../../components/Carousel/Carousel.jsx';
 import HomeSection from '../../components/HomeSection/HomeSection.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
@@ -13,6 +12,7 @@ import AllInclusiveRoundedIcon from '@material-ui/icons/AllInclusiveRounded';
 import { useStyles } from './styles';
 import useFetch from '../../utils/useFetch';
 import { lazy, Suspense } from 'react';
+import config from '../../config/config';
 const Carousel = lazy(() => import('../../components/Carousel/Carousel.jsx'))
 
 const courses1 = courses();
@@ -45,12 +45,11 @@ const HomeIntroBanner = () => {
 
 
 function Home(props) {
-    const { data: courses_, isPending: isPending1, error: error1 } = useFetch('http://localhost:8000/courses');
-    const { data: categories, isPending, error } = useFetch('http://localhost:8000/categories');
+    const { data: courses_, isPending: isPending1, error: error1 } = useFetch(`${config.HOST}:${config.PORT}/${config.COURSE_CONTROLLER}`);
+    const { data: categories, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/${config.CATEGORY_CONTROLLER}`);
 
     return (
         <div>
-            <Navbar handleToggleDark={props.handleToggle} />
             <Suspense fallback={<div>Loading...</div>}>
                 {isPending1 && <div>Loading...</div>}
                 {error1 && <div>{error1}</div>}

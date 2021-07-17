@@ -26,15 +26,18 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import { ListItem, Divider, ListItemIcon, ListItemText, List } from '@material-ui/core';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Drawer from '@material-ui/core/Drawer';
 import { Link } from 'react-router-dom';
-
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
+import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
+import { useLocation } from 'react-router-dom';
+import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
 import { useStyles } from './styles';
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 
-const ProfileButton = () => {
+const ProfileButton = (props) => {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
@@ -88,9 +91,10 @@ const ProfileButton = () => {
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                    <Link to="/profile">
+                                        <MenuItem onClick={handleClose}><FaceRoundedIcon />&nbsp;Profile</MenuItem>
+                                    </Link>
+                                    <MenuItem onClick={props.handleLogout}><ExitToAppRoundedIcon />&nbsp;Logout</MenuItem>
                                 </MenuList>
                             </ClickAwayListener>
                         </Paper>
@@ -102,7 +106,7 @@ const ProfileButton = () => {
 
 }
 
-const RegisterButton = () => {
+const RegisterButton = (props) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openRegister = Boolean(anchorEl);
@@ -136,7 +140,7 @@ const RegisterButton = () => {
                 }}
                 className={classes.popoverRegisterAndLogin}
             >
-                <RegisterAndLogin />
+                <RegisterAndLogin handleLogin={props.handleLogin} />
             </Popover>
         </Fragment>
     )
@@ -180,7 +184,6 @@ HideOnScroll.propTypes = {
 };
 
 
-
 function Navbar(props) {
     const classes = useStyles();
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -188,28 +191,90 @@ function Navbar(props) {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+    const [selectedIndex, setSelectedIndex] = React.useState(-1);
+
+    const handleListItemClick = (event, index) => {
+        setSelectedIndex(index);
+    };
+    let location = useLocation();
+    React.useEffect(() => {
+        switch (location.pathname) {
+            case '/profile':
+                setSelectedIndex(0);
+                break;
+            case '/my-learning':
+                setSelectedIndex(1);
+                break;
+            default: setSelectedIndex(-1);
+        }
+    }, [location])
+
+    const [isLogin, setIsLogin] = React.useState(window.sessionStorage.getItem('isLogin'))
+    const handleAuth = (type) => (event) => {
+        if (type === 'logout') {
+            setIsLogin(false)
+            window.sessionStorage.removeItem('isLogin');
+            window.sessionStorage.removeItem('user_id');
+        }
+        else if (type === 'login') {
+            setIsLogin(true)
+        }
+
+    }
+
+    /* React.useEffect(() => {
+         setIsLogin(window.sessionStorage.getItem('isLogin'))
+         console.log(window.sessionStorage.getItem('isLogin'))
+     }, [window.sessionStorage.getItem('isLogin')])
+ */
     const drawer = (
         <div>
-            <Link to="/">Home</Link>
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ButtonBase button id="logo-button" className={classes.logoButton}>
+                    <Link to="/"><ReactLogo className={classes.logo} /></Link>
+                </ButtonBase>
             </List>
             <Divider />
+            {isLogin &&
+                <List>
+                    {['Profile', 'My learning'].map((text, index) => (
+                        <Link to={index % 2 === 0 ? '/profile' : '/my-learning'}>
+                            <ListItem
+                                button
+                                key={text}
+                                selected={selectedIndex === index}
+                                onClick={(event) => handleListItemClick(event, index)}
+                            >
+                                <ListItemIcon>{index % 2 === 0 ? <FaceRoundedIcon /> : <MenuBookRoundedIcon />}</ListItemIcon>
+                                <ListItemText primary={text} />
+                            </ListItem>
+                        </Link>
+                    ))}
+                </List>}
+            <Divider />
+            {isLogin &&
+                <List>
+                    {['Wishlist'].map((text, index) => (
+                        <ListItem button key={text}>
+                            <ListItemIcon>{<FavoriteRoundedIcon />}</ListItemIcon>
+                            <ListItemText primary={text} />
+                        </ListItem>
+                    ))}
+                </List>}
             <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <IconButton onClick={props.handleToggle}>
+                    <FlareRoundedIcon />
+                </IconButton>
+                {isLogin &&
+                    <IconButton onClick={handleAuth('logout')}>
+                        <ExitToAppRoundedIcon />
+                    </IconButton>
+                }
             </List>
-        </div>
+
+        </div >
     );
+
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -249,12 +314,17 @@ function Navbar(props) {
                             </Hidden>
 
                             <SearchBar />
+                            {isLogin && <Hidden xsDown>
+                                <Button className={classes.categoriesButton}>Categories <ExpandMoreIcon /></Button>
+                                <ProfileButton handleLogout={handleAuth('logout')} />
+                            </Hidden>}
+                            {!isLogin && <RegisterButton handleLogin={handleAuth('login')} />}
                             <Hidden xsDown>
-                                <Button onClick={props.handleToggleDark} className={classes.categoriesButton}>Categories <ExpandMoreIcon /></Button>
-                                <ProfileButton />
-
+                                <IconButton onClick={props.handleToggle}>
+                                    <FlareRoundedIcon />
+                                </IconButton>
                             </Hidden>
-                            <RegisterButton />
+
                         </Grid>
                     </Toolbar>
                 </AppBar>

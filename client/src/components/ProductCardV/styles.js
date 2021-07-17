@@ -34,6 +34,7 @@ export const useStyles = makeStyles((theme) => ({
         position: 'relative',
         [theme.breakpoints.down('xs')]: {
             minWidth: 151,
+            minHeight: '100%',
         },
         [theme.breakpoints.up('sm')]: {
             height: 0,
