@@ -1,4 +1,17 @@
 {
+  "wishlist": [
+    {
+      "user_id": 0,
+      "course_id": 2
+    }
+  ],
+  "enrolled": [
+    {
+      "user_id": 0,
+      "course_id": 1,
+      "created_at": "15/01/2015"
+    }
+  ],
   "users": [
     {
       "id": 0,

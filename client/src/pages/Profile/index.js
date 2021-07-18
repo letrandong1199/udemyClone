@@ -10,7 +10,7 @@ import React from 'react';
 import useStyles from './styles'
 import useFetch from '../../utils/useFetch';
 import { Avatar } from "@material-ui/core";
-import Link from '@material-ui/core/Link';
+//import Link from '@material-ui/core/Link';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -22,10 +22,10 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import { Divider, CssBaseline } from "@material-ui/core";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
 import config from '../../config/config';
 
-function Profile(props) {
+const AccountInfo = () => {
     const classes = useStyles();
     const [uname, setUname] = React.useState(null);
     const [name, setName] = React.useState(null);
@@ -39,6 +39,80 @@ function Profile(props) {
     React.useEffect(() => {
         console.log(data);
     }, [data])
+    return (
+        <Container style={{ padding: 0, flexGrow: 1 }}>
+            <Typography variant="h3" className={classes.bigTitle}>Profile</Typography>
+            <Avatar className={classes.avatar}
+            >AV
+                <Button color="primary" className={classes.avatar.hideText}>Edit</Button>
+            </Avatar>
+            <Grid container style={{ margin: 20, width: 'auto' }} zeroMinWidth>
+                <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
+                    <Typography variant="h5" style={{ marginBottom: 20 }}>Personal info</Typography>
+                    <form style={{ maxWidth: 580, }}>
+                        <TextField id="txt-fullname" variant="outlined" require="true" fullWidth label="Full name"
+                            style={{ marginBottom: 16 }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <AccountCircle />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            required
+                            disabled={!editable}
+                            onChange={(event) => setName(event.target.value)}
+                            value={isPending ? 'loading...' : data.name}
+                        />
+
+                        <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
+                            style={{ marginBottom: 16 }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <AccountCircle />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            required
+                            disabled={!editable}
+                            onChange={(event) => setUname(event.target.value)}
+                            value={isPending ? 'loading...' : data.uname}
+                        />
+                        <Button variant="outlined" color="primary">Edit</Button>
+                    </form>
+                </Grid>
+                <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
+                    <Typography variant="h5" style={{ marginBottom: 20 }}>Account info</Typography>
+                    <form>
+                        <TextField id="txt-pass" variant="outlined" require="true" fullWidth label="Password"
+                            style={{ marginBottom: 16 }}
+                            type="password"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <VpnKeyRoundedIcon />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            disabled
+                            required
+                            onChange={(event) => setPassword(event.target.value)}
+                            value={isPending ? 'loading...' : data.password}
+                        />
+
+                        <Button variant="outlined" color="primary">Change password</Button>
+                    </form>
+
+                </Grid>
+            </Grid>
+        </Container>
+    )
+};
+
+function Profile() {
+    const classes = useStyles();
+    let { path, url } = useRouteMatch();
 
     const [selectedIndex, setSelectedIndex] = React.useState(-1);
 
@@ -61,7 +135,7 @@ function Profile(props) {
         <div className={classes.drawerContainer}>
             <List>
                 {['Profile', 'My learning'].map((text, index) => (
-                    <Link to={index % 2 === 0 ? '/profile' : '/my-learning'} style={{ textDecoration: 'none', color: 'unset' }}>
+                    <Link to={index % 2 === 0 ? `${url}/account-info` : `${url}/my-learning`}>
                         <ListItem
                             button
                             color="inherit"
@@ -84,7 +158,7 @@ function Profile(props) {
                     </ListItem>
                 ))}
             </List>
-        </div>
+        </div >
     );
 
     return (
@@ -103,75 +177,10 @@ function Profile(props) {
                 </Drawer>
 
             </Hidden>
-
-            <Container style={{ padding: 0, flexGrow: 1 }}>
-                <Toolbar />
-                <Typography variant="h3" className={classes.bigTitle}>Profile</Typography>
-                <Avatar className={classes.avatar}
-                >AV
-                    <Button color="primary" className={classes.avatar.hideText}>Edit</Button>
-                </Avatar>
-                <Grid container style={{ margin: 20, width: 'auto' }} zeroMinWidth>
-                    <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
-                        <Typography variant="h5" style={{ marginBottom: 20 }}>Personal info</Typography>
-                        <form style={{ maxWidth: 580, }}>
-                            <TextField id="txt-fullname" variant="outlined" require="true" fullWidth label="Full name"
-                                style={{ marginBottom: 16 }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <AccountCircle />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                required
-                                disabled={!editable}
-                                onChange={(event) => setName(event.target.value)}
-                                value={isPending ? 'loading...' : data.name}
-                            />
-
-                            <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
-                                style={{ marginBottom: 16 }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <AccountCircle />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                required
-                                disabled={!editable}
-                                onChange={(event) => setUname(event.target.value)}
-                                value={isPending ? 'loading...' : data.uname}
-                            />
-                            <Button variant="outlined" color="primary">Edit</Button>
-                        </form>
-                    </Grid>
-                    <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
-                        <Typography variant="h5" style={{ marginBottom: 20 }}>Account info</Typography>
-                        <form>
-                            <TextField id="txt-pass" variant="outlined" require="true" fullWidth label="Password"
-                                style={{ marginBottom: 16 }}
-                                type="password"
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <VpnKeyRoundedIcon />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                disabled
-                                required
-                                onChange={(event) => setPassword(event.target.value)}
-                                value={isPending ? 'loading...' : data.password}
-                            />
-
-                            <Button variant="outlined" color="primary">Change password</Button>
-                        </form>
-
-                    </Grid>
-                </Grid>
-            </Container>
+            <Switch>
+                <Route path={`${path}/`} exact component={AccountInfo} />
+                <Route path={`${path}/my-learning`} component={<div>Dang lam</div>} />
+            </Switch>
         </div>
     )
 };

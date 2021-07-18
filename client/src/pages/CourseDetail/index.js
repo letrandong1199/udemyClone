@@ -1,7 +1,7 @@
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Footer from '../../components/Footer/Footer.jsx';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import { Breadcrumbs } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
@@ -23,6 +23,8 @@ import useFetch from '../../utils/useFetch.js';
 import config from '../../config/config';
 import Navbar from '../../components/Navbar/Navbar.jsx';
 import { Link as Links } from 'react-router-dom';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
 //const course = courses()[0];
 
 const temp = <div>
@@ -64,7 +66,6 @@ const temp = <div>
 
 function DetailCourse() {
     const { id } = useParams();
-    const classes = useStyles();
     const [value, setValue] = React.useState(3);
     const [hover, setHover] = React.useState(-1);
     const handleClick = (link) => (event) => {
@@ -86,7 +87,7 @@ function DetailCourse() {
 
     const { data, loading, error } = usePalette(course.thumb);
 
-    const categories = (courses) => courses[0].categories_tree.map((category, index) => {
+    const categories = (course) => course.categories_tree.map((category, index) => {
         return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
     });
     //background = 'linear-gradient(45deg, rgb(245, 247, 248) 30%,' + data.lightVibrant + '50')'
@@ -95,18 +96,19 @@ function DetailCourse() {
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
+    const classes = useStyles({ data });
     return (
         <div>
-            <Card style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
+            <Card className={classes.banner}>
                 <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
                     <Grid item >
                         <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
-                            {categories}
+                            {categories(course)}
                         </Breadcrumbs>
                     </Grid>
-                    <Grid item container style={{ marginTop: 20, alignItems: 'flex-start' }} spacing={2}>
+                    <Grid item container style={{ marginTop: 20, marginBottom: 20, alignItems: 'flex-start' }} spacing={2}>
                         <Grid item container xs={6} direction="column">
-                            <Typography variant="h4" style={{ fontWeight: 'bold', color: 'rgb(55, 51, 51)'/*data.darkVibrant*/ }}>
+                            <Typography variant="h4" className={classes.title}>
                                 {course.title}
                             </Typography>
                             <Typography variant="subtitle1">
@@ -171,10 +173,10 @@ function DetailCourse() {
                         </Grid>
                                     */}
                     </Grid>
+                    <Divider />
                     <Grid item style={{ marginTop: 20 }}>
-                        <Links to="/">
-                            <Button variant="contained" color="primary" >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
-                        </Links>
+                        <Button size="large" variant="outlined" style={{ marginRight: 20, }} >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                        <Button size="large" variant="outlined"  > {'<3 Wishlist'}</Button>
                     </Grid>
                 </Grid>
 
