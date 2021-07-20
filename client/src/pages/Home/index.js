@@ -13,6 +13,7 @@ import { useStyles } from './styles';
 import useFetch from '../../utils/useFetch';
 import { lazy, Suspense } from 'react';
 import config from '../../config/config';
+import LinearProgress from '@material-ui/core/LinearProgress';
 const Carousel = lazy(() => import('../../components/Carousel/Carousel.jsx'))
 
 const courses1 = courses();
@@ -50,14 +51,14 @@ function Home(props) {
 
     return (
         <div>
-            <Suspense fallback={<div>Loading...</div>}>
-                {isPending1 && <div>Loading...</div>}
+            <Suspense fallback={<div><LinearProgress />.</div>}>
+                {isPending1 && <div><LinearProgress /></div>}
                 {error1 && <div>{error1}</div>}
                 {courses_ && <Carousel courses={courses_} />}
                 <HomeIntroBanner />
                 <HomeSection title="Most viewed courses" courses={courses1} color="vibrant" />
                 <HomeSection title="Most recent courses" courses={courses2} />
-                {isPending && <div>Loading...</div>}
+                {isPending && <div><LinearProgress /></div>}
                 {error && <div>{error}</div>}
                 {categories && <HomeSection categories={categories} title="Top categories" color="vibrant" />}
                 <Footer />

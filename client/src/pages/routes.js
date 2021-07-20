@@ -3,6 +3,9 @@ import { lazy } from 'react';
 const HomePage = lazy(() => import('./Home'));
 const CourseDetailPage = lazy(() => import('./CourseDetail'));
 const ProfilePage = lazy(() => import('./Profile'));
+//import ProfilePage from './Profile';
+//import CourseDetailPage from './CourseDetail';
+//import HomePage from './Home';
 
 const routes = [
     {
@@ -19,7 +22,7 @@ const routes = [
     },
     {
         path: '/profile',
-        exact: true,
+        exact: false,
         public: true,
         component: ProfilePage,
     }

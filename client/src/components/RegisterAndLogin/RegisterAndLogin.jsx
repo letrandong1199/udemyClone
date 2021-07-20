@@ -173,7 +173,7 @@ const LoginTab = ({ value, index, handleLogin }) => {
         fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`)
             .then(res => {
                 return res.json();
-            })
+            }) // 
             .then(data => {
                 console.log(data);
                 for (let user of data) {

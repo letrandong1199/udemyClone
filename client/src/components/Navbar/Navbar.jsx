@@ -36,6 +36,12 @@ import { useLocation } from 'react-router-dom';
 import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
 import { useStyles } from './styles';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import NestedMenuItem from "material-ui-nested-menu-item";
+import Menu from '@material-ui/core/Menu';
+import KeyboardArrowLeftRoundedIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
+import clsx from 'clsx';
+import config from '../../config/config';
+import useFetch from '../../utils/useFetch'
 
 const ProfileButton = (props) => {
     const classes = useStyles();
@@ -92,9 +98,15 @@ const ProfileButton = (props) => {
                             <ClickAwayListener onClickAway={handleClose}>
                                 <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                                     <Link to="/profile">
-                                        <MenuItem onClick={handleClose}><FaceRoundedIcon />&nbsp;Profile</MenuItem>
+                                        <MenuItem onClick={handleClose}>
+                                            <ListItemIcon><FaceRoundedIcon /></ListItemIcon>
+                                            <ListItemText primary="Profile" />
+                                        </MenuItem>
                                     </Link>
-                                    <MenuItem onClick={props.handleLogout}><ExitToAppRoundedIcon />&nbsp;Logout</MenuItem>
+                                    <MenuItem onClick={props.handleLogout}>
+                                        <ListItemIcon><ExitToAppRoundedIcon /></ListItemIcon>
+                                        <ListItemText primary="Sign-out" />
+                                    </MenuItem>
                                 </MenuList>
                             </ClickAwayListener>
                         </Paper>
@@ -165,6 +177,178 @@ const SearchBar = () => {
     )
 }
 
+const NestedMenu = (props) => {
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = props.anchorRef;
+    const [expanded, setExpanded] = React.useState(false);
+
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+
+    const handleOpen = () => {
+        setOpen(!open);
+    };
+
+    const handleClose = (event) => {
+        setOpen(false);
+    };
+
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            setOpen(false);
+        }
+    }
+
+    return (
+        <Fragment>
+            <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleOpen}
+                title="catg"
+                id="sub"
+            >
+                <ListItemIcon>
+                    <KeyboardArrowLeftRoundedIcon className={clsx(classes.expand, {
+                        [classes.expandOpen]: open,
+                    })}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more" />
+                </ListItemIcon>
+                <ListItemText primary={props.text} />
+
+            </MenuItem>
+
+            <Popper open={open} placement="left-start" anchorEl={anchorRef} role={undefined} transition style={{ zIndex: 1500, marginRight: 3 }}>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'left-start' ? 'left start' : 'center bottom' }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                    {props.children}
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
+        </Fragment >
+    )
+}
+
+const listToTree = (list) => {
+    var map = {}, node, roots = [], i;
+
+    for (i = 0; i < list.length; i += 1) {
+        map[list[i].id] = i; // initialize the map
+        list[i].children = []; // initialize the children
+    }
+
+    for (i = 0; i < list.length; i += 1) {
+        node = list[i];
+        if (node.parent !== null) {
+            // if you have dangling branches check that map[node.parentId] exists
+            list[map[node.parent]].children.push(node);
+        } else {
+            roots.push(node);
+        }
+    }
+    return roots;
+}
+
+const CategoryNestedMap = (props) => {
+    return (
+        <NestedMenu anchorRef={props.anchorRef} text={props.data.name}>
+            {props.data.children.map((child,
+                index) => <CategoryNestedMap key={index} anchorRef={props.anchorRef} data={child} />)}
+        </NestedMenu>
+    )
+}
+
+const CategoryMenu = (props) => {
+    const classes = useStyles();
+
+    const { data, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/categories`);
+    const [categoriesTree, setCategoriesTree] = React.useState([]);
+    React.useEffect(() => {
+        if (data) {
+            setCategoriesTree(listToTree(data));
+        }
+
+    }, [data])
+
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
+    const anchorRef2 = React.useRef(null);
+
+
+
+    const handleOpen = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+        setOpen(false);
+    };
+
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            setOpen(false);
+        }
+    }
+
+    const prevOpen = React.useRef(open);
+    React.useEffect(() => {
+        if (prevOpen.current === true && open === false) {
+            anchorRef.current.focus();
+        }
+        prevOpen.current = open;
+    }, [open]);
+
+    return (
+        <Fragment>
+            <Button className={classes.categoriesButton}
+                ref={anchorRef}
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleOpen}
+                title="catg"
+            >
+                Categories <ExpandMoreIcon />
+            </Button>
+            <Popper ref={anchorRef2} open={open} anchorEl={anchorRef.current} role={undefined} transition style={{ zIndex: 1500, marginTop: 16 }}>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                    {categoriesTree.map((category,
+                                        index) => <CategoryNestedMap key={index} anchorRef={anchorRef2.current} data={category} key={index} />)}
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
+
+        </Fragment>
+    )
+}
+
 const HideOnScroll = (props) => {
     const { children } = props;
     const trigger = useScrollTrigger({
@@ -223,10 +407,10 @@ function Navbar(props) {
     }
 
     /* React.useEffect(() => {
-         setIsLogin(window.sessionStorage.getItem('isLogin'))
+                setIsLogin(window.sessionStorage.getItem('isLogin'))
          console.log(window.sessionStorage.getItem('isLogin'))
      }, [window.sessionStorage.getItem('isLogin')])
- */
+            */
     const drawer = (
         <div>
             <List>
@@ -238,7 +422,7 @@ function Navbar(props) {
             {isLogin &&
                 <List>
                     {['Profile', 'My learning'].map((text, index) => (
-                        <Link to={index % 2 === 0 ? '/profile' : '/my-learning'}>
+                        <Link key={index} to={index % 2 === 0 ? '/profile' : '/my-learning'}>
                             <ListItem
                                 button
                                 key={text}
@@ -255,7 +439,7 @@ function Navbar(props) {
             {isLogin &&
                 <List>
                     {['Wishlist'].map((text, index) => (
-                        <ListItem button key={text}>
+                        <ListItem key={index} button key={text}>
                             <ListItemIcon>{<FavoriteRoundedIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>
@@ -314,17 +498,16 @@ function Navbar(props) {
                             </Hidden>
 
                             <SearchBar />
-                            {isLogin && <Hidden xsDown>
-                                <Button className={classes.categoriesButton}>Categories <ExpandMoreIcon /></Button>
-                                <ProfileButton handleLogout={handleAuth('logout')} />
-                            </Hidden>}
+                            <Hidden xsDown>
+                                <CategoryMenu />
+                                {isLogin && <ProfileButton handleLogout={handleAuth('logout')} />}
+                            </Hidden>
                             {!isLogin && <RegisterButton handleLogin={handleAuth('login')} />}
                             <Hidden xsDown>
                                 <IconButton onClick={props.handleToggle}>
                                     <FlareRoundedIcon />
                                 </IconButton>
                             </Hidden>
-
                         </Grid>
                     </Toolbar>
                 </AppBar>

@@ -71,22 +71,24 @@ export const useStyles = makeStyles((theme) => ({
     buttonGroup: {
         width: '100%',
         borderRadius: 0,
-        backgroundColor: 'white',
+        backgroundColor: theme.palette.background.default,
         paddingLeft: 10,
         zIndex: 1600,
         top: 0,
         position: 'sticky',
         overflow: 'auto',
-        '& .MuiButtonGroup-groupedContained': {
+        '& button': {
+            color: theme.palette.text.primary,
 
             overflow: 'auto',
             minHeight: 50,
-            backgroundColor: 'white',
+            backgroundColor: theme.palette.background.default,
             textTransform: 'none',
             fontSize: 16,
             border: 0,
             borderRadius: 0,
             '&:hover': {
+                backgroundColor: theme.palette.background.vibrant,
                 color: 'rgb(0, 86, 210)',
             }
         },

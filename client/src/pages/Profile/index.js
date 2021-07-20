@@ -22,8 +22,11 @@ import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import { Divider, CssBaseline } from "@material-ui/core";
-import { useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
+import { Fragment } from 'react';
+import { BrowserRouter as Router, useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
 import config from '../../config/config';
+import clsx from 'clsx';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const AccountInfo = () => {
     const classes = useStyles();
@@ -37,8 +40,39 @@ const AccountInfo = () => {
     const [editable, setEditable] = React.useState(false);
 
     React.useEffect(() => {
-        console.log(data);
+        if (data) {
+            setName(data.name);
+            setUname(data.uname);
+            setPassword(data.password);
+        }
+
     }, [data])
+
+    const handleClickEdit = () => {
+        setEditable(!editable)
+    }
+    const handleClickCancel = () => {
+        setEditable(!editable)
+        setName(data.name);
+        setUname(data.uname);
+        setPassword(data.password);
+    }
+
+    const [loading, setLoading] = React.useState(false);
+    const [success, setSuccess] = React.useState(false);
+    const timer = React.useRef();
+
+    const handleClickSave = () => {
+        //setEditable(!editable)
+        if (!loading) {
+            setSuccess(false);
+            setLoading(true);
+            timer.current = window.setTimeout(() => {
+                setSuccess(true);
+                setLoading(false);
+            }, 2000);
+        }
+    }
     return (
         <Container style={{ padding: 0, flexGrow: 1 }}>
             <Typography variant="h3" className={classes.bigTitle}>Profile</Typography>
@@ -46,7 +80,7 @@ const AccountInfo = () => {
             >AV
                 <Button color="primary" className={classes.avatar.hideText}>Edit</Button>
             </Avatar>
-            <Grid container style={{ margin: 20, width: 'auto' }} zeroMinWidth>
+            <Grid container style={{ margin: 20, width: 'auto' }}>
                 <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
                     <Typography variant="h5" style={{ marginBottom: 20 }}>Personal info</Typography>
                     <form style={{ maxWidth: 580, }}>
@@ -62,7 +96,7 @@ const AccountInfo = () => {
                             required
                             disabled={!editable}
                             onChange={(event) => setName(event.target.value)}
-                            value={isPending ? 'loading...' : data.name}
+                            value={isPending ? 'loading...' : name}
                         />
 
                         <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
@@ -77,9 +111,28 @@ const AccountInfo = () => {
                             required
                             disabled={!editable}
                             onChange={(event) => setUname(event.target.value)}
-                            value={isPending ? 'loading...' : data.uname}
+                            value={isPending ? 'loading...' : uname}
                         />
-                        <Button variant="outlined" color="primary">Edit</Button>
+                        {!editable && <Button variant="outlined" color="primary" onClick={handleClickEdit} >Edit</Button>}
+                        {editable && <Fragment>
+                            <Grid container alignItems="center">
+                                <Grid item className={classes.wrapper}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleClickSave}
+                                        className={clsx({ [classes.buttonSuccess]: success })}
+                                        disabled={loading} >
+                                        Save
+                                    </Button>
+                                    {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                                </Grid>
+                                <Grid item>
+                                    <Button style={{ marginLeft: 10 }} variant="contained" color="secondary" type="reset" onClick={handleClickCancel}>Cancel</Button>
+                                </Grid>
+
+                            </Grid>
+                        </Fragment>}
                     </form>
                 </Grid>
                 <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
@@ -101,14 +154,22 @@ const AccountInfo = () => {
                             value={isPending ? 'loading...' : data.password}
                         />
 
-                        <Button variant="outlined" color="primary">Change password</Button>
+                        <Button variant="outlined" color="primary" >Change password</Button>
                     </form>
 
                 </Grid>
             </Grid>
-        </Container>
+        </Container >
     )
 };
+
+const MyLearning = () => {
+    return (
+        <Container style={{ padding: 0, flexGrow: 1 }}>
+
+        </Container>
+    )
+}
 
 function Profile() {
     const classes = useStyles();
@@ -125,7 +186,7 @@ function Profile() {
             case '/profile':
                 setSelectedIndex(0);
                 break;
-            case '/my-learning':
+            case '/profile/my-learning':
                 setSelectedIndex(1);
                 break;
             default: setSelectedIndex(-1);
@@ -135,7 +196,7 @@ function Profile() {
         <div className={classes.drawerContainer}>
             <List>
                 {['Profile', 'My learning'].map((text, index) => (
-                    <Link to={index % 2 === 0 ? `${url}/account-info` : `${url}/my-learning`}>
+                    <Link key={index} to={index % 2 === 0 ? `${url}` : `${url}/my-learning`}>
                         <ListItem
                             button
                             color="inherit"
@@ -178,8 +239,8 @@ function Profile() {
 
             </Hidden>
             <Switch>
-                <Route path={`${path}/`} exact component={AccountInfo} />
-                <Route path={`${path}/my-learning`} component={<div>Dang lam</div>} />
+                <Route path={path} exact component={AccountInfo} />
+                <Route path={`${path}/:dsd`} component={() => (<div>Loading..</div>)} />
             </Switch>
         </div>
     )

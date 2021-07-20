@@ -6,6 +6,7 @@ import { lightTheme, darkTheme } from './theme';
 import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom';
 import routes from './pages/routes';
 import Navbar from './components/Navbar/Navbar.jsx';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 /*
 
@@ -99,16 +100,15 @@ function App() {
 
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div><CircularProgress /></div>}>
         <Router>
           <Navbar handleToggle={handleToggle} />
           <Switch>
             {routes.map(({ component, path, ...rest }) => {
-              return <Route path={path} component={component} {...rest} />
+              return <Route key={path} path={path} component={component} {...rest} />
             })}
           </Switch>
         </Router>
-
       </Suspense>
     </MuiThemeProvider >
   )
