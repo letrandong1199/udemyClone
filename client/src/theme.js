@@ -1,6 +1,11 @@
 import { red } from '@material-ui/core/colors';
 import { unstable_createMuiStrictModeTheme } from '@material-ui/core/styles';
-import { light } from '@material-ui/core/styles/createPalette';
+
+const commonTheme = {
+    shape: {
+        borderRadius: 5,
+    }
+}
 
 export const lightTheme = unstable_createMuiStrictModeTheme({
     palette: {
@@ -27,7 +32,7 @@ export const lightTheme = unstable_createMuiStrictModeTheme({
         },
         type: 'light',
     },
-});
+}, commonTheme);
 
 export const darkTheme = unstable_createMuiStrictModeTheme({
     palette: {
@@ -52,6 +57,6 @@ export const darkTheme = unstable_createMuiStrictModeTheme({
 
         type: 'dark',
     },
-});
+}, commonTheme);
 
 export default lightTheme

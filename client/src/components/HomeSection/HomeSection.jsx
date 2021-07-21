@@ -13,7 +13,7 @@ function HomeSection(props) {
     let list_ = undefined;
     if (props.courses) {
         list_ = props.courses.map((course, index) => {
-            return <Grid item key={index}>
+            return <Grid item key={index} >
                 <ProductCardV course={course} />
 
             </Grid>
@@ -21,10 +21,8 @@ function HomeSection(props) {
     }
     else {
         list_ = props.categories.map((catg, index) => {
-            return <Grid item key={index}>
-                <CategoryCard catg={catg} />
+            return <CategoryCard catg={catg} />
 
-            </Grid>
         })
     }
 
@@ -39,10 +37,14 @@ function HomeSection(props) {
                 <Grid container
                     className={classes.homeSection}
                 >
-                    {list_}
+                    <div className={classes.list}>
+                        {list_}
+                    </div>
+
                 </Grid>
+
             </Grid>
-        </Fragment>
+        </Fragment >
     )
 }
 

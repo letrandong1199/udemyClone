@@ -9,6 +9,20 @@ export const useStyles = makeStyles((theme) => ({
         boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)',
         margin: '10px'
     },
+    /* rgb(245, 247, 248)*/
+    banner: (props) => {
+        const color = theme.palette.type === 'dark' ? props.data.darkMuted : props.data.lightMuted;
+        const backgroundColor = 'radial-gradient(circle at 0%, ' + theme.palette.background.vibrant + ' 60%, ' + color + ' 80%)';
+        return {
+            height: 500,
+            background: backgroundColor, /*'rgb(245, 247, 248)'*/
+            padding: 30,
+        }
+    },
+    title: {
+        fontWeight: 'bold',
+        color: theme.palette.text.primary, //'rgb(55, 51, 51)', /*data.darkVibrant*/ 
+    },
     media: {
         height: 0,
         paddingTop: '56.25%', // 16:9
@@ -57,23 +71,24 @@ export const useStyles = makeStyles((theme) => ({
     buttonGroup: {
         width: '100%',
         borderRadius: 0,
-        backgroundColor: 'white',
+        backgroundColor: theme.palette.background.default,
         paddingLeft: 10,
         zIndex: 1600,
         top: 0,
         position: 'sticky',
         overflow: 'auto',
-        '& .MuiButtonGroup-groupedContained': {
+        '& button': {
+            color: theme.palette.text.primary,
 
             overflow: 'auto',
             minHeight: 50,
-            backgroundColor: 'white',
-
+            backgroundColor: theme.palette.background.default,
             textTransform: 'none',
             fontSize: 16,
             border: 0,
             borderRadius: 0,
             '&:hover': {
+                backgroundColor: theme.palette.background.vibrant,
                 color: 'rgb(0, 86, 210)',
             }
         },

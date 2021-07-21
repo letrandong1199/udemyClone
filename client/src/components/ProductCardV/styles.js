@@ -3,14 +3,17 @@ import { makeStyles } from '@material-ui/core/styles';
 export const useStyles = makeStyles((theme) => ({
     root: {
         borderRadius: 4,// '10px',
+        maxWidth: 260,
         width: 260,
         //minWidth: 260,
         //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
         //boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('xs')]: {
             display: 'flex',
+            maxWidth: 'unset',
             width: 'auto',
             flexDirection: 'row',
+            flexGrow: 1,
         },
         margin: '10px',
         '&:hover': {
@@ -34,6 +37,7 @@ export const useStyles = makeStyles((theme) => ({
         position: 'relative',
         [theme.breakpoints.down('xs')]: {
             minWidth: 151,
+            minHeight: '100%',
         },
         [theme.breakpoints.up('sm')]: {
             height: 0,

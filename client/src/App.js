@@ -1,12 +1,14 @@
 /* eslint-disable no-undef */
 import './App.css';
-import { makeStyles } from '@material-ui/core/styles';
-import Home from './pages/Home/Home.jsx';
-import DetailCourse from './pages/DetailCourse/DetailCourse.jsx';
-import { unstable_createMuiStrictModeTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { lightTheme, darkTheme } from './theme';
+import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom';
+import routes from './pages/routes';
+import Navbar from './components/Navbar/Navbar.jsx';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
+/*
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,25 +88,29 @@ const useStyles = makeStyles((theme) => ({
     margin: 10,
   }
 }));
-
-
+*/
+import { Suspense } from 'react';
 function App() {
-  const classes = useStyles();
   const [dark, setDark] = React.useState(false)
 
-  const theme = unstable_createMuiStrictModeTheme({
-    palette: {
-      type: dark ? 'dark' : 'light',
-    },
-  })
   const handleToggle = () => {
     setDark(!dark);
     console.log(dark);
   }
+
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
-      <Home handleToggle={handleToggle} />
-    </MuiThemeProvider>
+      <Suspense fallback={<div><CircularProgress /></div>}>
+        <Router>
+          <Navbar handleToggle={handleToggle} />
+          <Switch>
+            {routes.map(({ component, path, ...rest }) => {
+              return <Route key={path} path={path} component={component} {...rest} />
+            })}
+          </Switch>
+        </Router>
+      </Suspense>
+    </MuiThemeProvider >
   )
 }
 

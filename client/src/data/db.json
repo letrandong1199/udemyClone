@@ -1,0 +1,151 @@
+{
+  "wishlist": [
+    {
+      "user_id": 0,
+      "course_id": 2
+    }
+  ],
+  "enrolled": [
+    {
+      "user_id": 0,
+      "course_id": 1,
+      "created_at": "15/01/2015"
+    }
+  ],
+  "users": [
+    {
+      "id": 0,
+      "name": "DK",
+      "uname": "tdk",
+      "role": 0,
+      "email": "tdk@kh.com",
+      "password": "123456"
+    },
+    {
+      "uname": "zzf7ktx",
+      "name": "TraJ",
+      "password": "asd123",
+      "email": null,
+      "id": 1
+    },
+    {
+      "uname": "123",
+      "name": "tdk",
+      "password": "123",
+      "email": null,
+      "id": 2
+    }
+  ],
+  "categories": [
+    {
+      "id": 0,
+      "name": "Information Technology",
+      "parent": null,
+      "thumbnail_small": "assets/thumbnail/small/it.jpg"
+    },
+    {
+      "id": 1,
+      "name": "Web development",
+      "parent": 0,
+      "thumbnail_small": "assets/thumbnail/small/web-development.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Mobile Development",
+      "parent": 0,
+      "thumbnail_small": "assets/thumbnail/small/web-development.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Computer Science",
+      "parent": null,
+      "thumbnail_small": "assets/thumbnail/small/computer-science.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Software Development",
+      "parent": 3,
+      "thumbnail_small": "assets/thumbnail/small/software-development.jpg"
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "title": "Python for Everybody Specialization",
+      "thumb": "/assets/3.jpg",
+      "author": "Author 2",
+      "description": "Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.",
+      "price": 19,
+      "rating": 3,
+      "num_rating": 100,
+      "num_enrolled": 100,
+      "categories_tree": [
+        "Computer Science",
+        "Software Development"
+      ],
+      "language": [
+        "Eng",
+        "Vi",
+        "Jp"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Modern Application Development with Python on AWS Specialization",
+      "thumb": "/assets/3.jpg",
+      "author": "Author 2",
+      "description": "Become a modern web developer. Accelerate your career by learning to build cloud-native applications on AWS.",
+      "price": 0,
+      "rating": 3,
+      "num_rating": 100,
+      "num_enrolled": 100,
+      "categories_tree": [
+        "Information Technology",
+        "Mobile Development"
+      ],
+      "language": [
+        "Eng",
+        "Vi",
+        "Jp"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Web Design for Everybody: Basics of Web Development & Coding Specialization",
+      "thumb": "/assets/3.jpg",
+      "author": "Colleen van Lent",
+      "description": "Learn to Design and Create Websites. Build a responsive and accessible web portfolio using HTML5, CSS3, and JavaScript",
+      "price": 19,
+      "rating": 4.8,
+      "num_rating": 21129,
+      "num_enrolled": 212301,
+      "categories_tree": [
+        "Information Technology",
+        "Web Development"
+      ],
+      "language": [
+        "Eng",
+        "Vi",
+        "Jp"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Python for Data Science, AI & Development",
+      "thumb": "/assets/1.jpg",
+      "author": "Joseph Santarcangelo",
+      "description": "Learn to Design and Create Websites. Build a responsive and accessible web portfolio using HTML5, CSS3, and JavaScript",
+      "price": 19,
+      "rating": 4.6,
+      "num_rating": 22059,
+      "num_enrolled": 309937,
+      "categories_tree": [
+        "Computer Science",
+        "Software Development"
+      ],
+      "language": [
+        "Eng"
+      ]
+    }
+  ]
+}

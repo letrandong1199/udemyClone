@@ -74,8 +74,15 @@ export const useStyles = makeStyles((theme) => ({
     logoButton: {
         maxWidth: '100px',
         height: '30px',
-        marginTop: '10px',
-        marginBottom: '10px'
+        [theme.breakpoints.up('sm')]: {
+            marginTop: '10px',
+            marginBottom: '10px',
+        },
+        [theme.breakpoints.down('xs')]: {
+            margin: 'auto',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+        }
     },
     logo: {
         width: '100%',
@@ -96,5 +103,15 @@ export const useStyles = makeStyles((theme) => ({
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        marginRight: 'auto',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
     },
 }));

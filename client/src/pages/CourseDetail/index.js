@@ -1,16 +1,13 @@
 import Container from '@material-ui/core/Container';
-import Navbar from '../../components/Navbar/Navbar.jsx';
 import Grid from '@material-ui/core/Grid';
 import Footer from '../../components/Footer/Footer.jsx';
-import Link from '@material-ui/core/Link';
+import { Link } from 'react-router-dom';
 import { Breadcrumbs } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React from 'react';
 import Rating from '@material-ui/lab/Rating';
-
 import { usePalette } from 'react-palette'
-import { Avatar } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -19,11 +16,16 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { courses } from '../../utils/dataSample';
-import { CssBaseline } from '@material-ui/core';
+import { empty_course } from '../../utils/dataSample';
 import { useStyles } from './styles';
-
-const course = courses()[0];
+import { useParams } from 'react-router-dom';
+import useFetch from '../../utils/useFetch.js';
+import config from '../../config/config';
+import Navbar from '../../components/Navbar/Navbar.jsx';
+import { Link as Links } from 'react-router-dom';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+//const course = courses()[0];
 
 const temp = <div>
     <p>
@@ -33,9 +35,9 @@ const temp = <div>
         <br />
     </p>
     <p>Quill is a free, &nbsp;
-        <a key='1' href="https://github.com/quilljs/quill/" target="_blank">open source</a>WYSIWYG editor built for the modern web. With its
-        <a key='2' href="http://quilljs.com/docs/modules/" target="_blank">extensible architecture</a>and a
-        <a key='3' href="http://quilljs.com/docs/api/" target="_blank">expressive API</a>you can completely customize it to fulfill your needs. Some built in features include:</p>
+        <a rel="noreferrer" key='1' href="https://github.com/quilljs/quill/" target="_blank">open source</a>WYSIWYG editor built for the modern web. With its
+        <a rel="noreferrer" key='2' href="http://quilljs.com/docs/modules/" target="_blank">extensible architecture</a>and a
+        <a rel="noreferrer" key='3' href="http://quilljs.com/docs/api/" target="_blank">expressive API</a>you can completely customize it to fulfill your needs. Some built in features include:</p>
     <p>
         <br />
     </p>
@@ -56,25 +58,37 @@ const temp = <div>
     </p>
     <ul>
         <li key='5'>
-            <a href="https://quilljs.com" target="_blank">Quill.js</a>, the free, open source WYSIWYG editor</li>
+            <a rel="noreferrer" href="https://quilljs.com" target="_blank">Quill.js</a>, the free, open source WYSIWYG editor</li>
         <li key='6'>
-            <a href="https://zenoamaro.github.io/react-quill" target="_blank">React-quill</a>, a React component that wraps Quill.js</li>
+            <a rel="noreferrer" href="https://zenoamaro.github.io/react-quill" target="_blank">React-quill</a>, a React component that wraps Quill.js</li>
     </ul>
 </div>
 
 function DetailCourse() {
-    const classes = useStyles();
+    const { id } = useParams();
     const [value, setValue] = React.useState(3);
     const [hover, setHover] = React.useState(-1);
-    const { data, loading, error } = usePalette(course.thumb);
     const handleClick = (link) => (event) => {
         event.preventDefault();
         console.log(link);
     }
 
-    const catgs = course.categories_tree.map((catg, index) => {
-        const link = catg;
-        return <Link key={index} index={index} onClick={handleClick(link)}>{link}</Link>
+    const [course, setCourse] = React.useState(empty_course);
+    const { data: courses, isPending, error: errorFetch } = useFetch(`${config.HOST}:${config.PORT}/${config.COURSE_CONTROLLER}/${id}`);
+
+    React.useEffect(() => {
+        if (courses) {
+            console.log(courses);
+            setCourse(courses);
+            setValue(courses.rating)
+        }
+
+    }, [courses])
+
+    const { data, loading, error } = usePalette(course.thumb);
+
+    const categories = (course) => course.categories_tree.map((category, index) => {
+        return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
     });
     //background = 'linear-gradient(45deg, rgb(245, 247, 248) 30%,' + data.lightVibrant + '50')'
     const [expanded, setExpanded] = React.useState(false);
@@ -82,21 +96,19 @@ function DetailCourse() {
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
+    const classes = useStyles({ data });
     return (
         <div>
-
-            <Navbar />
-            <Card style={{ height: 500, background: 'radial-gradient(circle at 0%, rgb(245, 247, 248) 60%, ' + data.lightMuted + ' 80%)' /*'rgb(245, 247, 248)'*/, padding: 30 }}>
-
+            <Card className={classes.banner}>
                 <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
                     <Grid item >
                         <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
-                            {catgs}
+                            {categories(course)}
                         </Breadcrumbs>
                     </Grid>
-                    <Grid item container style={{ marginTop: 20, alignItems: 'flex-start' }} spacing={2}>
+                    <Grid item container style={{ marginTop: 20, marginBottom: 20, alignItems: 'flex-start' }} spacing={2}>
                         <Grid item container xs={6} direction="column">
-                            <Typography variant="h4" style={{ fontWeight: 'bold', color: data.darkVibrant }}>
+                            <Typography variant="h4" className={classes.title}>
                                 {course.title}
                             </Typography>
                             <Typography variant="subtitle1">
@@ -107,7 +119,7 @@ function DetailCourse() {
                                 <Rating
                                     name="hover-feedback"
                                     className={classes.rating}
-                                    value={course.rating}
+                                    value={value}
                                     precision={0.5}
                                     onChange={(event, newValue) => {
                                         setValue(newValue);
@@ -137,7 +149,7 @@ function DetailCourse() {
                         </Grid>
                         <Grid item xs={3}>
                             <Typography variant="subtitle1">Offered By</Typography>
-                            <img alt="offered" style={{ width: '100%', filter: 'contrast(200%)' }} src='assets/logo-fit.png' />
+                            <img alt="offered" style={{ width: '100%', filter: 'contrast(200%)' }} src='/assets/logo-fit.png' />
                         </Grid>
                         {/* COMMENTs
                         <Grid item container xs={3} style={{ overflow: 'auto', alignSelf: 'flex-start', position: 'sticky', top: 0 }}>
@@ -161,8 +173,10 @@ function DetailCourse() {
                         </Grid>
                                     */}
                     </Grid>
+                    <Divider />
                     <Grid item style={{ marginTop: 20 }}>
-                        <Button variant="contained" color="primary" >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                        <Button size="large" variant="outlined" style={{ marginRight: 20, }} >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                        <Button size="large" variant="outlined"  > {'<3 Wishlist'}</Button>
                     </Grid>
                 </Grid>
 

@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import { useStyles } from './styles';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
+import { Link } from 'react-router-dom';
 
 
 //{/*style={{ background: `url('${item.image}') no-repeat center center` }}*/}
@@ -29,7 +30,7 @@ function Carousel(props) {
                                 </Grid>
 
                                 <Typography style={{ textAlign: 'left' }} variant="body1">{item.description}</Typography>
-                                <Button variant="outlined" color="primary">{buttonText()}</Button>
+                                <Link to={`/detail/${item.id}`} style={{ textDecoration: 'none' }}><Button variant="outlined" color="primary">{buttonText()}</Button></Link>
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sm={7} className={classes.cardImage} style={{ background: `url('${item.thumb}') no-repeat center center`, backgroundSize: 'cover' }}>
