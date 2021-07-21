@@ -21,6 +21,10 @@ exports.up = function (knex) {
     .createTable("Categories", function (table) {
       table.increments("Id").primary();
       table.string("Name").notNullable();
+    })
+    .createTable("Languages", function (table) {
+      table.increments("Id").primary();
+      table.string("Name").notNullable();
     });
 };
 

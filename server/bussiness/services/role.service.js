@@ -12,7 +12,7 @@ const _entityRepository = require("../../repositories/entity.repository");
 const updateOneRoleResponseEnum = require("../../api/validators/enums/roleEnums/updateOneRoleResponseEnum");
 //require("dotenv").config();
 const roleService = {
-  //Update one user
+  //Update one Role
   async updateOneRole(request) {
     try {
       const resultValidator = updateOneRoleValidator.validate(
@@ -48,7 +48,7 @@ const roleService = {
     }
   },
 
-  //Get all User
+  //Get all Role
   async getAllRole() {
     try {
       const listRole = await _entityRepository("Role").getEntities();
@@ -67,7 +67,7 @@ const roleService = {
       return { Code: getAllRoleResponseEnum.SERVER_ERROR };
     }
   },
-  //Delete one user
+  //Delete one Role
   async deleteOneRole(request) {
     try {
       const resultValidator = deleteOneRoleValidator.validate(
@@ -93,7 +93,7 @@ const roleService = {
       console.log(e);
     }
   },
-  //Create one user
+  //Create one Role
   async createOneRole(request) {
     try {
       const resultValidator = createOneRoleValidator.validate(request.name);
