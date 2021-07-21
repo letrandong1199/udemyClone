@@ -13,6 +13,8 @@ import React from 'react';
 import { useStyles } from './styles';
 import { useFetch } from '../../utils/useFetch';
 import config from '../../config/config';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -52,7 +54,17 @@ const RegisterTab = ({ value, index }) => {
     const [password, setPassword] = React.useState(null);
     const [email, setEmail] = React.useState(null);
     const [isPending, setIsPending] = React.useState(false);
-    const [error, setError] = React.useState(null);;
+    const [error, setError] = React.useState(null);
+    const [openSnack, setOpenSnack] = React.useState(false);
+    const [snackContent, setSnackContent] = React.useState(null);
+    const [snackType, setSnackType] = React.useState(null);
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
 
     const handleClickRegister = () => {
         const user = { uname, name, password, email }
@@ -64,10 +76,8 @@ const RegisterTab = ({ value, index }) => {
             .then(data => {
                 for (let user of data) {
                     if (user.uname === uname) {
-                        if (user.password === password) {
-                            setIsPending(false);
-                            throw new Error('User already exists');
-                        }
+                        setIsPending(false);
+                        throw new Error('User already exists');
                     }
                 }
                 fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`, {
@@ -78,18 +88,24 @@ const RegisterTab = ({ value, index }) => {
                     console.log(res);
                     console.log('Added');
                     setIsPending(false);
+                    setSnackType("success");
+                    setSnackContent("Register success. You can login now.");
+                    setOpenSnack(true);
                 })
             })
             .catch(error => {
                 console.log(error);
                 setError(error);
+                setSnackType("error");
+                setSnackContent(error.message);
+                setOpenSnack(true);
             })
 
     }
     return (
         <TabPanel value={value} index={0}>
-            <Grid container spacing={3} alignItems='center' alignContent='center' justifyContent='space-around' direction="row" >
-                <Grid item xs={12} justifyContent='center' container>
+            <Grid container spacing={3} alignItems='center' alignContent='center' direction="row" >
+                <Grid item xs={12} container>
                     <Button
                         startIcon={<MailOutlineRoundedIcon />}
                         variant="contained"
@@ -140,7 +156,7 @@ const RegisterTab = ({ value, index }) => {
                         />
                     </form>
                 </Grid>
-                <Grid item xs={12} justifyContent='center' container>
+                <Grid item xs={12} container>
                     {!isPending && <Button
                         variant="outlined"
                         color="primary"
@@ -159,8 +175,18 @@ const RegisterTab = ({ value, index }) => {
                     >
                         Register
                     </Button>}
+                    <Snackbar
+                        open={openSnack}
+                        autoHideDuration={6000}
+                        onClose={handleCloseSnack}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    >
+                        <Alert onClose={handleCloseSnack} severity={snackType}>
+                            {snackContent}
+                        </Alert>
+                    </Snackbar>
                 </Grid>
-            </Grid>
+            </Grid >
         </TabPanel >
     )
 };
@@ -169,6 +195,17 @@ const LoginTab = ({ value, index, handleLogin }) => {
     const [uname, setUname] = React.useState(null);
     const [password, setPassword] = React.useState(null);
     const [error, setError] = React.useState(null);
+    const [openSnack, setOpenSnack] = React.useState(false);
+    const [snackContent, setSnackContent] = React.useState(null);
+    const [snackType, setSnackType] = React.useState(null);
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
+
     const handleClickLogin = () => {
         fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`)
             .then(res => {
@@ -181,21 +218,28 @@ const LoginTab = ({ value, index, handleLogin }) => {
                         if (user.password === password) {
                             window.sessionStorage.setItem('isLogin', true);
                             window.sessionStorage.setItem('user_id', user.id);
+                            setSnackType("success");
+                            setSnackContent("You are now logged in");
+                            setOpenSnack(true);
                             return handleLogin();
                         }
                     }
                 }
+
                 throw Error('Invalid username or password');
             })
             .catch(error => {
                 console.log(error);
                 setError(error);
+                setSnackType("error");
+                setSnackContent(error.message);
+                setOpenSnack(true);
             })
     }
     return (
         <TabPanel value={value} index={1}>
-            <Grid container spacing={3} alignItems='center' alignContent='center' justifyContent='space-around' direction="row" >
-                <Grid item xs={12} justifyContent='center' container>
+            <Grid container spacing={3} alignItems='center' alignContent='center' direction="row" >
+                <Grid item xs={12} container>
                     <Button
                         startIcon={<MailOutlineRoundedIcon />}
                         variant="contained"
@@ -234,7 +278,7 @@ const LoginTab = ({ value, index, handleLogin }) => {
                 <Grid item xs={12}>
                     <Button style={{ maxWidth: 580, left: 60, padding: 0 }} color='primary'>Forget password?</Button>
                 </Grid>
-                <Grid item xs={12} justifyContent='center' container>
+                <Grid item xs={12} container>
                     <Button
                         variant="outlined"
                         color="primary"
@@ -244,6 +288,16 @@ const LoginTab = ({ value, index, handleLogin }) => {
                     >
                         Login
                     </Button>
+                    <Snackbar
+                        open={openSnack}
+                        autoHideDuration={6000}
+                        onClose={handleCloseSnack}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    >
+                        <Alert onClose={handleCloseSnack} severity={snackType}>
+                            {snackContent}
+                        </Alert>
+                    </Snackbar>
                 </Grid>
             </Grid>
         </TabPanel >
@@ -275,7 +329,7 @@ function RegisterAndLogin(props) {
                 action={tabsActions}
                 onChange={handleChange}
                 aria-label="login"
-                centered="true"
+                centered={true}
                 indicatorColor="primary"
                 textColor="primary"
             >

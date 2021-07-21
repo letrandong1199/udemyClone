@@ -25,7 +25,8 @@ export const lightTheme = unstable_createMuiStrictModeTheme({
         },
         background: {
             default: '#fff',
-            vibrant: 'rgba(243,243,255,1)'
+            vibrant: 'rgba(243,243,255,1)',
+            acrylic: 'rgba(195,195,195,0.7)',
         },
         text: {
             primary: 'hsl(240, 15%, 35%)',
@@ -53,6 +54,7 @@ export const darkTheme = unstable_createMuiStrictModeTheme({
         background: {
             default: '#1f1f1f',
             vibrant: 'hsl(240, 15%, 35%)',
+            acrylic: 'rgba(127, 127, 127, 0.7)',
         },
 
         type: 'dark',

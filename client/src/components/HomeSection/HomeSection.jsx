@@ -11,6 +11,7 @@ import CategoryCard from '../CategoryCard/CategoryCard.jsx'
 function HomeSection(props) {
     const classes = useStyles(props);
     let list_ = undefined;
+
     if (props.courses) {
         list_ = props.courses.map((course, index) => {
             return <Grid item key={index} >
@@ -19,9 +20,9 @@ function HomeSection(props) {
             </Grid>
         })
     }
-    else {
+    else if (props.categories) {
         list_ = props.categories.map((catg, index) => {
-            return <CategoryCard catg={catg} />
+            return <CategoryCard key={index} catg={catg} />
 
         })
     }

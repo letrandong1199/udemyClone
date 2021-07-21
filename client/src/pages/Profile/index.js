@@ -27,6 +27,7 @@ import { BrowserRouter as Router, useLocation, Route, Switch, useRouteMatch, Lin
 import config from '../../config/config';
 import clsx from 'clsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import HomeSection from '../../components/HomeSection/HomeSection.jsx'
 
 const AccountInfo = () => {
     const classes = useStyles();
@@ -35,7 +36,6 @@ const AccountInfo = () => {
     const [password, setPassword] = React.useState(null);
     //const [email, setEmail] = React.useState(null);
     const id = window.sessionStorage.getItem('user_id');
-    console.log(id);
     const { data, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}/${id}`)
     const [editable, setEditable] = React.useState(false);
 
@@ -64,14 +64,25 @@ const AccountInfo = () => {
 
     const handleClickSave = () => {
         //setEditable(!editable)
+        const update_info = { uname, password, name }
         if (!loading) {
             setSuccess(false);
             setLoading(true);
-            timer.current = window.setTimeout(() => {
+
+        }
+        fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}/${id}`,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(update_info)
+            }).then((res) => {
                 setSuccess(true);
                 setLoading(false);
-            }, 2000);
-        }
+                console.log(res);
+                return res.json();
+            }).catch((err) => {
+                console.log(err);
+            })
     }
     return (
         <Container style={{ padding: 0, flexGrow: 1 }}>
@@ -84,7 +95,7 @@ const AccountInfo = () => {
                 <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
                     <Typography variant="h5" style={{ marginBottom: 20 }}>Personal info</Typography>
                     <form style={{ maxWidth: 580, }}>
-                        <TextField id="txt-fullname" variant="outlined" require="true" fullWidth label="Full name"
+                        <TextField id="txt-uname" variant="outlined" require fullWidth label="Full name"
                             style={{ marginBottom: 16 }}
                             InputProps={{
                                 startAdornment: (
@@ -97,21 +108,6 @@ const AccountInfo = () => {
                             disabled={!editable}
                             onChange={(event) => setName(event.target.value)}
                             value={isPending ? 'loading...' : name}
-                        />
-
-                        <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
-                            style={{ marginBottom: 16 }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <AccountCircle />
-                                    </InputAdornment>
-                                ),
-                            }}
-                            required
-                            disabled={!editable}
-                            onChange={(event) => setUname(event.target.value)}
-                            value={isPending ? 'loading...' : uname}
                         />
                         {!editable && <Button variant="outlined" color="primary" onClick={handleClickEdit} >Edit</Button>}
                         {editable && <Fragment>
@@ -138,7 +134,7 @@ const AccountInfo = () => {
                 <Grid item xs={12} sm={6} container direction="column" style={{ padding: 20 }}>
                     <Typography variant="h5" style={{ marginBottom: 20 }}>Account info</Typography>
                     <form>
-                        <TextField id="txt-pass" variant="outlined" require="true" fullWidth label="Password"
+                        <TextField id="txt-pass" variant="outlined" required fullWidth label="Password"
                             style={{ marginBottom: 16 }}
                             type="password"
                             InputProps={{
@@ -164,9 +160,25 @@ const AccountInfo = () => {
 };
 
 const MyLearning = () => {
+    const id = window.sessionStorage.getItem('user_id').valueOf();
+    const { data, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/${config.ENROLLED}`)
+    const [ownCourse, setOwnCourse] = React.useState([]);
+    React.useEffect(() => {
+        if (data) {
+            const temp = data.filter((obj) => obj.user_id == id);
+            let course_list = []
+            for (let course of temp) {
+                course.course_info.id = course.course_id;
+                course_list.push(course.course_info);
+            }
+            setOwnCourse(course_list);
+            console.log(temp);
+        }
+    }, [data])
+
     return (
         <Container style={{ padding: 0, flexGrow: 1 }}>
-
+            <HomeSection title="Learning" color="vibrant" courses={ownCourse} />
         </Container>
     )
 }
@@ -240,7 +252,7 @@ function Profile() {
             </Hidden>
             <Switch>
                 <Route path={path} exact component={AccountInfo} />
-                <Route path={`${path}/:dsd`} component={() => (<div>Loading..</div>)} />
+                <Route path={`${path}/:dsd`} component={MyLearning} />
             </Switch>
         </div>
     )

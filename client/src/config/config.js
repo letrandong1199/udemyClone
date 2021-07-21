@@ -3,6 +3,7 @@ const config = {
     "PORT": "8000",
     "USER_CONTROLLER": "users",
     "COURSE_CONTROLLER": "courses",
-    "CATEGORY_CONTROLLER": "categories"
+    "CATEGORY_CONTROLLER": "categories",
+    "ENROLLED": "enrolled",
 };
 export default config;
