@@ -4,6 +4,11 @@ const router = express.Router();
 const request = require('request')
 require('dotenv').config();
 
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+
+
+
 router.get('/', (req, res) => {
     res.send('Hello');
 });
@@ -121,7 +126,7 @@ router.post('/webhook', (req, res) => {
 router.get('/webhook', (req, res) => {
 
     // Your verify token. Should be a random string.
-    let VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+    //let VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
     // Parse the query params
     let mode = req.query['hub.mode'];
