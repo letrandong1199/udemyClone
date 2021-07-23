@@ -181,22 +181,21 @@ function handleGetStarted(sender_psid) {
     })
 };
 
-function sendMessageAskingPhoneNumber(sender_id) {
+function handleSendMessageAskingKeyword(sender_id) {
     let request_body = {
         "recipient": {
             "id": sender_id
         },
         "messaging_type": "RESPONSE",
         "message": {
-            "text": "Thank you. And what's the best phone number for us to reach you at?",
+            "text": "What do you want to search?",
             "quick_replies": [
                 {
-                    "content_type": "user_phone_number",
+                    "content_type": "text",
                 }
             ]
         }
     };
-    console.log("hahahaha");
 
     // Send the HTTP request to the Messenger Platform
     request({
@@ -213,4 +212,4 @@ function sendMessageAskingPhoneNumber(sender_id) {
     });
 };
 
-module.exports = { handleGetStarted, handleListCategories, sendMessageAskingPhoneNumber };
+module.exports = { handleGetStarted, handleListCategories, sendMessageAskingKeyword };
