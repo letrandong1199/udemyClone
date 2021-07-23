@@ -6,13 +6,6 @@ const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
 // Get user
 async function getUser(sender_psid) {
-    // Construct the message body
-    let request_body = {
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": response
-    }
     // Send the HTTP request to the Messenger Platform
     //let response = null;
     return new Promise((resolve, reject) => {
