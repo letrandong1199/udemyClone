@@ -15,7 +15,7 @@ setupProfile.post('/', async (req, res) => {
     console.log('Hello');
     // Construct the message body
     let request_body = {
-        'get_started': { 'payload': 'Get Started' },
+        'get_started': { 'payload': 'GET_STARTED' },
         'whitelisted_domains': ['https://udemy-chatbots.herokuapp.com/', 'https://udemy-client.herokuapp.com/'],
         "persistent_menu": [
             {
