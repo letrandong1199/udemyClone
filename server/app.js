@@ -12,7 +12,7 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(cors());
-const PORT = 3000 || process.env.PORT;
+var PORT = process.env.PORT || 8080;
 
 app.use(morgan("dev"));
 
