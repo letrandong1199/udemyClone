@@ -15,20 +15,23 @@ async function getUser(sender_psid) {
     }
     // Send the HTTP request to the Messenger Platform
     let response = null;
-    await request({
-        "uri": `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic`,
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            response = JSON.parse(body);
-            console.log('message sent!');
-            return response;
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    });
+    return new Promise((resolve, reject) => {
+        request({
+            "uri": `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic`,
+            "qs": { "access_token": PAGE_ACCESS_TOKEN },
+            "method": "POST",
+            "json": request_body
+        }, (err, res, body) => {
+            if (!err) {
+                response = JSON.parse(body);
+                console.log('message sent!');
+                resolve(response);
+            } else {
+                console.error("Unable to send message:" + err);
+                reject(err);
+            }
+        });
+    })
 }
 
 // Sends response messages via the Send API
