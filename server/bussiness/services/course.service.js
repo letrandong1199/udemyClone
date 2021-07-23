@@ -90,16 +90,17 @@ const courseService = {
       console.log(e);
     }
   },
-  async getAllCourse() {
-    try {
-      const listCourse = await _entityRepository("Courses").getEntities();
-      const listALlResponse=await Promise.all(listCourse.map(async (course)=>{
-          let category=await _entityRepository("Categories").getEntity(course.Id);
-          let promote=await _entityRepository("Promotes").getEntity(course.Id)
-      })
-    } catch (e) {
-      console.log(e);
-    }
-  },
+  //   async getAllCourse() {
+  //     try {
+  //       const listCourse = await _entityRepository("Courses").getEntities();
+  //       const listALlResponse=await Promise.all(listCourse.map(async (course)=>{
+  //           let category=await _entityRepository("Categories").getEntity(course.Id);
+  //           let promote=await _entityRepository("Promotes").getEntity(course.Id);
+
+  //       }))
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   },
 };
 module.exports = courseService;
