@@ -14,7 +14,7 @@ async function getUser(sender_psid) {
         "message": response
     }
     // Send the HTTP request to the Messenger Platform
-    let response = null;
+    //let response = null;
     return new Promise((resolve, reject) => {
         request({
             "uri": `https://graph.facebook.com/${sender_psid}?fields=first_name,last_name,profile_pic`,
@@ -23,7 +23,7 @@ async function getUser(sender_psid) {
             "json": request_body
         }, (err, res, body) => {
             if (!err) {
-                response = JSON.parse(body);
+                let response = JSON.parse(body);
                 console.log('message sent!');
                 resolve(response);
             } else {
