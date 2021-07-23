@@ -98,6 +98,41 @@ async function callSendAPI(sender_psid, response) {
     });
 }
 
+function returnCategories() {
+    let response = {
+        "text": "Pick a category:",
+        "quick_replies": [
+            {
+                "content_type": "text",
+                "title": "Web development",
+                "payload": "CATEGORIES",
+            }, {
+                "content_type": "text",
+                "title": "Mobile development",
+                "payload": "CATEGORIES",
+            }
+        ]
+    };
+    return response;
+}
+
+function handleListCategories(sender_psid) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let user = await getUser(sender_psid)
+            let response = returnCategories();
+
+            await callSendAPI(sender_psid, response);
+            await callSendAPI(sender_psid, response2);
+
+            resolve('OK');
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
+
 function returnTemplate() {
     let response = {
         "attachment": {

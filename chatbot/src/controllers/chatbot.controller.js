@@ -30,12 +30,14 @@ async function handlePostback(sender_psid, received_postback) {
     let payload = received_postback.payload;
 
     // Set the response based on the postback payload
-    if (payload === 'yes') {
+    if (payload === 'LIST_CATEGORIES') {
         response = { "text": "Thanks!" }
     } else if (payload === 'no') {
         response = { "text": "Oops, try sending another image." }
-    } else if (payload === 'GET_STARTED') {
+    } else if (payload === 'GET_STARTED' || payload === 'RESTART') {
         await chatbotService.handleGetStarted(sender_psid);
+    } else if (payload === 'LIST_CATEGORIES') {
+        await chatbotService.handleListCategories(sender_psid);
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);

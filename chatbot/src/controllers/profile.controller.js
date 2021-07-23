@@ -32,7 +32,7 @@ exports.profilePost = async (req, res) => {
                     {
                         "type": "web_url",
                         "title": "Learn now",
-                        "url": "https://udemy-client.herokuapp.com/",
+                        "url": "https://udemy-client.herokuapp.com",
                         "webview_height_ratio": "full"
                     }
                 ]
