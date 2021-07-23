@@ -181,35 +181,31 @@ function handleGetStarted(sender_psid) {
     })
 };
 
-function handleSendMessageAskingKeyword(sender_id) {
-    let request_body = {
-        "recipient": {
-            "id": sender_id
-        },
-        "messaging_type": "RESPONSE",
-        "message": {
-            "text": "What do you want to search?",
-            "quick_replies": [
-                {
-                    "content_type": "text",
-                }
-            ]
-        }
-    };
-
-    // Send the HTTP request to the Messenger Platform
-    request({
-        "uri": "https://graph.facebook.com/v6.0/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('quick message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    });
+function returnMessageAskingKeyword() {
+    let response = {
+        "text": "What do you want to search?",
+        "quick_replies": [
+            {
+                "content_type": "text",
+            }
+        ]
+    }
+    return response;
 };
 
-module.exports = { handleGetStarted, handleListCategories, handleSendMessageAskingKeyword };
+function handleSearch(sender_psid) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = returnMessageAskingKeyword();
+
+            await callSendAPI(sender_psid, response);
+
+            resolve('OK');
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
+
+module.exports = { handleGetStarted, handleListCategories, handleSearch };
