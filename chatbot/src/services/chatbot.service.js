@@ -181,4 +181,4 @@ function handleGetStarted(sender_psid) {
     })
 }
 
-module.exports = { handleGetStarted };
+module.exports = { handleGetStarted, handleListCategories };
