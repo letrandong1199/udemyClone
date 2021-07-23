@@ -181,15 +181,11 @@ function handleGetStarted(sender_psid) {
 
 function returnMessageAskingKeyword() {
     let response = {
-        "text": "Pick a category:",
+        "text": "What do you want to search?",
         "quick_replies": [
             {
                 "content_type": "text",
                 "title": "Web development",
-                "payload": "CATEGORIES",
-            }, {
-                "content_type": "text",
-                "title": "Mobile development",
                 "payload": "CATEGORIES",
             }
         ]
