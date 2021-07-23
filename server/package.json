@@ -19,6 +19,7 @@
   "homepage": "https://github.com/letrandong1199/udemyClone#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.26.2",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",

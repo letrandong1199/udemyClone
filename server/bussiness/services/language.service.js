@@ -43,7 +43,7 @@ const languageService = {
         request.params.id
       );
       console.log("Language:", language);
-      if (role.length == 0) {
+      if (language.length == 0) {
         return { Code: deleteOneLanguageResponseEnum.LANGUAGE_IS_NOT_EXIST };
       }
       if (
@@ -59,7 +59,7 @@ const languageService = {
     }
   },
   //Create one Language
-  async createOneRole(request) {
+  async createOneLanguage(request) {
     try {
       const resultValidator = createOneLanguageValidator.validate(request.name);
       if (!resultValidator.IsSuccess) {

@@ -66,8 +66,10 @@ const userService = {
       if (user.length == 0) {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
       }
+      console.log(new Date());
       user[0].Full_Name = request.body.fullname;
       user[0].Password = bcrypt.hashSync(request.body.password);
+      user[0].updated_at = new Date();
       if (
         (await _entityRepository("Users").updateEntity(
           request.params.id,

@@ -7,8 +7,6 @@ const userRepository = {
       .where("Email", email)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
-  //UPDATE USER
-  updateUserById(id) {},
   //DELETE BY EMAIL
   deleteUserByEmail(email) {
     return db("Users")
