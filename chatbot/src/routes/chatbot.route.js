@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+const chatbotService = require('../services/chatbot.service');
 
 router.get('/', (req, res) => {
     res.sendFile('index.html', { root: __dirname + '/../' });
@@ -29,7 +30,7 @@ function handleMessage(sender_psid, received_message) {
 }
 
 // Handles messaging_postbacks events
-function handlePostback(sender_psid, received_postback) {
+async function handlePostback(sender_psid, received_postback) {
     let response;
 
     // Get the payload for the postback
@@ -41,38 +42,13 @@ function handlePostback(sender_psid, received_postback) {
     } else if (payload === 'no') {
         response = { "text": "Oops, try sending another image." }
     } else if (payload === 'GET_STARTED') {
-        response = {
-            "text": "Welcome to my website."
-        }
+        await chatbotService.handleGetStarted(sender_psid);
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
-
 }
 
-// Sends response messages via the Send API
-function callSendAPI(sender_psid, response) {
-    // Construct the message body
-    let request_body = {
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": response
-    }
-    // Send the HTTP request to the Messenger Platform
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    });
-}
+
 
 router.post('/webhook', (req, res) => {
 
