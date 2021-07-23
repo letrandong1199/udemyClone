@@ -42,20 +42,7 @@ function handlePostback(sender_psid, received_postback) {
         response = { "text": "Oops, try sending another image." }
     } else if (payload === 'GET_STARTED') {
         response = {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    "template_type": "button",
-                    "text": "What do you want to do next?",
-                    "buttons": [
-                        {
-                            "type": "message",
-                            "url": "https://www.messenger.com",
-                            "title": "Visit Messenger"
-                        }
-                    ]
-                }
-            }
+            "text": "Welcome to my website."
         }
     }
     // Send the message to acknowledge the postback
