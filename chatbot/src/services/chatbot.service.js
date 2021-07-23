@@ -50,12 +50,53 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
+function returnTemplate() {
+    return {
+        "message": {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": [
+                        {
+                            "title": "Welcome!",
+                            "image_url": "https://www.studytienganh.vn/upload/2021/06/106293.jpg",
+                            "subtitle": "What's next?",
+                            "default_action": {
+                                "type": "web_url",
+                                "url": "https://petersfancybrownhats.com/view?item=103",
+                                "messenger_extensions": false,
+                                "webview_height_ratio": "tall",
+                                "fallback_url": "https://petersfancybrownhats.com/"
+                            },
+                            "buttons": [
+                                {
+                                    "type": "postback",
+                                    "title": "List categories",
+                                    "payload": "LIST_CATEGORIES"
+                                }, {
+                                    "type": "postback",
+                                    "title": "Search",
+                                    "payload": "SEARCH"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
+
 function handleGetStarted(sender_psid) {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await getUser(sender_psid)
             let response = { "text": `Welcome ${user.first_name}` };
+            let response2 = returnTemplate();
             await callSendAPI(sender_psid, response);
+
+
             resolve('OK');
         } catch (error) {
             console.log(error);
