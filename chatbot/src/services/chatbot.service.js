@@ -119,11 +119,9 @@ function returnCategories() {
 function handleListCategories(sender_psid) {
     return new Promise(async (resolve, reject) => {
         try {
-            let user = await getUser(sender_psid)
             let response = returnCategories();
 
             await callSendAPI(sender_psid, response);
-            await callSendAPI(sender_psid, response2);
 
             resolve('OK');
         } catch (error) {
@@ -187,6 +185,7 @@ function returnMessageAskingKeyword() {
         "quick_replies": [
             {
                 "content_type": "text",
+                "title": "search"
             }
         ]
     }
