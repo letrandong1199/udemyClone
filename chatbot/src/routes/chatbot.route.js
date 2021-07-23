@@ -7,10 +7,8 @@ require('dotenv').config();
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
-
-
 router.get('/', (req, res) => {
-    res.send('Hello');
+    res.sendFile('index.html', { root: __dirname + '/../' });
 });
 
 // Handles messages events
