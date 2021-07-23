@@ -1,17 +1,14 @@
-const express = require('express');
 const request = require('request')
 require('dotenv').config();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
-const setupProfile = express.Router();
-
-setupProfile.get('/', (req, res) => {
+exports.profileGet = (req, res) => {
     res.sendFile('profile.html', { root: __dirname + '/../' })
-})
+};
 
-setupProfile.post('/', async (req, res) => {
+exports.profilePost = async (req, res) => {
     console.log('Hello');
     // Construct the message body
     let request_body = {
@@ -57,6 +54,4 @@ setupProfile.post('/', async (req, res) => {
         }
     });
     return res.send('Sussess');
-});
-
-module.exports = setupProfile;
+}

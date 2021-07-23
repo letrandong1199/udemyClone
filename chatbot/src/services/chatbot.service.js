@@ -95,7 +95,7 @@ function handleGetStarted(sender_psid) {
             let response = { "text": `Welcome ${user.first_name}` };
             let response2 = returnTemplate();
             await callSendAPI(sender_psid, response);
-
+            await callSendAPI(sender_psid, response2);
 
             resolve('OK');
         } catch (error) {
