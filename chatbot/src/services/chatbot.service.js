@@ -73,7 +73,7 @@ function handleMarkSeen(sender_psid, response) {
 }
 
 // Sends response messages via the Send API
-function callSendAPI(sender_psid, response) {
+async function callSendAPI(sender_psid, response) {
     // Construct the message body
     let request_body = {
         "recipient": {
@@ -81,6 +81,8 @@ function callSendAPI(sender_psid, response) {
         },
         "message": response
     }
+    await handleMarkSeen(sender_psid);
+    await handleTypingOn(sender_psid);
     // Send the HTTP request to the Messenger Platform
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
