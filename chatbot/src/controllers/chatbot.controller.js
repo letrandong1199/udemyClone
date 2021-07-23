@@ -32,7 +32,7 @@ async function handlePostback(sender_psid, received_postback) {
 
     // Set the response based on the postback payload
     if (payload === 'LIST_CATEGORIES') {
-        response = { "text": "Thanks!" }
+        await chatbotService.handleListCategories(sender_psid);
     } else if (payload === 'no') {
         response = { "text": "Oops, try sending another image." }
     } else if (payload === 'GET_STARTED' || payload === 'RESTART') {

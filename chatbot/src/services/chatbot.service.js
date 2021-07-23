@@ -196,6 +196,7 @@ function sendMessageAskingPhoneNumber(sender_id) {
             ]
         }
     };
+    console.log("hahahaha");
 
     // Send the HTTP request to the Messenger Platform
     request({
