@@ -55,8 +55,8 @@ function callSendAPI(sender_psid, response) {
     });
 }
 
-async function handleGetStarted(sender_psid) {
-    return new Promise((resolve, reject) => {
+function handleGetStarted(sender_psid) {
+    return new Promise(async (resolve, reject) => {
         try {
             let user = await getUser(sender_psid)
             let response = { "text": `Welcome ${user.first_name}` };
