@@ -26,8 +26,8 @@ exports.profilePost = async (req, res) => {
                     },
                     {
                         "type": "postback",
-                        "title": "Outfit suggestions",
-                        "payload": "CURATION"
+                        "title": "Restart conservation",
+                        "payload": "RESTART"
                     },
                     {
                         "type": "web_url",
