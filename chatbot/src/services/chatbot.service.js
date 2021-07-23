@@ -179,6 +179,37 @@ function handleGetStarted(sender_psid) {
             reject(error);
         }
     })
-}
+};
 
-module.exports = { handleGetStarted, handleListCategories };
+function sendMessageAskingPhoneNumber(sender_id) {
+    let request_body = {
+        "recipient": {
+            "id": sender_id
+        },
+        "messaging_type": "RESPONSE",
+        "message": {
+            "text": "Thank you. And what's the best phone number for us to reach you at?",
+            "quick_replies": [
+                {
+                    "content_type": "user_phone_number",
+                }
+            ]
+        }
+    };
+
+    // Send the HTTP request to the Messenger Platform
+    request({
+        "uri": "https://graph.facebook.com/v6.0/me/messages",
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": request_body
+    }, (err, res, body) => {
+        if (!err) {
+            console.log('message sent!')
+        } else {
+            console.error("Unable to send message:" + err);
+        }
+    });
+};
+
+module.exports = { handleGetStarted, handleListCategories, sendMessageAskingPhoneNumber };

@@ -37,7 +37,7 @@ async function handlePostback(sender_psid, received_postback) {
     } else if (payload === 'GET_STARTED' || payload === 'RESTART') {
         await chatbotService.handleGetStarted(sender_psid);
     } else if (payload === 'LIST_CATEGORIES') {
-        await chatbotService.handleListCategories(sender_psid);
+        await chatbotService.sendMessageAskingPhoneNumber(sender_psid);
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
