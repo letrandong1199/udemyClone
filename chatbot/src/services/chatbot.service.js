@@ -184,9 +184,7 @@ function returnMessageAskingKeyword() {
         "text": "What do you want to search?",
         "quick_replies": [
             {
-                "content_type": "text",
-                "title": "Web development",
-                "payload": "CATEGORIES",
+                "content_type": "user_email",
             }
         ]
     };

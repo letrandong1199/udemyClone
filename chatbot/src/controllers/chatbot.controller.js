@@ -11,6 +11,7 @@ function handleMessage(sender_psid, received_message) {
 
     // Check if the message contains text
     if (received_message.text) {
+        console.log(received_message)
         if (received_message.quick_replies && received_message.quick_replies.payload) {
             if (message.quick_reply.payload !== " ") {
                 console.log(message.quick_replies.payload);
