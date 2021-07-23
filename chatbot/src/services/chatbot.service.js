@@ -212,4 +212,4 @@ function handleSendMessageAskingKeyword(sender_id) {
     });
 };
 
-module.exports = { handleGetStarted, handleListCategories, sendMessageAskingKeyword };
+module.exports = { handleGetStarted, handleListCategories, handleSendMessageAskingKeyword };
