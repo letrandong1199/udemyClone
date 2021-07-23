@@ -17,6 +17,17 @@ import CardMedia from '@material-ui/core/CardMedia';
 import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
 import Divider from '@material-ui/core/Divider';
 import { Fragment } from 'react';
+import Pagination from '@material-ui/lab/Pagination';
+import Select from '@material-ui/core/Select';
+import Chip from '@material-ui/core/Chip';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 const courses_list = courses();
 
@@ -85,13 +96,38 @@ function Result() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    const options = [
+        { label: 'Thing 1', value: 1 },
+        { label: 'Thing 2', value: 2 },
+    ];
+    const [option, setOption] = React.useState([]);
+    const handleChangeOption = (event) => {
+
+        setOption(event);
+        console.log(option);
+    };
+    const handleDelete = (event) => {
+
+    }
+
+    const styles = {
+        menu: (provided, state) => ({
+            border: '1px solid',
+            borderRadius: 5
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            borderRadius: 5,
+
+        }),
+    };
 
 
     return (
         <div>
             <Typography variant="h3" className={classes.bigTitle}>Development course</Typography>
             <Container className={classes.highlightSection} >
-                <Typography variant="h4" style={{ textAlign: 'center', padding: 20 }}>Highlight course</Typography>
+                <Typography variant="h4" className={classes.title}>Highlight course</Typography>
                 <StyledTabs value={value}
                     onChange={handleChange}
                     aria-label="login"
@@ -111,22 +147,53 @@ function Result() {
                 </TabPanel>
 
             </Container>
-            <Container style={{ paddingTop: 20, paddingBottom: 20, }}>
-                <Typography variant="h4" style={{ textAlign: 'center' }}>All course</Typography>
-                <Grid container>
-
+            <Container className={classes.section}>
+                <Typography variant="h4" className={classes.title}>All course</Typography>
+                <Grid container className={classes.filterContainer}>
+                    <ReactMultiSelectCheckboxes
+                        placeholderButtonLabel="Language"
+                        options={options}
+                        //value={selectedOption}
+                        onChange={handleChangeOption}
+                        hideSearch={true}
+                        getDropdownButtonLabel={({ placeholderButtonLabel, value }) => placeholderButtonLabel}
+                        className={classes.selectStyles}
+                    />
+                    <ReactMultiSelectCheckboxes
+                        placeholderButtonLabel="Duration"
+                        options={options}
+                        //value={selectedOption}
+                        onChange={handleChangeOption}
+                        hideSearch={true}
+                        getDropdownButtonLabel={({ placeholderButtonLabel, value }) => placeholderButtonLabel}
+                    />
+                    <ReactMultiSelectCheckboxes
+                        placeholderButtonLabel="Rating"
+                        options={options}
+                        //value={selectedOption}
+                        onChange={handleChangeOption}
+                        hideSearch={true}
+                        getDropdownButtonLabel={({ placeholderButtonLabel, value }) => placeholderButtonLabel}
+                    />
                 </Grid>
-                <List container style={{ padding: 20 }}>
-                    {courses_list.map((course) =>
-                        <Fragment>
-                            <ListItem>
+                <Grid container className={classes.chipsContainer}>
+                    {option.map((opt, index) => {
+                        return <Chip key={index} label={opt.label}
+                            onDelete={handleDelete} />
+                    })}
+                </Grid>
+                <List style={{ padding: 20 }}>
+                    {courses_list.map((course, index) =>
+                        <Fragment key={index}>
+                            <ListItem key={index}>
                                 <ProductCardH course={course} />
                             </ListItem>
                             <Divider variant="middle" />
                         </Fragment>)}
-
-
                 </List>
+                <Grid container alignItems="center" style={{ marginLeft: 20 }}>
+                    <Pagination count={10} color="primary" />
+                </Grid>
 
             </Container>
 

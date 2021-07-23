@@ -38,7 +38,7 @@ import { useStyles } from './styles';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import NestedMenuItem from "material-ui-nested-menu-item";
 import Menu from '@material-ui/core/Menu';
-import KeyboardArrowLeftRoundedIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
+import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import clsx from 'clsx';
 import config from '../../config/config';
 import useFetch from '../../utils/useFetch'
@@ -204,29 +204,35 @@ const NestedMenu = (props) => {
 
     return (
         <Fragment>
-            <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
+            {props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
                 aria-haspopup="true"
                 onClick={handleOpen}
                 title="catg"
                 id="sub"
             >
+                <ListItemText primary={props.text} className={clsx({ [classes.textExpandOpen]: open })} />
                 <ListItemIcon>
-                    <KeyboardArrowLeftRoundedIcon className={clsx(classes.expand, {
+                    <KeyboardArrowRightRoundedIcon className={clsx(classes.expand, {
                         [classes.expandOpen]: open,
                     })}
                         onClick={handleExpandClick}
                         aria-expanded={expanded}
                         aria-label="show more" />
                 </ListItemIcon>
+            </MenuItem>}
+            {!props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                title="catg"
+                id="sub"
+            >
                 <ListItemText primary={props.text} />
+            </MenuItem>}
 
-            </MenuItem>
-
-            <Popper open={open} placement="left-start" anchorEl={anchorRef} role={undefined} transition style={{ zIndex: 1500, marginRight: 3 }}>
+            <Popper open={open} placement="right-start" anchorEl={anchorRef} role={undefined} transition style={{ zIndex: 1500, marginLeft: 3, }}>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
-                        style={{ transformOrigin: placement === 'left-start' ? 'left start' : 'center bottom' }}
+                        style={{ transformOrigin: placement === 'right-start' ? 'right start' : 'center bottom' }}
                     >
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
@@ -263,8 +269,9 @@ const listToTree = (list) => {
 }
 
 const CategoryNestedMap = (props) => {
+    console.log(props.data);
     return (
-        <NestedMenu anchorRef={props.anchorRef} text={props.data.name}>
+        <NestedMenu anchorRef={props.anchorRef} text={props.data.name} hasChildren={props.data.children.length !== 0}>
             {props.data.children.map((child,
                 index) => <CategoryNestedMap key={index} anchorRef={props.anchorRef} data={child} />)}
         </NestedMenu>
@@ -495,11 +502,12 @@ function Navbar(props) {
                                 <ButtonBase id="logo-button" className={classes.logoButton}>
                                     <Link to="/"><ReactLogo className={classes.logo} /></Link>
                                 </ButtonBase>
+                                <CategoryMenu />
                             </Hidden>
 
                             <SearchBar />
                             <Hidden xsDown>
-                                <CategoryMenu />
+
                                 {isLogin && <ProfileButton handleLogout={handleAuth('logout')} />}
                             </Hidden>
                             {!isLogin && <RegisterButton handleLogin={handleAuth('login')} />}

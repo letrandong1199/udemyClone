@@ -3,12 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 
 
 export const useStyles = makeStyles((theme) => ({
-    root: {
-        borderRadius: '10px',
-        maxWidth: 345,
-        //boxShadow: '10x 10px 5px 1px rgba(143, 143, 143, 0.5)',
-        boxShadow: '5px 5px 5px rgba(143, 143, 143, .5)'
-    },
     paper: {
         padding: theme.spacing(2),
         textAlign: 'center',
@@ -30,25 +24,16 @@ export const useStyles = makeStyles((theme) => ({
         paddingBottom: 30,
         textAlign: 'center',
     },
-    list: {
-        display: 'flex',
-        //gridTemplateColumns: 'repeat(auto-fit, minmax(260px, max-content))',
-        /* overflow-x: auto; */
-        /* grid-gap: 50px; */
-        justifyContent: 'space-between',
-        /* padding: initial; */
-        maxWidth: '100%',
-        overflow: 'auto',
-        scrollSnapType: 'x mandatory',
-        MsOverflowStyle: 'none',  /* IE and Edge */
-        scrollbarWidth: 'none',  /* Firefox */
-        '&::-webkit-scrollbar': {
-            display: 'none',
-        },
-        [theme.breakpoints.down('xs')]: {
-            display: 'block',
-        },
+
+    section: {
+        paddingTop: 20,
+        paddingBottom: 20,
     },
+    title: {
+        textAlign: 'center',
+        padding: 20,
+    },
+
     indicator: {
         display: 'flex',
         justifyContent: 'center',
@@ -64,4 +49,36 @@ export const useStyles = makeStyles((theme) => ({
         paddingTop: 20,
         paddingBottom: 20,
     },
+    filterContainer: {
+        justifyContent: 'center',
+        //margin: 20,
+        width: 'auto',
+        '& > *': {
+            margin: theme.spacing(0.5),
+            borderRadius: theme.shape.borderRadius,
+            '& button': {
+                borderRadius: theme.shape.borderRadius,
+            },
+        },
+    },
+    chipsContainer: {
+        minHeight: 40,
+        justifyContent: 'center',
+        '& > *': {
+            margin: theme.spacing(0.5),
+        },
+    },
+    selectStyles: {
+        '&.react-select-container': {
+            '&.react-select__menu': {
+                backgroundColor: '#000',
+                '&.react-select__menu-list': {
+                    backgroundColor: '#000',
+                }
+            }
+        },
+        '&.react-select__menu': {
+            backgroundColor: '#000',
+        }
+    }
 }));

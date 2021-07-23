@@ -34,10 +34,9 @@
   "users": [
     {
       "uname": "tdk",
-      "name": "Trần Đình Khoát",
-      "id": 0,
       "password": "123456",
-      "email": null
+      "name": "Trần Đình Khoát",
+      "id": 0
     },
     {
       "uname": "zzf7ktx",

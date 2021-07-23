@@ -48,7 +48,6 @@ function ProductCardV(props) {
                     <Typography variant="subtitle1">{props.course.rating.toFixed(1)}</Typography>
                     <Rating
                         name={`hover-feedback-${props.name}-${props.id}`}
-                        disabled={true}
                         readOnly={true}
                         className={classes.rating}
                         value={props.course.rating}
@@ -63,7 +62,7 @@ function ProductCardV(props) {
                 </Collapse>
             </CardContent >
             <Hidden xsDown>
-                <CardActions disableSpacing>
+                <CardActions disableSpacing style={{ marginLeft: 'auto', flexDirection: 'column' }}>
                     <IconButton aria-label="add to favorites">
                         <FavoriteBorderRoundedIcon />
                     </IconButton>

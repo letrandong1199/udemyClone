@@ -13,7 +13,7 @@ export const lightTheme = unstable_createMuiStrictModeTheme({
             //light: '#6f63ff',
             main: '#0056d2', //'#0336ff',
             dark: '#0008ca',
-            contrastText: 'white',
+            contrastText: '#FFF',
         },
         secondary: {
             //light: '#ffff51',
@@ -38,10 +38,10 @@ export const lightTheme = unstable_createMuiStrictModeTheme({
 export const darkTheme = unstable_createMuiStrictModeTheme({
     palette: {
         primary: {
-            //light: '#6f63ff',
-            main: '#0056d2', //'#0336ff',
-            dark: '#0008ca',
-            contrastText: 'white',
+            light: '#205d9b', //'#6f63ff',
+            main: '#2E86DE', //'#0056d2', //'#0336ff',
+            dark: '#579ee4', //'#0008ca',
+            contrastText: '#FFF',
         },
         secondary: {
             //light: '#ffff51',
@@ -55,6 +55,9 @@ export const darkTheme = unstable_createMuiStrictModeTheme({
             default: '#1f1f1f',
             vibrant: 'hsl(240, 15%, 35%)',
             acrylic: 'rgba(127, 127, 127, 0.7)',
+        },
+        text: {
+            primary: 'rgb(234,234,238)',
         },
 
         type: 'dark',
