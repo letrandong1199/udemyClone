@@ -142,6 +142,7 @@
       "author": "Author 2",
       "description": "Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.",
       "price": 19,
+      "promote": 5,
       "rating": 3,
       "num_rating": 100,
       "num_enrolled": 100,

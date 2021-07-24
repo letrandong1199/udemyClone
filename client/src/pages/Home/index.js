@@ -56,7 +56,7 @@ function Home(props) {
                 {error1 && <div>{error1}</div>}
                 {courses_ && <Carousel courses={courses_} />}
                 <HomeIntroBanner />
-                <HomeSection title="Most viewed courses" courses={courses1} color="vibrant" />
+                <HomeSection title="Most popular courses" courses={courses1} color="vibrant" />
                 <HomeSection title="Most recent courses" courses={courses2} />
                 {isPending && <div><LinearProgress /></div>}
                 {error && <div>{error}</div>}

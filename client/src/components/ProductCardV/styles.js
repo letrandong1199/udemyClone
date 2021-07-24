@@ -44,6 +44,9 @@ export const useStyles = makeStyles((theme) => ({
             paddingTop: '56.25%', // 16:9
         },
     },
+    action: {
+        padding: 0,
+    },
     content: {
     },
     price: {
@@ -51,13 +54,27 @@ export const useStyles = makeStyles((theme) => ({
         bottom: '16px',
         left: '16px',
         borderRadius: 4,//'10px',
-        padding: '10px',
+        padding: '8px',
         backgroundColor: theme.palette.background.paper,
         opacity: '0.8',
         fontWeight: 'bold'
     },
+    tag: {
+        position: 'absolute',
+        top: '16px',
+        left: '16px',
+        borderRadius: 4,//'10px',
+        padding: '5px',
+        backgroundColor: theme.palette.secondary.main,
+        color: '#000',
+        //opacity: '0.8',
+        fontWeight: 'bold',
+        fontSize: 8,
+        textTransform: 'uppercase',
+    },
     rating: {
-        color: theme.palette.primary.secondary,
+        color: theme.palette.text.primary,
+        left: '-2px',
     },
     expand: {
         transform: 'rotate(0deg)',

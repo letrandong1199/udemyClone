@@ -2,10 +2,12 @@ export const courses = () => ([
     {
         id: 1,
         title: 'Python for Everybody Specialization',
-        thumb: 'assets/3.jpg',
+        thumb: '/assets/3.jpg',
         author: 'Author 2',
         description: 'Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.',
         price: 19,
+        promote: 5,
+        tag: "Best seller",
         rating: 3,
         num_rating: 100,
         num_enrolled: 100,
@@ -15,7 +17,7 @@ export const courses = () => ([
     {
         id: 2,
         title: 'Course 1 hej hjh jj hjh jh jhj hj hh j hj hj hj hj hj h jh jh jhj hj hj hj hj hj hj hj hj h jh jh jh j hj hj hj hjh jh ',
-        thumb: 'assets/1.jpg',
+        thumb: '/assets/1.jpg',
         author: 'Author 1',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -28,7 +30,7 @@ export const courses = () => ([
     {
         id: 3,
         title: 'Course 2',
-        thumb: 'assets/2.jpg',
+        thumb: '/assets/2.jpg',
         author: 'Author 2',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -41,7 +43,7 @@ export const courses = () => ([
     {
         id: 4,
         title: 'Course 1',
-        thumb: 'assets/1.jpg',
+        thumb: '/assets/1.jpg',
         author: 'Author 1',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -54,7 +56,7 @@ export const courses = () => ([
     {
         id: 5,
         title: 'Course 2',
-        thumb: 'assets/2.jpg',
+        thumb: '/assets/2.jpg',
         author: 'Author 2',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -67,7 +69,7 @@ export const courses = () => ([
     {
         id: 6,
         title: 'Course 1',
-        thumb: 'assets/1.jpg',
+        thumb: '/assets/1.jpg',
         author: 'Author 1',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -80,7 +82,7 @@ export const courses = () => ([
     {
         id: 7,
         title: 'Python for Everybody Specialization',
-        thumb: 'assets/3.jpg',
+        thumb: '/assets/3.jpg',
         author: 'Author 2',
         description: 'Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.',
         price: 19,
@@ -93,7 +95,7 @@ export const courses = () => ([
     {
         id: 8,
         title: 'Course 1 hej hjh jj hjh jh jhj hj hh j hj hj hj hj hj h jh jh jhj hj hj hj hj hj hj hj hj h jh jh jh j hj hj hj hjh jh ',
-        thumb: 'assets/1.jpg',
+        thumb: '/assets/1.jpg',
         author: 'Author 1',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -106,7 +108,7 @@ export const courses = () => ([
     {
         id: 9,
         title: 'Course 2',
-        thumb: 'assets/2.jpg',
+        thumb: '/assets/2.jpg',
         author: 'Author 2',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -119,7 +121,7 @@ export const courses = () => ([
     {
         id: 10,
         title: 'Course 1',
-        thumb: 'assets/1.jpg',
+        thumb: '/assets/1.jpg',
         author: 'Author 1',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -132,7 +134,7 @@ export const courses = () => ([
     {
         id: 11,
         title: 'Course 2',
-        thumb: 'assets/2.jpg',
+        thumb: '/assets/2.jpg',
         author: 'Author 2',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
@@ -145,7 +147,7 @@ export const courses = () => ([
     {
         id: 12,
         title: 'Course 1',
-        thumb: 'assets/1.jpg',
+        thumb: '/assets/1.jpg',
         author: 'Author 1',
         description: 'Here is a short description for this course. Blab blab blab blab.',
         price: 19,
