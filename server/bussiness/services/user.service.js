@@ -23,13 +23,11 @@ const userService = {
   //Get one user
   async getOneUser(request) {
     try {
-      const resultValidator = getOneUserValidator.validate(request.params.id);
+      const resultValidator = getOneUserValidator.validate(request.id);
       if (!resultValidator.IsSuccess) {
         return { Code: getOneUserResponseEnum.Code };
       }
-      const user = await _entityRepository("Users").getEntity(
-        request.params.id
-      );
+      const user = await _entityRepository("Users").getEntity(request.id);
       if (user.length == 0) {
         return { Code: getOneUserResponseEnum.ID_IS_INVALID };
       }
@@ -51,7 +49,7 @@ const userService = {
   async updateOneUser(request) {
     try {
       const resultValidator = updateOneUserValidator.validate(
-        request.params.id,
+        request.id,
         request.body.fullname,
         request.body.password
       );
@@ -59,9 +57,7 @@ const userService = {
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const user = await _entityRepository("Users").getEntity(
-        request.params.id
-      );
+      const user = await _entityRepository("Users").getEntity(request.id);
       console.log(user);
       if (user.length == 0) {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
@@ -71,10 +67,8 @@ const userService = {
       user[0].Password = bcrypt.hashSync(request.body.password);
       user[0].updated_at = new Date();
       if (
-        (await _entityRepository("Users").updateEntity(
-          request.params.id,
-          user[0]
-        )) === operatorType.FAIL.UPDATE
+        (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
+        operatorType.FAIL.UPDATE
       ) {
         return { Code: updateOneUserResponseEnum.SERVER_ERROR };
       }
@@ -129,17 +123,21 @@ const userService = {
   //Delete one user
   async deleteOneUser(request) {
     try {
-      const resultValidator = deleteOneUserValidator.validate(request.email);
+      const resultValidator = deleteOneUserValidator.validate(
+        request.params.id
+      );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const user = await userRepository.getUserByEmail(request.email);
+      const user = await _entityRepository("Users").getEntity(
+        request.params.id
+      );
       console.log(user);
       if (user.length == 0) {
-        return { Code: deleteOneUserResponseEnum.EMAIL_IS_NOT_EXIST };
+        return { Code: deleteOneUserResponseEnum.ID_IS_NOT_EXIST };
       }
       if (
-        (await userRepository.deleteUserByEmail(request.email)) ===
+        (await _entityRepository("Users").deleteEntity(request.params.id)) ===
         operatorType.FAIL.DELETE
       ) {
         return { Code: deleteOneUserResponseEnum.SERVER_ERROR };
@@ -156,7 +154,7 @@ const userService = {
         request.email,
         request.fullname,
         request.password
-        //request.roleOfUser
+        // request.roleOfUser
       );
       //console.log(resultValidator.IsSuccess);
       if (!resultValidator.IsSuccess) {

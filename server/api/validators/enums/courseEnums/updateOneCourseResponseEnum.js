@@ -1,5 +1,5 @@
 module.exports = {
-  SUCCESS: "add_course_success",
+  SUCCESS: "update_course_success",
   NAME_IS_EMPTY: "name_is_empty",
   NAME_IS_EXIST: "name_is_exist",
   TITLE_IS_EMPTY: "title_is_empty",
@@ -9,14 +9,13 @@ module.exports = {
   IMAGE_IS_EMPTY: "image_is_empty",
   PRICE_IS_EMPTY: "price_is_empty",
   CATEGORY_IS_EMPTY: "category_is_empty",
-  AUTHOR_IS_EMPTY: "author_is_empty",
   LANGUAGE_IS_EMPTY: "language_is_empty",
   PROMOTE_IS_EMPTY: "promote_is_empty",
   PROMOTE_IS_NOT_EXIST: "promote_is_not_exist",
   PRICE_IS_INVALID: "price_is_invalid",
   IMAGE_IS_INVALID: "image_is_invalid",
-  AUTHOR_IS_NOT_EXIST: "author_is_not_exist",
   LANGUAGE_IS_NOT_EXIST: "language_is_not_exist",
   CATEGORY_IS_NOT_EXIST: "category_is_not_exist",
+  ID_IS_INVALID: "id_is_invalid",
   SERVER_ERROR: "server_error",
 };
