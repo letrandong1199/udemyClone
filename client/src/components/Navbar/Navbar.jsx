@@ -41,7 +41,8 @@ import Menu from '@material-ui/core/Menu';
 import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import clsx from 'clsx';
 import config from '../../config/config';
-import useFetch from '../../utils/useFetch'
+import useFetch from '../../utils/useFetch';
+import authService from '../../services/auth.service';
 
 const ProfileButton = (props) => {
     const classes = useStyles();
@@ -358,10 +359,7 @@ const CategoryMenu = (props) => {
 
 const HideOnScroll = (props) => {
     const { children } = props;
-    const trigger = useScrollTrigger({
-        disableHysteresis: true,
-        threshold: 4,
-    });
+    const trigger = useScrollTrigger({ threshold: props.threshold });
 
     return (
         <Slide appear={false} direction="down" in={!trigger}>
@@ -400,7 +398,7 @@ function Navbar(props) {
         }
     }, [location])
 
-    const [isLogin, setIsLogin] = React.useState(window.sessionStorage.getItem('isLogin'))
+    const [isLogin, setIsLogin] = React.useState(authService.getCurrentUser())
     const handleAuth = (type) => (event) => {
         if (type === 'logout') {
             setIsLogin(false)
@@ -469,57 +467,54 @@ function Navbar(props) {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <HideOnScroll>
-                <AppBar color="default" className={classes.appBar} elevation={1}>
-                    <Toolbar>
-                        <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
-                            <Hidden smUp>
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="open drawer"
-                                    edge="start"
-                                    onClick={handleDrawerToggle}
-                                    size="small"
-                                >
-                                    <MenuIcon />
-                                </IconButton>
-                                <Drawer
-                                    variant="temporary"
-                                    anchor='left'
-                                    open={mobileOpen}
-                                    onClose={handleDrawerToggle}
-                                    classes={{
-                                        paper: classes.drawerPaper,
-                                    }}
-                                    ModalProps={{
-                                        keepMounted: true, // Better open performance on mobile.
-                                    }}
-                                >
-                                    {drawer}
-                                </Drawer>
-                            </Hidden>
-                            <Hidden xsDown>
-                                <ButtonBase id="logo-button" className={classes.logoButton}>
-                                    <Link to="/"><ReactLogo className={classes.logo} /></Link>
-                                </ButtonBase>
-                                <CategoryMenu />
-                            </Hidden>
 
-                            <SearchBar />
-                            <Hidden xsDown>
+            <AppBar color="default" className={classes.appBar} elevation={1}>
+                <Toolbar>
+                    <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
+                        <Hidden smUp>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                edge="start"
+                                onClick={handleDrawerToggle}
+                                size="small"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Drawer
+                                variant="temporary"
+                                anchor='left'
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                classes={{
+                                    paper: classes.drawerPaper,
+                                }}
+                                ModalProps={{
+                                    keepMounted: true, // Better open performance on mobile.
+                                }}
+                            >
+                                {drawer}
+                            </Drawer>
+                        </Hidden>
+                        <Hidden xsDown>
+                            <ButtonBase id="logo-button" className={classes.logoButton}>
+                                <Link to="/"><ReactLogo className={classes.logo} /></Link>
+                            </ButtonBase>
+                            <CategoryMenu />
+                        </Hidden>
 
-                                {isLogin && <ProfileButton handleLogout={handleAuth('logout')} />}
-                            </Hidden>
-                            {!isLogin && <RegisterButton handleLogin={handleAuth('login')} />}
-                            <Hidden xsDown>
-                                <IconButton onClick={props.handleToggle}>
-                                    <FlareRoundedIcon />
-                                </IconButton>
-                            </Hidden>
-                        </Grid>
-                    </Toolbar>
-                </AppBar>
-            </HideOnScroll>
+                        <SearchBar />
+                        {!isLogin && <RegisterButton handleLogin={handleAuth('login')} />}
+                        <Hidden xsDown>
+                            {isLogin && <ProfileButton handleLogout={handleAuth('logout')} />}
+                            <IconButton onClick={props.handleToggle}>
+                                <FlareRoundedIcon />
+                            </IconButton>
+                        </Hidden>
+                    </Grid>
+                </Toolbar>
+            </AppBar>
+
         </div >
     );
 }

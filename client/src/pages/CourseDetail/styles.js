@@ -1,6 +1,16 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
+    titleBar: {
+        backgroundColor: theme.palette.background.vibrant,
+        color: theme.palette.text.primary,
+    },
+    show: {
+        display: 'block',
+    },
+    hide: {
+        display: 'none'
+    },
     title: {
         fontWeight: 500,
         paddingTop: 40,
@@ -96,8 +106,8 @@ export const useStyles = makeStyles((theme) => ({
         borderRadius: 0,
         backgroundColor: theme.palette.background.default,
         paddingLeft: 10,
-        zIndex: 1600,
-        top: 0,
+        zIndex: theme.zIndex.appBar,
+        top: 64,
         position: 'sticky',
         overflow: 'auto',
 
@@ -111,6 +121,10 @@ export const useStyles = makeStyles((theme) => ({
             border: 'none !important',
             borderRadius: 0,
             '&:hover': {
+                backgroundColor: 'unset',
+                color: 'rgb(0, 86, 210)',
+            },
+            '& active': {
                 backgroundColor: 'unset',
                 color: 'rgb(0, 86, 210)',
             }

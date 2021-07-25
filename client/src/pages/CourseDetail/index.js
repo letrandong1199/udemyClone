@@ -32,6 +32,9 @@ import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import MyCarousel from '../../components/MyCarousel/MyCarousel.jsx';
 import { courses } from '../../utils/dataSample';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AppBar from '@material-ui/core/AppBar';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import Toolbar from '@material-ui/core/Toolbar';
 
 const list_courses = courses();
 
@@ -80,6 +83,8 @@ const Banner = ({ course }) => {
         event.preventDefault();
         console.log(link);
     }
+
+
 
     const categories = (course) => course.categories_tree.map((category, index) => {
         return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
@@ -132,7 +137,7 @@ const Banner = ({ course }) => {
                 <Divider />
                 <Grid item style={{ marginTop: 20 }}>
                     <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
-                    <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} ><FavoriteBorderRoundedIcon /> {'Wishlist'}</Button>
+                    <Button color="primary" size="large" variant="outlined" startIcon={<FavoriteBorderRoundedIcon />} style={{ marginRight: 20, textTransform: 'none' }} >{'Wishlist'}</Button>
                 </Grid>
             </Grid>
 
@@ -179,9 +184,6 @@ const Description = ({ course }) => {
 
 function DetailCourse() {
     const { id } = useParams();
-
-
-
     const [course, setCourse] = React.useState(empty_course);
     const { data: courses, isPending, error: errorFetch } = useFetch(`${config.HOST}:${config.PORT}/${config.COURSE_CONTROLLER}/${id}`);
 
@@ -196,10 +198,13 @@ function DetailCourse() {
     const bannerAnchor = React.useRef();
 
     React.useEffect(() => {
-        window.scrollTo(0, 160);
+        const scrollOptions = {
+            left: 0,
+            top: 190,
+            behavior: 'auto',
+        }
+        window.scrollTo(scrollOptions);
     }, [])
-
-
 
     const [expanded, setExpanded] = React.useState(false);
 
@@ -207,14 +212,26 @@ function DetailCourse() {
         setExpanded(isExpanded ? panel : false);
     };
     const classes = useStyles({ thumbnail: course.thumb });
+    const trigger = useScrollTrigger({ threshold: 640 });
     return (
         <div>
             <Container className={classes.outerBanner}>
                 <Banner ref={bannerAnchor} course={course} />
             </Container>
+            <AppBar className={trigger ? `${classes.titleBar} ${classes.show}` : `${classes.titleBar} ${classes.hide}`}>
+                <Toolbar>
+                    <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
+                        <Typography variant="h6">{course.title}</Typography>
+                        <Grid item alignItems="center">
+                            <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                            <Button color="primary" size="large" variant="outlined" startIcon={<FavoriteBorderRoundedIcon />} style={{ marginRight: 20, textTransform: 'none' }} >{'Wishlist'}</Button>
+                        </Grid>
+                    </Grid>
 
-            <ButtonGroup disableFocusRipple disableRipple variant="contained" aria-label="large button group" className={classes.buttonGroup}>
-                <Button disableElevation><a alt="description" href="#description-section" >About</a></Button>
+                </Toolbar>
+            </AppBar>
+            <ButtonGroup disableFocusRipple disableRipple elevation={1} variant="contained" aria-label="large button group" className={classes.buttonGroup}>
+                <Button disableElevation href="#description-section">About</Button>
                 <Button disableElevation><a alt="instructor" href="#instructor-section" >Instructor</a></Button>
                 <Button disableElevation><a alt="content" href="#content-section" >Content</a></Button>
                 <Button disableElevation>Review</Button>

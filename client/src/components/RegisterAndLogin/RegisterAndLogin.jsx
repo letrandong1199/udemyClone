@@ -15,6 +15,8 @@ import { useFetch } from '../../utils/useFetch';
 import config from '../../config/config';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
+import AuthService from "../../services/auth.service";
+import { useHistory } from 'react-router-dom';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -66,41 +68,27 @@ const RegisterTab = ({ value, index }) => {
         setOpenSnack(false);
     };
 
-    const handleClickRegister = () => {
-        const user = { uname, name, password, email }
+    const handleClickRegister = (event) => {
+        event.preventDefault();
         setIsPending(true);
-        fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`)
-            .then(res => {
-                return res.json();
-            })
-            .then(data => {
-                for (let user of data) {
-                    if (user.uname === uname) {
-                        setIsPending(false);
-                        throw new Error('User already exists');
-                    }
-                }
-                fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(user)
-                }).then(res => {
-                    console.log(res);
-                    console.log('Added');
-                    setIsPending(false);
-                    setSnackType("success");
-                    setSnackContent("Register success. You can login now.");
-                    setOpenSnack(true);
-                })
-            })
-            .catch(error => {
-                console.log(error);
-                setError(error);
-                setSnackType("error");
-                setSnackContent(error.message);
-                setOpenSnack(true);
-            })
 
+        AuthService.register(uname, name, password).then(
+            response => {
+                setSnackContent(response.data.Code)
+                setIsPending(false);
+            },
+            error => {
+                const resMessage =
+                    (error.response &&
+                        error.response.data &&
+                        error.response.data.message) ||
+                    error.message ||
+                    error.toString();
+
+                setError(resMessage);
+                setIsPending(false);
+            }
+        );
     }
     return (
         <TabPanel value={value} index={0}>
@@ -198,6 +186,7 @@ const LoginTab = ({ value, index, handleLogin }) => {
     const [openSnack, setOpenSnack] = React.useState(false);
     const [snackContent, setSnackContent] = React.useState(null);
     const [snackType, setSnackType] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
@@ -205,36 +194,26 @@ const LoginTab = ({ value, index, handleLogin }) => {
         }
         setOpenSnack(false);
     };
+    const history = useHistory();
+    const handleClickLogin = (event) => {
+        event.preventDefault();
 
-    const handleClickLogin = () => {
-        fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}`)
-            .then(res => {
-                return res.json();
-            }) // 
-            .then(data => {
-                console.log(data);
-                for (let user of data) {
-                    if (user.uname === uname) {
-                        if (user.password === password) {
-                            window.sessionStorage.setItem('isLogin', true);
-                            window.sessionStorage.setItem('user_id', user.id);
-                            setSnackType("success");
-                            setSnackContent("You are now logged in");
-                            setOpenSnack(true);
-                            return handleLogin();
-                        }
-                    }
-                }
+        setLoading(true);
 
-                throw Error('Invalid username or password');
-            })
-            .catch(error => {
-                console.log(error);
-                setError(error);
-                setSnackType("error");
-                setSnackContent(error.message);
-                setOpenSnack(true);
-            })
+        AuthService.login(uname, password)
+            .then(() => {
+                history.push("/profile");
+            }, error => {
+                const resMessage =
+                    (error.response &&
+                        error.response.data &&
+                        error.response.data.message) ||
+                    error.message ||
+                    error.toString();
+
+                setLoading(false);
+            }
+            );
     }
     return (
         <TabPanel value={value} index={1}>
@@ -318,7 +297,7 @@ function RegisterAndLogin(props) {
         if (tabsActions.current) {
             setTimeout(() => {
                 window.dispatchEvent(new CustomEvent('resize'));
-                tabsActions.current.updateIndicator();
+                // tabsActions.current.updateIndicator();
             }, 175);
         }
     }, [tabsActions]);

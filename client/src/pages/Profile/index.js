@@ -28,61 +28,64 @@ import config from '../../config/config';
 import clsx from 'clsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import HomeSection from '../../components/HomeSection/HomeSection.jsx'
+import UserService from '../../services/user.service';
+import AuthService from '../../services/auth.service';
 
 const AccountInfo = () => {
     const classes = useStyles();
-    const [uname, setUname] = React.useState(null);
-    const [name, setName] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-    //const [email, setEmail] = React.useState(null);
-    const id = window.sessionStorage.getItem('user_id');
-    const { data, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}/${id}`)
-    const [editable, setEditable] = React.useState(false);
 
+    const [user, setUser] = React.useState(null);
+    const [error, setError] = React.useState(null);
     React.useEffect(() => {
-        if (data) {
-            setName(data.name);
-            setUname(data.uname);
-            setPassword(data.password);
-        }
+        console.log(error);
+    }, [error])
+    React.useEffect(() => {
+        UserService.getUserBoard().then(
+            response => {
+                if (response.data.message) {
+                    if (response.data.message.resultResponse) {
+                        setUser(response.data.message.resultResponse)
+                        console.log("user", response.data.message.resultResponse);
+                    }
+                    else if (response.data.message === "Invalid_token") {
+                        setError(response.data.message)
+                    }
 
-    }, [data])
+                }
+            },
+            error => {
+                setError((
+                    error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                    error.message ||
+                    error.toString())
+            }
+        );
+        //console.log(user);
+    }, [])
+
+    const [editable, setEditable] = React.useState(false);
 
     const handleClickEdit = () => {
         setEditable(!editable)
     }
     const handleClickCancel = () => {
         setEditable(!editable)
-        setName(data.name);
-        setUname(data.uname);
-        setPassword(data.password);
     }
 
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
-    const timer = React.useRef();
 
     const handleClickSave = () => {
         //setEditable(!editable)
-        const update_info = { uname, password, name }
+        //const update_info = { uname, password, name }
         if (!loading) {
             setSuccess(false);
             setLoading(true);
 
         }
-        fetch(`${config.HOST}:${config.PORT}/${config.USER_CONTROLLER}/${id}`,
-            {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(update_info)
-            }).then((res) => {
-                setSuccess(true);
-                setLoading(false);
-                console.log(res);
-                return res.json();
-            }).catch((err) => {
-                console.log(err);
-            })
     }
     return (
         <Container style={{ padding: 0, flexGrow: 1 }}>
@@ -106,8 +109,8 @@ const AccountInfo = () => {
                             }}
                             required
                             disabled={!editable}
-                            onChange={(event) => setName(event.target.value)}
-                            value={isPending ? 'loading...' : name}
+                            onChange={(event) => setUser({ name: event.target.value })}
+                            value={user?.Full_Name}
                         />
                         {!editable && <Button variant="outlined" color="primary" onClick={handleClickEdit} >Edit</Button>}
                         {editable && <Fragment>
@@ -145,9 +148,8 @@ const AccountInfo = () => {
                                 ),
                             }}
                             disabled
-                            required
                             onChange={(event) => setPassword(event.target.value)}
-                            value={isPending ? 'loading...' : data.password}
+                            value={"password"}
                         />
 
                         <Button variant="outlined" color="primary" >Change password</Button>

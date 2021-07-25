@@ -5,6 +5,7 @@ const CourseDetailPage = lazy(() => import('./CourseDetail'));
 const ProfilePage = lazy(() => import('./Profile'));
 const ResultPage = lazy(() => import('./Result'));
 const CreateCoursePage = lazy(() => import('./CreateCourse'));
+const Page404 = lazy(() => import('./Page404'));
 //import ProfilePage from './Profile';
 //import CourseDetailPage from './CourseDetail';
 //import HomePage from './Home';
@@ -39,6 +40,12 @@ const routes = [
         exact: false,
         public: true,
         component: CreateCoursePage,
+    },
+    {
+        path: '*',
+        exact: false,
+        public: true,
+        component: Page404,
     }
 ];
 export default routes;
