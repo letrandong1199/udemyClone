@@ -5,7 +5,6 @@ const authTeacher = require("../middleware/authTeacher.mdw");
 const authUser = require("../middleware/authUser.mdw");
 const router = Router();
 router.post("/user", async (req, res) => {
-  console.log("hahahaha");
   console.log(req.body);
   const message = await userService.createOneUser(req.body);
   res.json({ message }).end();
@@ -13,11 +12,12 @@ router.post("/user", async (req, res) => {
 
 router.post("/authenticate-user", async (req, res) => {
   const message = await userService.signIn(req.body);
+  console.log(message);
   res.json({ message }).end();
 });
 
 router.post("/refresh-token", async (req, res) => {
-  const message = await userService.refreshToken(req.body);
+  const message = await userService.refreshToken(req);
   res.json({ message }).end();
 })
 

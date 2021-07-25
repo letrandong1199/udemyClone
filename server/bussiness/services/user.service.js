@@ -151,17 +151,20 @@ const userService = {
   },
   //Create one user
   async createOneUser(request) {
+    console.log("I'm here");
     try {
       const resultValidator = createOneUserValidator.validate(
         request.email,
-        request.fullname,
+        request.name,
         request.password
         // request.roleOfUser
       );
       //console.log(resultValidator.IsSuccess);
       if (!resultValidator.IsSuccess) {
+        console.log(resultValidator, "in user.service");
         return { Code: resultValidator.Code };
       }
+      console.log("Now, I'm in the door of repository");
       var user = await userRepository.getUserByEmail(request.email);
       if (user != "") {
         return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
@@ -173,12 +176,12 @@ const userService = {
       // console.log(roleOfUser[0]);
       const newUser = {
         Email: request.email,
-        Full_Name: request.fullname,
+        Full_Name: request.name,
         Password: bcrypt.hashSync(request.password, 8),
-        // Role_Id: roleOfUser[0].Id,
+        Role_Id: 1,
       };
       ret = await _entityRepository("Users").addEntity(newUser);
-      // console.log(ret);
+      console.log(ret);
       // console.log(newUser);
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneUserResponseEnum.SERVER_ERROR };
@@ -210,11 +213,12 @@ const userService = {
         Email: user[0].Email,
         Role_Id: user[0].Role_Id,
       };
+
       const jwToken = jwt.sign(payload, process.env.SECRET_KEY, {
         expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
       });
-      const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_KEY, {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24 * 7,
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
       });
       // Store refresh token in ...
       tokenList[refreshToken] = payload;
@@ -228,7 +232,7 @@ const userService = {
     }
   },
 
-  async refreshToken(request) {
+  async refreshToken(req) {
     const { refreshToken } = req.body;
     if ((refreshToken) && (refreshToken in tokenList)) {
       try {
