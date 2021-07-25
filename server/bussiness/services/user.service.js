@@ -19,6 +19,8 @@ const updateOneUserResponseEnum = require("../../api/validators/enums/userEnums/
 const getOneUserResponseEnum = require("../../api/validators/enums/userEnums/getOneUserResponseEnum");
 const getOneUserValidator = require("../../api/validators/userValidators/getOneUserValidator");
 require("dotenv").config();
+const tokenList = {};
+
 const userService = {
   //Get one user
   async getOneUser(request) {
@@ -149,16 +151,19 @@ const userService = {
   },
   //Create one user
   async createOneUser(request) {
+    console.log("I'm here");
     try {
       const resultValidator = createOneUserValidator.validate(
         request.email,
-        request.fullname,
+        request.name,
         request.password
       );
       //console.log(resultValidator.IsSuccess);
       if (!resultValidator.IsSuccess) {
+        console.log(resultValidator, "in user.service");
         return { Code: resultValidator.Code };
       }
+      console.log("Now, I'm in the door of repository");
       var user = await userRepository.getUserByEmail(request.email);
       if (user != "") {
         return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
@@ -170,12 +175,12 @@ const userService = {
       console.log(roleOfUser[0]);
       const newUser = {
         Email: request.email,
-        Full_Name: request.fullname,
+        Full_Name: request.name,
         Password: bcrypt.hashSync(request.password, 8),
         Role_Id: roleOfUser[0].Id,
       };
       ret = await _entityRepository("Users").addEntity(newUser);
-      // console.log(ret);
+      console.log(ret);
       // console.log(newUser);
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneUserResponseEnum.SERVER_ERROR };
@@ -207,14 +212,47 @@ const userService = {
         Email: user[0].Email,
         Role_Id: user[0].Role_Id,
       };
+
+      const jwToken = jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+      });
+      const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
+      });
+      // Store refresh token in ...
+      tokenList[refreshToken] = payload;
       return {
         Code: signInResponseEnum.SUCCESS,
-        token: jwt.sign(payload, process.env.SECRET_KEY, {
-          expiresIn: 60 * 60 * 24,
-        }),
+        token: jwToken,
+        refreshToken: refreshToken,
       };
     } catch (e) {
       console.log(e);
+    }
+  },
+
+  async refreshToken(req) {
+    const { refreshToken } = req.body;
+    if (refreshToken && refreshToken in tokenList) {
+      try {
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
+        const payload = tokenList[refreshToken];
+        const token = jwt.sign(payload, process.env.SECRET_KEY, {
+          expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+        });
+        return {
+          token,
+        };
+      } catch (error) {
+        console.error(err);
+        return {
+          Code: "Invalid refresh token",
+        };
+      }
+    } else {
+      return {
+        Code: "Invalid request",
+      };
     }
   },
 };

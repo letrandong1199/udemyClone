@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.string("Email").notNullable();
       table.string("Full_Name").notNullable();
       table.string("Password").notNullable();
+      table.string("Refresh_Token").defaultTo(null);
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.timestamp("updated_at").defaultTo(knex.fn.now());
       table.integer("Role_Id").unsigned().references("Id").inTable("Role");
@@ -75,7 +76,11 @@ exports.up = function (knex) {
       table.increments("Id").primary();
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
-    });
+    })
+    .createTable("Refresh_Token", function (table) {
+      table.string("Refresh_Token").notNullable().primary();
+      table.integer("User_Id");
+    })
 };
 
 exports.down = function (knex) {
