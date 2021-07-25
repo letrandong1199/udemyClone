@@ -11,5 +11,10 @@ const courseRepository = {
       .where("Title", title)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
+  getCourseByAuthorAndCourseId(author_id) {
+    return db(Courses)
+      .where("Author_Id", author_id)
+      .catch(() => operatorType.FAIL.NOT_EXIST);
+  },
 };
 module.exports = courseRepository;

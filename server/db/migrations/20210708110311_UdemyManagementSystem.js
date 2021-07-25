@@ -11,12 +11,7 @@ exports.up = function (knex) {
       table.string("Password").notNullable();
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table.timestamp("updated_at").defaultTo(knex.fn.now());
-      table
-        .integer("Role_Id")
-        .unsigned()
-        .references("Id")
-        .inTable("Role")
-        .defaultTo(1);
+      table.integer("Role_Id").unsigned().references("Id").inTable("Role");
     })
     .createTable("Categories", function (table) {
       table.increments("Id").primary();

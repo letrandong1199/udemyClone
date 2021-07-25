@@ -1,13 +1,12 @@
 const jwt = require("jsonwebtoken");
 const operatorType = require("../../utils/enums/operatorType");
 require("dotenv").config();
-module.exports = async (req, res, next) => {
+module.exports = (req, res, next) => {
   const token = req.headers["x-access-token"];
   if (token) {
     try {
       const payload = jwt.verify(token, process.env.SECRET_KEY);
       req.id = payload.User_Id;
-      console.log(req);
       next();
     } catch (e) {
       console.log(e);

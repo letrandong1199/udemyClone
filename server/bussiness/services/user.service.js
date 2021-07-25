@@ -154,7 +154,6 @@ const userService = {
         request.email,
         request.fullname,
         request.password
-        // request.roleOfUser
       );
       //console.log(resultValidator.IsSuccess);
       if (!resultValidator.IsSuccess) {
@@ -164,16 +163,16 @@ const userService = {
       if (user != "") {
         return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
       }
-      // const roleOfUser = await roleRepository.getRoleByName(request.roleOfUser);
-      // if (roleOfUser == "") {
-      //   return { Code: createOneUserResponseEnum.ROLE_OFUSER_IS_INVALID };
-      // }
-      // console.log(roleOfUser[0]);
+      const roleOfUser = await roleRepository.getRoleByName("User");
+      if (roleOfUser.length == 0) {
+        return { Code: createOneUserResponseEnum.ROLE_OFUSER_IS_INVALID };
+      }
+      console.log(roleOfUser[0]);
       const newUser = {
         Email: request.email,
         Full_Name: request.fullname,
         Password: bcrypt.hashSync(request.password, 8),
-        // Role_Id: roleOfUser[0].Id,
+        Role_Id: roleOfUser[0].Id,
       };
       ret = await _entityRepository("Users").addEntity(newUser);
       // console.log(ret);

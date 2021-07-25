@@ -7,6 +7,7 @@ const categoryController = require("./api/controller/category.controller");
 const languageController = require("./api/controller/language.controller");
 const promoteController = require("./api/controller/promote.controller");
 const courseController = require("./api/controller/course.controller");
+const sectionController = require("./api/controller/section.controller");
 require("dotenv").config();
 
 const app = express();
@@ -26,6 +27,7 @@ app.use("/api/category-controller", categoryController);
 app.use("/api/language-controller", languageController);
 app.use("/api/promote-controller", promoteController);
 app.use("/api/course-controller", courseController);
+app.use("/api/section-controller", sectionController);
 
 app.get("/err", function (req, res) {
   throw new Error("Error!!!");
