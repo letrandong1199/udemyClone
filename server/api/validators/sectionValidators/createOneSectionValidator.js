@@ -1,20 +1,20 @@
-const createOneSectionEnum = require("../enums/sectionEnums/createOneSectionResponse");
+const createOneSectionResponseEnum = require("../enums/sectionEnums/createOneSectionResponseEnum");
 module.exports = {
-  validate(name) {
+  validate(name, course_id) {
     if (name == null || name == "") {
       return {
-        Code: createOneSectionEnum.SECTION_NAME_IS_EMPTY,
+        Code: createOneSectionResponseEnum.SECTION_NAME_IS_EMPTY,
         Isuccess: false,
       };
     }
     if (course_id == null || course_id == "") {
       return {
-        Code: createOneSectionEnum.COURSE_ID_IS_EMPTY,
+        Code: createOneSectionResponseEnum.COURSE_ID_IS_EMPTY,
         Isuccess: false,
       };
     }
     return {
-      Code: createOneSectionEnum.SUCCESS,
+      Code: createOneSectionResponseEnum.SUCCESS,
       Isuccess: true,
     };
   },

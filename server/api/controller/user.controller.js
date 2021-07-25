@@ -12,14 +12,13 @@ router.post("/user", async (req, res) => {
 
 router.post("/authenticate-user", async (req, res) => {
   const message = await userService.signIn(req.body);
-  console.log(message);
   res.json({ message }).end();
 });
 
 router.post("/refresh-token", async (req, res) => {
   const message = await userService.refreshToken(req);
   res.json({ message }).end();
-})
+});
 
 router.get("/users", authAdmin, async (req, res) => {
   const message = await userService.getAllUser();

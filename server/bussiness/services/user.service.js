@@ -214,7 +214,7 @@ const userService = {
       };
 
       const jwToken = jwt.sign(payload, process.env.SECRET_KEY, {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 60 * 24,
       });
       const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,

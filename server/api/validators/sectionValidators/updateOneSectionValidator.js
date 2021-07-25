@@ -1,20 +1,26 @@
-const updateOneSectionEnum = require("../enums/sectionEnums/createOneSectionResponse");
+const updateOneSectionResponseEnum = require("../enums/sectionEnums/updateOneSectionResponseEnum");
 module.exports = {
-  validate(name, course_id) {
+  validate(course_id, name, id) {
     if (name == null || name == "") {
       return {
-        Code: updateOneSectionEnum.SECTION_NAME_IS_EMPTY,
+        Code: updateOneSectionResponseEnum.SECTION_NAME_IS_EMPTY,
         Isuccess: false,
       };
     }
     if (course_id == null || course_id == "") {
       return {
-        Code: updateOneSectionEnum.COURSE_ID_IS_EMPTY,
+        Code: updateOneSectionResponseEnum.COURSE_ID_IS_EMPTY,
+        Isuccess: false,
+      };
+    }
+    if (id == null || id == "") {
+      return {
+        Code: updateOneSectionResponseEnum.SECTION_ID_IS_EMPTY,
         Isuccess: false,
       };
     }
     return {
-      Code: updateOneSectionEnum.SUCCESS,
+      Code: updateOneSectionResponseEnum.SUCCESS,
       Isuccess: true,
     };
   },
