@@ -19,6 +19,8 @@ const updateOneUserResponseEnum = require("../../api/validators/enums/userEnums/
 const getOneUserResponseEnum = require("../../api/validators/enums/userEnums/getOneUserResponseEnum");
 const getOneUserValidator = require("../../api/validators/userValidators/getOneUserValidator");
 require("dotenv").config();
+const tokenList = {};
+
 const userService = {
   //Get one user
   async getOneUser(request) {
@@ -208,15 +210,50 @@ const userService = {
         Email: user[0].Email,
         Role_Id: user[0].Role_Id,
       };
+      const jwToken = jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+      });
+      const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_KEY, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24 * 7,
+      });
+      // Store refresh token in ...
+      tokenList[refreshToken] = payload;
       return {
         Code: signInResponseEnum.SUCCESS,
-        token: jwt.sign(payload, process.env.SECRET_KEY, {
-          expiresIn: 60 * 60 * 24,
-        }),
+        token: jwToken,
+        refreshToken: refreshToken,
       };
     } catch (e) {
       console.log(e);
     }
+  },
+
+  async refreshToken(request) {
+    const { refreshToken } = req.body;
+    if ((refreshToken) && (refreshToken in tokenList)) {
+      try {
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
+        const payload = tokenList[refreshToken];
+        const token = jwt.sign(payload, process.env.SECRET_KEY, {
+          expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+        });
+        return {
+          token,
+        }
+
+      } catch (error) {
+        console.error(err);
+        return {
+          Code: 'Invalid refresh token',
+        }
+      }
+
+    } else {
+      return {
+        Code: 'Invalid request',
+      }
+    }
+
   },
 };
 module.exports = userService;

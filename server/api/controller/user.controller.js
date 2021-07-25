@@ -16,6 +16,11 @@ router.post("/authenticate-user", async (req, res) => {
   res.json({ message }).end();
 });
 
+router.post("/refresh-token", async (req, res) => {
+  const message = await userService.refreshToken(req.body);
+  res.json({ message }).end();
+})
+
 router.get("/users", authAdmin, async (req, res) => {
   const message = await userService.getAllUser();
   res.json({ message }).end();
