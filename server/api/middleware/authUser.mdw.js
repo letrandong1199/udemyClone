@@ -8,10 +8,11 @@ module.exports = (req, res, next) => {
     try {
       const payload = jwt.verify(token, process.env.SECRET_KEY);
       req.id = payload.User_Id;
+      console.log('I here');
       next();
     } catch (e) {
       console.log(e);
-      return res.json({ message: "Invalid_token" });
+      return res.status(401).json({ message: "Invalid_token" });
     }
   } else {
     return res.json({ message: "Token is not found" }).end();
