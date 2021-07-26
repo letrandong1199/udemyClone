@@ -97,13 +97,6 @@ export const useStyles = makeStyles((theme) => ({
             display: 'flex',
         },
     },
-    popoverRegisterAndLogin: {
-        width: '100vw',
-        backgroundColor: 'rgba(81,81,81,0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     expand: {
         transform: 'rotate(0deg)',
         marginLeft: 'auto',

@@ -8,7 +8,6 @@ const popups = {
 }
 
 const GetParameterPopups = () => {
-    console.log("temp");
     const { mountedPopup, isOpened } = useGetPopupState();
     const Component = popups[mountedPopup]
     if (!Component) {

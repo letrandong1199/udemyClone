@@ -1,15 +1,20 @@
-import { ReactComponent as Image404 } from "../../404.svg";
+import { ReactComponent as Image404 } from '../../svgs/404.svg';
 import { useStyles } from './styles';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import { Grid, Button } from '@material-ui/core'
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../config/config';
 
 export default function Page404() {
     const classes = useStyles();
     return (
         <Grid container className={classes.root}>
-            <Image404 width={"40%"} />
-            <Button><Link to='/'>Go home</Link></Button>
+            <Image404 width={'40%'} />
+            <Button
+                component={Link}
+                to={ROUTES.home}
+            >
+                Go home
+            </Button>
         </Grid>
     )
 };

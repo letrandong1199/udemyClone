@@ -1,5 +1,5 @@
 import useGetParameter from './useGetParameter';
-import { GET_PARAMS, GET_ENUMS } from '../config/config';
+import { GET_PARAMS } from '../config/config';
 import { useState, useEffect, useMemo } from 'react';
 
 let timeout;

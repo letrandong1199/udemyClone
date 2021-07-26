@@ -11,8 +11,7 @@ import Tab from '@material-ui/core/Tab';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useStyles } from './styles';
-import { useFetch } from '../../utils/useFetch';
-import config from '../../config/config';
+import { GET_ENUMS } from '../../config/config';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import AuthService from "../../services/auth.service";
@@ -197,7 +196,6 @@ const LoginTab = ({ value, index, handleLogin }) => {
     const history = useHistory();
     const handleClickLogin = (event) => {
         event.preventDefault();
-
         setLoading(true);
 
         AuthService.login(uname, password)
@@ -205,7 +203,7 @@ const LoginTab = ({ value, index, handleLogin }) => {
                 setLoading(false);
                 setSnackContent("Login success");
                 //setOpenSnack(true)
-                //history.push("/profile");
+                history.goBack();
             }, error => {
                 const resMessage =
                     (error.response &&
@@ -290,7 +288,13 @@ const LoginTab = ({ value, index, handleLogin }) => {
 
 function RegisterAndLogin(props) {
     const classes = useStyles();
-    const [value, setValue] = React.useState(0);
+
+    const popups = {
+        [GET_ENUMS.popup.signIn]: 1,
+        [GET_ENUMS.popup.signUp]: 0,
+    };
+
+    const [value, setValue] = React.useState(popups[props.tab]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -305,6 +309,8 @@ function RegisterAndLogin(props) {
             }, 175);
         }
     }, [tabsActions]);
+
+
 
     return (
         <Paper className={classes.loginSection}>

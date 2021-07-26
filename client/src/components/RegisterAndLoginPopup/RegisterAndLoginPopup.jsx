@@ -8,18 +8,17 @@ const RegisterAndLoginPopup = ({ isOpened, tab }) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
     const openRegister = Boolean(anchorEl);
-    const id = openRegister ? 'simple-popover' : undefined;
     const styles = useStyles();
     const history = useHistory();
 
 
     const handleLogin = (event) => {
-
+        return history.goBack;
     }
 
     return (
         <Popover
-            id={id}
+            id={tab}
             open={isOpened}
             anchorReference="none"
             onClose={history.goBack}
@@ -33,7 +32,7 @@ const RegisterAndLoginPopup = ({ isOpened, tab }) => {
             }}
             className={classes.popoverRegisterAndLogin}
         >
-            <RegisterAndLogin handleLogin={handleLogin} />
+            <RegisterAndLogin handleLogin={handleLogin} tab={tab} />
         </Popover>
     )
 }

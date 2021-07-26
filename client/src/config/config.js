@@ -7,18 +7,26 @@ const config = {
     "ENROLLED": "enrolled",
 };
 
+export const ROUTES = {
+    home: "/",
+    courseDetail: "/course/detail",
+    profile: "/profile",
+    myLearning: "/my-learning",
+    createCourse: "/course/create",
+    editCourse: "/course/edit",
+    admin: "/admin",
+    instructor: "/instructor",
+    search: "/course/search",
+}
 
 export const GET_PARAMS = {
     popup: "auth",
-    notificationId: "notification-id",
 };
 
 export const GET_ENUMS = {
     popup: {
         signIn: "sign-in",
         signUp: "sign-up",
-        notifications: "notifications",
-        notificationDetails: "notification-details",
     },
 };
 
