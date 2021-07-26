@@ -62,16 +62,20 @@ const promoteService = {
   //Create one Promote
   async createOnePromote(request) {
     try {
-      const resultValidator = createOnePromoteValidator.validate(request.price);
+      const resultValidator = createOnePromoteValidator.validate(
+        request.promote
+      );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const promote = await promoteRepository.getPromoteByPrice(request.price);
-      if (promote != null) {
+      const promote = await promoteRepository.getPromoteByPromote(
+        request.promote
+      );
+      if (promote.length != null) {
         return { Code: createOnePromoteResponseEnum.Promote_IS_EXIST };
       }
       const newPromote = {
-        Price: request.price,
+        Promote: request.promote,
         Start_Time: new Date(),
       };
       console.log(newPromote);

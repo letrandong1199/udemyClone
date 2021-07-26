@@ -58,9 +58,9 @@ const courseService = {
       const promote = await promoteRepository.getPromoteByPromote(
         request.promote
       );
-      //   if (promote.length == 0) {
-      //     return { Code: createOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
-      //   }
+      if (promote.length == 0) {
+        return { Code: createOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
+      }
       const language = await languageRepository.getLanguageByName(
         request.language
       );
@@ -81,7 +81,7 @@ const courseService = {
         Price: request.price,
         Category_Id: category[0].Id,
         Author_Id: author[0].Id,
-        //Promote_Id: promote[0].Id,
+        Promote_Id: promote[0].Id,
         Language_Id: language[0].Id,
       };
       if (
@@ -115,6 +115,7 @@ const courseService = {
             Author: author[0].Full_Name,
             Category: category[0].Name,
             Sub_Description: course.Sub_Description,
+            Promote: promote[0].Promote,
           };
         })
       );
@@ -186,9 +187,9 @@ const courseService = {
       const promote = await promoteRepository.getPromoteByPromote(
         request.body.promote
       );
-      // if (promote.length == 0) {
-      //   return { Code: updateOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
-      // }
+      if (promote.length == 0) {
+        return { Code: updateOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
+      }
       const language = await languageRepository.getLanguageByName(
         request.body.language
       );
@@ -202,7 +203,7 @@ const courseService = {
       course[0].Image = newImage;
       course[0].Price = request.body.price;
       course[0].Category_Id = category[0].Id;
-      //course[0].Promote_Id = promote[0].Id;
+      course[0].Promote_Id = promote[0].Id;
       course[0].Language_Id = language[0].Id;
       course[0].last_update = new Date();
       if (
@@ -239,7 +240,7 @@ const courseService = {
         Sub_Description: course[0].Sub_Description,
         Description: course[0].Description,
         Price: course[0].Price,
-        //Promote: promote[0].Promote,
+        Promote: promote[0].Promote,
         //Rating/number of user
         //number of user register
         //section,lecture,media
