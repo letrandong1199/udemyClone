@@ -1,10 +1,10 @@
 const Router = require("express");
-const userService = require("../../bussiness/services/user.service");
+const userService = require("../../business/services/user.service");
 const authAdmin = require("../middleware/authAdmin.mdw");
 const authTeacher = require("../middleware/authTeacher.mdw");
 const authUser = require("../middleware/authUser.mdw");
 const router = Router();
-router.post("/user", async (req, res) => {
+router.post("/users", async (req, res) => {
   console.log(req.body);
   const message = await userService.createOneUser(req.body);
   res.json({ message }).end();
@@ -30,17 +30,17 @@ router.get("/get-info", authUser, async (req, res) => {
   res.json({ message }).end();
 });
 
-router.get("/user/:id", authAdmin, async (req, res) => {
+router.get("/users/:id", authAdmin, async (req, res) => {
   const message = await userService.getOneUser(req.params);
   res.json({ message }).end();
 });
 
-router.delete("/user/:id", authAdmin, async (req, res) => {
+router.delete("/users/:id", authAdmin, async (req, res) => {
   const message = await userService.deleteOneUser(req);
   res.json({ message }).end();
 });
 
-router.put("/user/update-user", authUser, async (req, res) => {
+router.put("/users/update-user", authUser, async (req, res) => {
   const message = await userService.updateOneUser(req);
   res.json({ message }).end();
 });

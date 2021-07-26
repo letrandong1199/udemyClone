@@ -35,10 +35,11 @@ const courseService = {
         return { Code: resultValidator.Code };
       }
       try {
-        const upLoadImage = await cloudinary.uploader.upload(request.image, {
+        const image = JSON.parse(request.image);
+        const upLoadImage = await cloudinary.uploader.upload(image, {
           upload_preset: "udemy-clone-cloud",
         });
-        console.log(upLoadImage);
+        //console.log(upLoadImage);
         var newImage = upLoadImage.secure_url;
       } catch (e) {
         return { Code: createOneCourseResponseEnum.IMAGE_IS_INVALID };
@@ -84,13 +85,12 @@ const courseService = {
         Promote_Id: promote[0].Id,
         Language_Id: language[0].Id,
       };
-      if (
-        _entityRepository("Courses").addEntity(newCourse) ===
-        operatorType.FAIL.CREATE
-      ) {
+      const ret = _entityRepository("Courses").addEntity(newCourse)
+      if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneCourseResponseEnum.SERVER_ERROR };
       }
-      return { Code: createOneCourseResponseEnum.SUCCESS };
+      newCourse.Course_Id = ret[0];
+      return { Code: createOneCourseResponseEnum.SUCCESS, newCourse };
     } catch (e) {
       console.log(e);
     }

@@ -42,7 +42,7 @@ module.exports = {
         Isuccess: false,
       };
     }
-    if (price == null || image == "") {
+    if (price == null || price == "") {
       return {
         Code: createOneCourseResponseEnum.PRICE_IS_EMPTY,
         Isuccess: false,
@@ -72,6 +72,7 @@ module.exports = {
         Isuccess: false,
       };
     }
+    console.log(typeof price);
     if (typeof price != "number") {
       return {
         Code: createOneCourseResponseEnum.PRICE_IS_INVALID,
