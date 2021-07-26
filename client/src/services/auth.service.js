@@ -49,6 +49,12 @@ class AuthService {
         return JSON.parse(localStorage.getItem('user'));
     };
 
+    getCurrentUserId() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const id = JSON.parse(atob(user.token.split('.')[1])).User_Id;
+        return id
+    }
+
     isUser() {
         const user = JSON.parse(localStorage.getItem('user'));
         console.log(user);

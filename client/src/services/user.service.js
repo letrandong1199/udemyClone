@@ -32,7 +32,8 @@ class UserService {
                 return Promise.reject(error);
             }
         );
-    }
+    };
+
     getPublicContent() {
         return axios.get(API_URL + 'all');
     }

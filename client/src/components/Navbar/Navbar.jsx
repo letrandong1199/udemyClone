@@ -44,6 +44,7 @@ import { useStyles } from './styles';
 import config from '../../config/config';
 import useFetch from '../../utils/useFetch';
 import authService from '../../services/auth.service';
+import categoryService from '../../services/category.service';
 import usePrepareLink from '../../utils/usePrepareLink';
 import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
 import listToTree from '../../utils/listToTree';
@@ -246,7 +247,7 @@ const NestedMenu = (props) => {
 
 const CategoryNestedMap = (props) => {
     return (
-        <NestedMenu anchorRef={props.anchorRef} text={props.data.name} hasChildren={props.data.children.length !== 0}>
+        <NestedMenu anchorRef={props.anchorRef} text={props.data.Name} hasChildren={props.data.children.length !== 0}>
             {props.data.children.map((child,
                 index) => <CategoryNestedMap key={index} anchorRef={props.anchorRef} data={child} />)}
         </NestedMenu>
@@ -256,14 +257,21 @@ const CategoryNestedMap = (props) => {
 const CategoryMenu = (props) => {
     const classes = useStyles();
 
-    const { data, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/categories`);
+    const [isPending, setIsPending] = useState(false)
     const [categoriesTree, setCategoriesTree] = useState([]);
-    useEffect(() => {
-        if (data) {
-            setCategoriesTree(listToTree(data));
-        }
 
-    }, [data])
+    useEffect(() => {
+        categoryService.getAll().then(response => {
+            console.log('catg');
+            const categoriesArray = response.data.message.listAllResponse;
+            const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: null });
+            console.log(tree);
+            setCategoriesTree(categoriesArray);
+        })
+    }, [])
+
+
+
 
     const [open, setOpen] = useState(false);
     const anchorRef = useRef(null);
