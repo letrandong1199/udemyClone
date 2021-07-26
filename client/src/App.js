@@ -3,11 +3,12 @@ import './App.css';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import { lightTheme, darkTheme } from './theme';
-import { BrowserRouter as Router, Route, Switch, withRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, withRouter, useLocation } from 'react-router-dom';
 import routes from './pages/routes';
 import Navbar from './components/Navbar/Navbar.jsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+import GetParameterPopups from './components/GetParameterPopups/GetParameterPopups';
 /*
 
 const useStyles = makeStyles((theme) => ({
@@ -97,7 +98,7 @@ function App() {
     setDark(!dark);
     console.log(dark);
   }
-
+  //let location = useLocation();
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
       <Suspense fallback={<div><CircularProgress /></div>}>
@@ -108,6 +109,7 @@ function App() {
               return <Route key={path} path={path} component={component} {...rest} />
             })}
           </Switch>
+          <GetParameterPopups />
         </Router>
       </Suspense>
     </MuiThemeProvider >

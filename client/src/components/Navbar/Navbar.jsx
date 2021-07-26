@@ -36,13 +36,16 @@ import { useLocation } from 'react-router-dom';
 import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
 import { useStyles } from './styles';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
-import NestedMenuItem from "material-ui-nested-menu-item";
 import Menu from '@material-ui/core/Menu';
 import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import clsx from 'clsx';
 import config from '../../config/config';
 import useFetch from '../../utils/useFetch';
 import authService from '../../services/auth.service';
+import usePrepareLink from "../../utils/usePrepareLink";
+import { GET_ENUMS, GET_PARAMS } from "../../config/config";
+
+
 
 const ProfileButton = (props) => {
     const classes = useStyles();
@@ -119,46 +122,24 @@ const ProfileButton = (props) => {
 
 }
 
-const RegisterButton = (props) => {
+const RegisterButton = () => {
+    const signUpLink = usePrepareLink({
+        query: {
+            [GET_PARAMS.popup]: GET_ENUMS.popup.signUp
+        }
+    });
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const openRegister = Boolean(anchorEl);
-    const id = openRegister ? 'simple-popover' : undefined;
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
 
     return (
-        <Fragment>
-            <Button color="primary" variant="contained" className={classes.registerButton} onClick={handleClick}>
-                Register
-            </Button>
-            <Popover
-                id={id}
-                open={openRegister}
-                anchorReference="none"
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                className={classes.popoverRegisterAndLogin}
-            >
-                <RegisterAndLogin handleLogin={props.handleLogin} />
-            </Popover>
-        </Fragment>
+        <Button color="primary"
+            variant="contained"
+            className={classes.registerButton}
+            component={Link}
+            to={signUpLink}>
+            Register
+        </Button>
     )
 }
-
 const SearchBar = () => {
     const classes = useStyles();
     return (
@@ -270,7 +251,6 @@ const listToTree = (list) => {
 }
 
 const CategoryNestedMap = (props) => {
-    console.log(props.data);
     return (
         <NestedMenu anchorRef={props.anchorRef} text={props.data.name} hasChildren={props.data.children.length !== 0}>
             {props.data.children.map((child,

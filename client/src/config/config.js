@@ -6,4 +6,20 @@ const config = {
     "CATEGORY_CONTROLLER": "categories",
     "ENROLLED": "enrolled",
 };
+
+
+export const GET_PARAMS = {
+    popup: "auth",
+    notificationId: "notification-id",
+};
+
+export const GET_ENUMS = {
+    popup: {
+        signIn: "sign-in",
+        signUp: "sign-up",
+        notifications: "notifications",
+        notificationDetails: "notification-details",
+    },
+};
+
 export default config;

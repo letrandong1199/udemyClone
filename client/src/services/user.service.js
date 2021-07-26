@@ -2,30 +2,6 @@ import axios from 'axios';
 import authHeader from './authHeader.service.js';
 
 const API_URL = 'http://localhost:8080/api/user-controller';
-
-axios.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    function (error) {
-        const originalRequest = error.config;
-        let user = localStorage.getItem("user");
-        if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-            return axios
-                .post(API_URL + '/refresh_token', { refreshToken: user.refreshToken })
-                .then((res) => {
-                    if (res.status === 200) {
-                        user["token"] = res.data.message.accessToken
-                        localStorage.setItem("accessToken", res.data.accessToken);
-                        console.log("Access token refreshed!");
-                        return axios(originalRequest);
-                    }
-                });
-        }
-        return Promise.reject(error);
-    }
-);
 class UserService {
     constructor() {
         axios.interceptors.response.use(
@@ -43,9 +19,12 @@ class UserService {
                         .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
                         .then((res) => {
                             if (res.status === 200) {
-                                user.token = res.data.message.accessToken
+                                user.token = res.data.message.token
                                 localStorage.setItem("user", JSON.stringify(user));
+                                console.log(user);
                                 console.log("Access token refreshed!");
+                                originalRequest.headers = authHeader();
+                                console.log("originalRequest", originalRequest);
                                 return axios(originalRequest);
                             }
                         });

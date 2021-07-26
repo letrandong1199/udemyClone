@@ -202,7 +202,10 @@ const LoginTab = ({ value, index, handleLogin }) => {
 
         AuthService.login(uname, password)
             .then(() => {
-                history.push("/profile");
+                setLoading(false);
+                setSnackContent("Login success");
+                //setOpenSnack(true)
+                //history.push("/profile");
             }, error => {
                 const resMessage =
                     (error.response &&
@@ -210,7 +213,8 @@ const LoginTab = ({ value, index, handleLogin }) => {
                         error.response.data.message) ||
                     error.message ||
                     error.toString();
-
+                setSnackContent(resMessage);
+                setOpenSnack(true)
                 setLoading(false);
             }
             );
