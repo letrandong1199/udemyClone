@@ -39,6 +39,7 @@ const userService = {
         Full_Name: user[0].Full_Name,
         Password: user[0].Password,
       };
+      console.log(userResponse);
       return {
         Code: getOneUserResponseEnum.SUCCESS,
         resultResponse: userResponse,
@@ -214,7 +215,7 @@ const userService = {
       };
 
       const jwToken = jwt.sign(payload, process.env.SECRET_KEY, {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 60 * 24,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
       });
       const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
@@ -238,7 +239,7 @@ const userService = {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
         const payload = tokenList[refreshToken];
         const token = jwt.sign(payload, process.env.SECRET_KEY, {
-          expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+          expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
         });
         return {
           token,
