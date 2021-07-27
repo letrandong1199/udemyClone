@@ -238,11 +238,13 @@ const userService = {
       try {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
         const payload = tokenList[refreshToken];
-        const token = jwt.sign(payload, process.env.SECRET_KEY, {
+        const token = await jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
         });
         return {
-          token,
+          Code: signInResponseEnum.SUCCESS,
+          token: token,
+          refreshToken: refreshToken,
         };
       } catch (error) {
         console.error(err);

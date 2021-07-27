@@ -17,7 +17,7 @@ const categoryService = {
     try {
       const resultValidator = updateOneCategoryValidator.validate(
         request.params.id,
-        request.body.name
+        request.body.Name
       );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
@@ -29,13 +29,21 @@ const categoryService = {
       if (category.length == 0) {
         return { Code: updateOneCategoryResponseEnum.ID_IS_INVALID };
       }
-      console.log(request.body.name);
-      const ret = await categoryRepository.getCategoryByName(request.body.name);
-      console.log("Ret:", ret);
+      const ret = await categoryRepository.getCategoryByName(request.body.Name);
+
       if (ret.length != 0) {
         return { Code: updateOneCategoryResponseEnum.CATEGORY_NAME_IS_EXIST };
       }
-      category[0].Name = request.body.name;
+
+      if (!request.Parent_Id) {
+        const categoryParent = await _entityRepository("Categories").getEntity(request.Parent_Id)
+        if (category.length == 0) {
+          return { Code: createOneCategoryResponseEnum.PARENT_IS_NOT_EXIST };
+        }
+      }
+
+      category[0].Name = request.body.Name;
+      category[0].Parent_Id = request.body.Parent_Id;
       if (
         (await _entityRepository("Categories").updateEntity(
           request.params.id,
@@ -112,8 +120,16 @@ const categoryService = {
       if (category.length != 0) {
         return { Code: createOneCategoryResponseEnum.CATEGORY_IS_EXIST };
       }
+
+      if (!request.Parent_Id) {
+        const categoryParent = await _entityRepository("Categories").getEntity(request.Parent_Id)
+        if (category.length == 0) {
+          return { Code: createOneCategoryResponseEnum.PARENT_IS_NOT_EXIST };
+        }
+      }
       const newCategory = {
-        Name: request.name,
+        Name: request.Name,
+        Parent_Id: request.Parent_Id,
       };
       ret = await _entityRepository("Categories").addEntity(newCategory);
       if (ret === operatorType.FAIL.CREATE) {

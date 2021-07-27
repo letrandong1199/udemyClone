@@ -67,10 +67,23 @@ const courseService = {
       // Upload image
       try {
         const image = request.Image;
-        const upLoadImage = await cloudinary.uploader.upload(image, {
-          folder: 'udemy'
+        const upLoadImageLarge = await cloudinary.uploader.upload(image, {
+          folder: 'udemy-clone-cloud',
         });
-        var newImage = upLoadImage.secure_url;
+        const upLoadImageSmall = await cloudinary.uploader.upload(image, {
+          folder: 'udemy-clone-cloud',
+          width: 128,
+          height: 128 * 9 / 16
+        });
+        const upLoadImageMedium = await cloudinary.uploader.upload(image, {
+          folder: 'udemy-clone-cloud',
+          width: 512,
+          height: 512 * 9 / 16
+        });
+
+        var newImageLarge = upLoadImageLarge.secure_url;
+        var newImageMedium = upLoadImageMedium.secure_url;
+        var newImageSmall = upLoadImageSmall.secure_url;
       } catch (e) {
         console.log('In course.service: ', e);
         return { Code: createOneCourseResponseEnum.IMAGE_IS_INVALID };
@@ -81,7 +94,9 @@ const courseService = {
         Title: request.Title,
         Sub_Description: request.Sub_Description,
         Description: request.Description,
-        Image: newImage,
+        Thumbnail_Small: newImageSmall,
+        Thumbnail_Medium: newImageMedium,
+        Thumbnail_Large: newImageLarge,
         Price: request.Price,
         Category_Id: category[0].Id,
         Author_Id: author[0].Id,
@@ -103,22 +118,32 @@ const courseService = {
     console.log('query', query);
     const keyToColName = {
       language: "Language_Id",
-      category: "Category_Id"
+      category: "Category_Id",
+      rating: "Rating"
     }
-    const queryTable = {}
+    const queryTable = {};
+    const paging = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (typeof value === "string" || typeof value === "number") {
+      if (key === "limit") {
+        paging[key] = parseInt(value);
+      }
+      else if (key === "page") {
+        paging["offset"] = (parseInt(value) - 1) * parseInt(query.limit);
+      }
+      else if (typeof value === "string" || typeof value === "number") {
         console.log("Number");
         queryTable[keyToColName[key]] = Array(value);
       } else {
         queryTable[keyToColName[key]] = value;
       }
 
+
     }
     console.log('object', queryTable);
+    console.log('object', paging);
     try {
-      const listCourse = await courseRepository.getCourseByQuery(queryTable)
+      const listCourse = await courseRepository.getCourseByQuery(queryTable, paging)
       const listAllCourseResponse = await Promise.all(
         listCourse.map(async (course) => {
           let category = await _entityRepository("Categories").getEntity(
@@ -164,20 +189,14 @@ const courseService = {
       if (!resultValidator.Isuccess) {
         return { Code: updateOneCourseResponseEnum.Code };
       }
+      //
       const course = await _entityRepository("Courses").getEntity(
         request.params.id
       );
       if (course.length == 0) {
         return { Code: updateOneCourseResponseEnum.ID_IS_INVALID };
       }
-      const nameCourse = await courseRepository.getCourseByName(
-        request.body.Name
-      );
-      if (nameCourse.length != 0) {
-        if (nameCourse[0].Name != course[0].Name) {
-          return { Code: updateOneCourseResponseEnum.NAME_IS_EXIST };
-        }
-      }
+
       const titleCourse = await courseRepository.getCourseByTitle(
         request.body.Title
       );
@@ -186,46 +205,72 @@ const courseService = {
           return { Code: updateOneCourseResponseEnum.TITLE_IS_EXIST };
         }
       }
-      try {
-        const upLoadImge = await cloudinary.uploader.upload(
-          request.body.Image,
-          {
-            folder: 'udemy'
-          }
-        );
-        var newImage = upLoadImge.secure_url;
-      } catch (e) {
-        console.log(e);
-        return { Code: updateOneCourseResponseEnum.IMAGE_IS_INVALID };
+
+      // Upload image
+      let newImageLarge = course[0].Thumbnail_Large;
+      let newImageMedium = course[0].Thumbnail_Medium;
+      let newImageSmall = course[0].Thumbnail_Small;
+
+      if (request.Image) {
+        try {
+          const image = request.Image;
+
+          const upLoadImageLarge = await cloudinary.uploader.upload(image, {
+            folder: 'udemy-clone-cloud',
+          });
+          const upLoadImageSmall = await cloudinary.uploader.upload(image, {
+            folder: 'udemy-clone-cloud',
+            width: 128,
+            height: 128 * 9 / 16
+          });
+          const upLoadImageMedium = await cloudinary.uploader.upload(image, {
+            folder: 'udemy-clone-cloud',
+            width: 512,
+            height: 512 * 9 / 16
+          });
+
+          newImageLarge = upLoadImageLarge.secure_url;
+          newImageMedium = upLoadImageMedium.secure_url;
+          newImageSmall = upLoadImageSmall.secure_url;
+        } catch (e) {
+          console.log('In course.service: ', e);
+          return { Code: createOneCourseResponseEnum.IMAGE_IS_INVALID };
+        }
       }
-      const category = await categoryRepository.getCategoryByName(
-        request.body.category
+
+
+      const category = await _entityRepository("Categories").getEntity(
+        request.body.Category_Id
       );
       if (category.length == 0) {
         return { Code: updateOneCourseResponseEnum.CATEGORY_IS_NOT_EXIST };
       }
+      if (request.body.Promote === null) request.body.Promote = 0;
       const promote = await promoteRepository.getPromoteByPromote(
-        request.body.promote
+        request.body.Promote
       );
+
       if (promote.length == 0) {
         return { Code: updateOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
       }
-      const language = await languageRepository.getLanguageByName(
-        request.body.language
+
+      const language = await _entityRepository("Languages").getEntity(
+        request.body.Language_Id
       );
       if (language.length == 0) {
         return { Code: updateOneCourseResponseEnum.LANGUAGE_IS_NOT_EXIST };
       }
-      course[0].Name = request.body.name;
-      course[0].Title = request.body.title;
-      course[0].Sub_Description = request.body.sub_description;
-      course[0].Description = request.body.description;
-      course[0].Image = newImage;
-      course[0].Price = request.body.price;
+      course[0].Title = request.body.Title;
+      course[0].Sub_Description = request.body.Sub_Description;
+      course[0].Description = request.body.Description;
+      course[0].Thumbnail_Small = newImageSmall;
+      course[0].Thumbnail_Medium = newImageMedium;
+      course[0].Thumbnail_Large = newImageLarge;
+      course[0].Price = request.body.Price;
       course[0].Category_Id = category[0].Id;
       course[0].Promote_Id = promote[0].Id;
       course[0].Language_Id = language[0].Id;
-      course[0].last_update = new Date();
+      course[0].Update_At = new Date();
       if (
         (await _entityRepository("Courses").updateEntity(
           request.params.id,

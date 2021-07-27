@@ -5,7 +5,6 @@ const authAdmin = require("../middleware/authAdmin.mdw");
 const authTeacher = require("../middleware/authTeacher.mdw");
 const router = Router();
 router.post("/categories", authAdmin, async (req, res) => {
-  console.log(req.body);
   const message = await categoryService.createOneCategory(req.body);
   res.json({ message }).end();
 });

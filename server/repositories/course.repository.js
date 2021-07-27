@@ -1,12 +1,13 @@
 const db = require("../db/db");
 const operatorType = require("../utils/enums/operatorType");
 const courseRepository = {
-  getCourseByQuery(query) {
+  getCourseByQuery(query, paging) {
     return db("Courses").where(qb => {
       for (const [key, value] of Object.entries(query)) {
-        qb.whereIn(key, value)
+        qb.whereIn(key, value);
       }
-    })
+
+    }).limit(paging.limit).offset(paging.offset)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCourseByName(name) {
