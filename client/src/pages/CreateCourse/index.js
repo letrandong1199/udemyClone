@@ -16,56 +16,39 @@ import IconButton from '@material-ui/core/IconButton';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
-import { convertFromRaw } from 'draft-js';
 import categoryService from '../../services/category.service';
+import listToTree from '../../utils/listToTree';
 import toDataUrl from '../../utils/toDataUrl';
 import languageService from '../../services/language.service';
 import authService from '../../services/auth.service';
 import courseService from '../../services/course.service';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 function CreateCourse() {
     const classes = useStyles();
-    const [category, setCategory] = useState(null);
-    const [title, setTitle] = useState(null);
-    const [subDescription, setSubDescription] = useState(null);
+    const [category, setCategory] = useState('');
+    const [title, setTitle] = useState('');
+    const [subDescription, setSubDescription] = useState('');
     const [image, setImage] = useState(null);
-    const [price, setPrice] = useState(null);
-    const [promote, setPromote] = useState(null);
-    const [language, setLanguage] = useState(null);
+    const [price, setPrice] = useState(0);
+    const [promote, setPromote] = useState(0);
+    const [language, setLanguage] = useState('');
 
-
-    const [isPending, setIsPending] = useState(false)
     const [categoriesTree, setCategoriesTree] = useState([]);
+    const [isPendingCategory, setIsPendingCategory] = useState(false);
     const [languagesTree, setLanguagesTree] = useState([]);
+    const [isPendingLang, setIsPendingLang] = useState(false);
     useEffect(() => {
-        categoryService.getAll().then(response => {
-            console.log('catg');
-            const categoriesArray = response.data.message.listAllResponse;
-            //const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: null });
-            console.log(categoriesArray);
-            if (categoriesArray !== undefined) { setCategoriesTree(categoriesArray); }
-        });
-        languageService.getAll().then(response => {
-            console.log('lang');
-            const languagesArray = response.data.message.listAllResponse;
-            //const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: null });
-            console.log(response);
-            if (languagesArray !== undefined) { setLanguagesTree(languagesArray); }
-        })
+
+
     }, [])
 
 
-    const handleChangeCategory = (event) => {
-        setCategory(event.target.value)
-    }
-    const options = {
-
-    }
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const handleEditorStateChange = (editorState) => {
         setEditorState(editorState);
     }
-    const [selectedFile, setSelectedFile] = useState()
+    const [selectedFile, setSelectedFile] = useState(undefined);
     const [preview, setPreview] = useState("/assets/image.svg");
 
     useEffect(() => {
@@ -78,7 +61,9 @@ function CreateCourse() {
         reader.readAsDataURL(selectedFile)
         reader.onloadend = () => {
             setPreview(reader.result)
+            console.log("done");
         }
+
 
     }, [selectedFile]);
 
@@ -104,26 +89,40 @@ function CreateCourse() {
         setSelectedFile(undefined);
     }
 
-    const handleCreate = () => {
+    const handleLoadCategory = () => {
+        setIsPendingCategory(true)
+        console.log("Ngu");
+        categoryService.getAll().then(response => {
+            const categoriesArray = response.data.message.listAllResponse;
+            const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: null });
+            console.log(tree);
+            if (categoriesArray !== undefined) { setCategoriesTree(categoriesArray); }
+            setIsPendingCategory(false)
+        }).catch(error => {
+            setIsPendingCategory(false);
+        });
+    }
+
+    const handleCreate = async () => {
         const author = authService.getCurrentUserId()
         console.log('author', author);
         console.log('price', price);
         console.log("hehe1");
         if (!preview) { return }
         console.log("hehe");
-        setImage(JSON.stringify(uploadImage(preview)));
+        const base64Image = await uploadImage(preview)
+        setImage(base64Image);
 
         const newCourse = {
-            name: title,
-            title,
-            sub_description: subDescription,
-            description: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-            image,
-            price: Number(price),
-            category,
-            author: authService.getCurrentUserId(),
-            promote: Number(promote),
-            language,
+            Title: title,
+            Sub_Description: subDescription,
+            Description: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
+            Image: image,
+            Price: Number(price),
+            Category_Id: category,
+            Author_Id: authService.getCurrentUserId(),
+            Promote: Number(promote),
+            Language_Id: language,
         };
         console.log(newCourse);
         courseService.postOne(newCourse).then(response => {
@@ -148,7 +147,6 @@ function CreateCourse() {
                     <div className={classes.thumbnail} style={{ background: `url('${preview}') no-repeat center center content-box` }} />
                     <input
                         accept="image/*"
-                        //className={classes.input}
                         id="contained-button-file"
                         multiple
                         type="file"
@@ -172,7 +170,7 @@ function CreateCourse() {
                 <Typography variant="body1" className={classes.caption}>
                     {"Basic information will show in course card and detail course."}
                 </Typography>
-                <Grid container direction="column" className={classes.section} zeroMinWidth>
+                <Grid container direction="column" className={classes.section}>
                     <TextField
                         id="title"
                         label="Title"
@@ -184,7 +182,6 @@ function CreateCourse() {
                         id="sub-description"
                         label="Short description"
                         multiline
-                        maxRows={4}
                         variant="outlined"
                         value={subDescription} onChange={(event) => setSubDescription(event.target.value)}
                     />
@@ -204,39 +201,39 @@ function CreateCourse() {
                         value={promote}
                         onChange={(event) => setPromote(event.target.value)}
                     />
-                    <FormControl className={classes.formControl} variant="outlined">
+                    <FormControl className={classes.formControl} variant='outlined'>
                         <InputLabel id="catg-label" >Category</InputLabel>
                         <Select
-                            labelId="catg-select-label"
-                            id="catg-select"
+                            labelId='catg-select-label'
+                            id='catg-select'
                             value={category}
                             onChange={(event) => setCategory(event.target.value)}
-                            label="Category"
+                            label='Category'
+                            onOpen={handleLoadCategory}
                         >
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            {categoriesTree.map(category => (
-                                <MenuItem value={category.Id}>
-                                    {category.Name}
-                                </MenuItem>
-                            ))}
+                            {isPendingCategory ? <Skeleton variant='h6'></Skeleton>
+                                : categoriesTree.map(category => (
+                                    <MenuItem key={category.Id} value={category.Id}>
+                                        {category.Name}
+                                    </MenuItem>
+                                ))}
                         </Select>
                     </FormControl>
                     <FormControl className={classes.formControl} variant="outlined">
-                        <InputLabel id="lang-label" >Category</InputLabel>
+                        <InputLabel id="lang-label" >Language</InputLabel>
                         <Select
                             labelId="lang-select-label"
                             id="lang-select"
                             value={language}
                             onChange={(event) => setLanguage(event.target.value)}
-                            label="Category"
+                            label="Language"
+
                         >
-                            <MenuItem value="">
+                            <MenuItem value=''>
                                 <em>None</em>
                             </MenuItem>
                             {languagesTree.map(lang => (
-                                <MenuItem value={lang.Id}>
+                                <MenuItem key={lang.Id} value={lang.Id}>
                                     {lang.Name}
                                 </MenuItem>
                             ))}
@@ -263,7 +260,16 @@ function CreateCourse() {
                         //editorStyle={{ border: "1px solid #C0C0C0", borderRadius: 5 }}
                         /*style={{ border: "1px solid #C0C0C0" }}*/ />
             </Container>
-            <Button variant='primary' onClick={handleCreate}>Create</Button>
+            <Container className={classes.marginContainer}>
+                <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={handleCreate}
+                >
+                    Create
+                </Button>
+            </Container>
+
             <Container className={classes.marginContainer}>
                 <Typography variant="h5" className={classes.title}>
                     3. Lectures

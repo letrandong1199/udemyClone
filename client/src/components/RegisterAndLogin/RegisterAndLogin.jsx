@@ -16,6 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import AuthService from "../../services/auth.service";
 import { useHistory } from 'react-router-dom';
+import { CREATE_USER } from '../../config/config';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -57,8 +58,8 @@ const RegisterTab = ({ value, index }) => {
     const [isPending, setIsPending] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [openSnack, setOpenSnack] = React.useState(false);
-    const [snackContent, setSnackContent] = React.useState(null);
-    const [snackType, setSnackType] = React.useState(null);
+    const [snackContent, setSnackContent] = React.useState("");
+    const [snackType, setSnackType] = React.useState("success");
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
@@ -73,8 +74,13 @@ const RegisterTab = ({ value, index }) => {
 
         AuthService.register(uname, name, password).then(
             response => {
-                setSnackContent(response.data.Code)
+                setSnackContent(String(response.data.message.Code))
                 setIsPending(false);
+                setSnackType('error');
+                setOpenSnack(true);
+                if (response.data.message.Code === CREATE_USER.SUCCESS) {
+
+                }
             },
             error => {
                 const resMessage =
@@ -86,6 +92,8 @@ const RegisterTab = ({ value, index }) => {
 
                 setError(resMessage);
                 setIsPending(false);
+                setSnackContent(resMessage);
+                setOpenSnack(resMessage);
             }
         );
     }

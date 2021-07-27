@@ -9,22 +9,18 @@ class UserService {
                 return response;
             },
             function (error) {
-                console.log("r", error);
                 const originalRequest = error.config;
                 let user = JSON.parse(localStorage.getItem("user"));
                 if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
-                    console.log("Heh");
                     return axios
                         .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
                         .then((res) => {
                             if (res.status === 200) {
-                                user.token = res.data.message.token
+                                user = res.data.message
                                 localStorage.setItem("user", JSON.stringify(user));
-                                console.log(user);
                                 console.log("Access token refreshed!");
                                 originalRequest.headers = authHeader();
-                                console.log("originalRequest", originalRequest);
                                 return axios(originalRequest);
                             }
                         });

@@ -19,12 +19,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { empty_course } from '../../utils/dataSample';
 import { useStyles } from './styles';
 import { useParams } from 'react-router-dom';
-import useFetch from '../../utils/useFetch.js';
-import config from '../../config/config';
-import Navbar from '../../components/Navbar/Navbar.jsx';
-import { Link as Links } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import Avatar from '@material-ui/core/Avatar';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
@@ -35,6 +30,8 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import AppBar from '@material-ui/core/AppBar';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Toolbar from '@material-ui/core/Toolbar';
+import draftToHtml from 'draftjs-to-html';
+import courseService from '../../services/course.service.js';
 
 const list_courses = courses();
 
@@ -76,7 +73,7 @@ const temp = <div>
 </div>
 
 const Banner = ({ course }) => {
-    const { data, loading, error } = usePalette(course.thumb);
+    const { data, loading, error } = usePalette(course.thumb || course.Thumbnail_Large);
     const classes = useStyles({ data });
 
     const handleClick = (link) => (event) => {
@@ -86,31 +83,31 @@ const Banner = ({ course }) => {
 
 
 
-    const categories = (course) => course.categories_tree.map((category, index) => {
+    const categories = (categories_tree) => categories_tree?.map((category, index) => {
         return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
     });
     return (
         <Card className={classes.banner}>
             <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
                 <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
-                    {categories(course)}
+                    {course.categories_tree && categories(course.categories_tree)}
                 </Breadcrumbs>
                 <Grid item container style={{ marginTop: 20, marginBottom: 20, alignItems: 'flex-start' }}>
                     <Grid item container xs={7} direction="column">
                         <Typography variant="h4" className={classes.bannerTitle}>
-                            {course.title}
+                            {course.Name}
                         </Typography>
                         <Typography variant="subtitle1">
-                            {course.description}
+                            {course.Sub_Description}
                         </Typography>
                         <Grid item container direction="row" alignItems="center">
-                            <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>{course.rating.toFixed(1)}</Typography>
+                            <Typography variant="subtitle1" style={{ fontWeight: 'bold' }}>{course.rating?.toFixed(1)}</Typography>
                             <Rating
-                                name="hover-feedback"
+                                name="rating-banner"
+                                readOnly
                                 className={classes.rating}
-                                value={course.rating}
+                                value={course.rating || 0}
                                 precision={0.5}
-
                                 size="small"
                                 style={{ color: 'rgb(247, 187, 86)' }}
                             />
@@ -125,7 +122,7 @@ const Banner = ({ course }) => {
                         </Typography>
                         <Typography variant="body2">
                             <span style={{ fontWeight: 'bold' }}>Languages: </span>
-                            &nbsp;{course.language.join(', ')}
+                            &nbsp;{course.language?.join(', ')}
                         </Typography>
                     </Grid>
 
@@ -149,6 +146,7 @@ const Banner = ({ course }) => {
 
 const Description = ({ course }) => {
     const classes = useStyles();
+    console.log("hee: ", course);
     return (
         <Container className={classes.padding}>
             <Grid container style={{ justifyContent: 'space-between' }}>
@@ -157,43 +155,28 @@ const Description = ({ course }) => {
                     {/*<span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>About this course</span>*/}
                     About this Course
                 </Typography>
-                <Typography component="div">{temp}</Typography>
-                {/*</Grid>
-                <Grid item xs={4}>
-                    <Card className={classes.card} elevation={0}>
-                        <CardMedia>
-                            <img className={classes.cardThumbnail} alt='thumb' src={course.thumb}></img>
-                        </CardMedia>
-                        <CardContent>
-                            <Grid container direction="column" style={{ overflow: 'auto', position: 'sticky' }}>
-                                <Typography variant="subtitle2">
-                                    What's include:
-                                </Typography>
-                                {[1, 2, 3, 4].map((name, index) => <Typography key={index} style={{ marginTop: 10 }}
-                                    variant="body2">Feature {name}</Typography>)
-                                }
-                            </Grid>
-                        </CardContent>
-
-                    </Card>
-                            </Grid>*/}
+                <Typography component="div" dangerouslySetInnerHTML={{
+                    __html:
+                        course?.Description
+                            ? draftToHtml(JSON.parse(course.Description))
+                            : temp
+                }} >
+                </Typography>
             </Grid>
-        </Container>
+        </Container >
     )
 }
 
 function DetailCourse() {
     const { id } = useParams();
     const [course, setCourse] = React.useState(empty_course);
-    const { data: courses, isPending, error: errorFetch } = useFetch(`${config.HOST}:${config.PORT}/${config.COURSE_CONTROLLER}/${id}`);
-
     React.useEffect(() => {
-        if (courses) {
-            console.log(courses);
-            setCourse(courses);
-        }
-
-    }, [courses])
+        courseService.getById(id)
+            .then(response => {
+                console.log('Get', response.data.message.resultResponse);
+                setCourse(response.data.message.resultResponse);
+            })
+    }, [id])
 
     const bannerAnchor = React.useRef();
 
@@ -210,8 +193,9 @@ function DetailCourse() {
 
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
+        return event;
     };
-    const classes = useStyles({ thumbnail: course.thumb });
+    const classes = useStyles({ thumbnail: course.thumb || course.Image });
     const trigger = useScrollTrigger({ threshold: 640 });
     return (
         <div>
@@ -222,7 +206,7 @@ function DetailCourse() {
                 <Toolbar>
                     <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
                         <Typography variant="h6">{course.title}</Typography>
-                        <Grid item alignItems="center">
+                        <Grid>
                             <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
                             <Button color="primary" size="large" variant="outlined" startIcon={<FavoriteBorderRoundedIcon />} style={{ marginRight: 20, textTransform: 'none' }} >{'Wishlist'}</Button>
                         </Grid>

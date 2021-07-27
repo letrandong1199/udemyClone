@@ -12,6 +12,7 @@ export const useStyles = makeStyles((theme) => ({
         display: 'none'
     },
     title: {
+        flexBasis: '100%',
         fontWeight: 500,
         paddingTop: 40,
         paddingBottom: 40,

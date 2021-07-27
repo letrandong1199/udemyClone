@@ -51,7 +51,7 @@ function ProductCardV(props) {
                     <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
                 </Grid>
                 <Typography variant="body2" color="textSecondary">{`by ${props.course.author}`}</Typography>
-                <Grid container direction="row" alignItems="left">
+                <Grid container direction="row">
                     <Rating
                         name={`hover-feedback-${props.name}-${props.id}`}
                         readOnly={true}
