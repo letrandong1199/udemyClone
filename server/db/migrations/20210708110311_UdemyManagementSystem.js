@@ -16,7 +16,11 @@ exports.up = function (knex) {
     .createTable("Categories", function (table) {
       table.increments("Id").primary();
       table.string("Name").notNullable();
-      table.integer("Parent_Id").unsigned().references("Id").inTable("Categories");
+      table
+        .integer("Parent_Id")
+        .unsigned()
+        .references("Id")
+        .inTable("Categories");
     })
     .createTable("Languages", function (table) {
       table.increments("Id").primary();
@@ -39,7 +43,7 @@ exports.up = function (knex) {
       table.string("Thumbnail_Medium").notNullable();
       table.string("Thumbnail_Large").notNullable();
       table.float("Price").notNullable().defaultTo(0.0);
-      table.float("Rating")
+      table.float("Rating");
       table
         .integer("Category_Id")
         .unsigned()
@@ -77,20 +81,18 @@ exports.up = function (knex) {
     })
     .createTable("Media", function (table) {
       table.increments("Id").primary();
-      table.integer("Lecture_Id").unsigned().references("Id").inTable("Lectures");
+      table
+        .integer("Lecture_Id")
+        .unsigned()
+        .references("Id")
+        .inTable("Lectures");
       table.string("Video_URL");
-    })
-    .createTable("Enrolled_Courses", function (table) {
-      table.integer("User_Id").unsigned().references("Id").inTable("Users");
-      table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
-      table.float("Rating").defaultTo(0.0);
-      table.primary("User_Id", "Course_Id");
     })
 
     .createTable("Feedbacks", function (table) {
       table.increments("Id").primary();
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
-      table.integer("Course_Id").unsigned().references("Id").inTable("Courses")
+      table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.text("Content");
     })
     .createTable("Media_User", function (table) {
@@ -103,26 +105,46 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
     })
-    .then(function (table) {
-
-      const trigFunc = "CREATE OR REPLACE FUNCTION calculate_avg_ratings()\nRETURNS trigger AS $calculate_avg_ratings$\nBEGIN\nUPDATE Courses \nSET Rating (SELECT AVG(Rating)\nFROM Enrolled_Courses\nWHERE Course_Id = NEW.Course_Id)\nWHERE Id = NEW.Course_Id;\nRETURN NEW;\nEND;\n$calculate_avg_ratings$ LANGUAGE plpgsql; ";
-
-      knex.raw(trigFunc)
-        .then(function (response) {
-
-          var trigger = "CREATE TRIGGER calAvgRating\nAFTER INSERT OR UPDATE\nON Enrolled_Courses FOR EACH ROW EXECUTE PROCEDURE calculate_avg_ratings();";
-
-          knex.raw(trigger)
-            .then(function (response) {
-              console.log('defined rating trigger');
-            });
-        });
+    .createTable("Enrolled_Courses", function (table) {
+      table.integer("User_Id").unsigned().references("Id").inTable("Users");
+      table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
+      table.float("Rating").defaultTo(0.0);
+      table.primary("User_Id", "Course_Id");
     })
+    .then(function (table) {
+      const trigFunc = `CREATE OR REPLACE FUNCTION calculate_avg_ratings() RETURNS trigger AS 
+      $BODY$ 
+      BEGIN 
+      UPDATE "Courses" 
+      SET "Rating"= (SELECT AVG("Rating") FROM "Enrolled_Courses" WHERE "Course_Id" = NEW."Course_Id")  
+      WHERE "Id" = NEW."Course_Id"; 
+      RETURN NEW;  
+      END; 
+      $BODY$ language plpgsql; `;
 
+      knex.raw(trigFunc).then(function (response) {
+        var trigger = `CREATE TRIGGER calAvgRating  
+        AFTER INSERT OR UPDATE 
+        ON "Enrolled_Courses" FOR EACH ROW EXECUTE PROCEDURE calculate_avg_ratings();`;
+
+        knex.raw(trigger).then(function (response) {
+          console.log("defined rating trigger");
+        });
+      });
+    });
 };
 
 exports.down = function (knex) {
   return knex.schema
+    .dropTable("Feedbacks")
+    .dropTable("Enrolled_Courses")
+    .dropTable("Media_User")
+    .dropTable("Media")
+    .dropTable("Lectures")
+    .dropTable("Sections")
+    .dropTable("Watch_Lists")
+    .dropTable("Courses")
+    .dropTable("Promotes")
     .dropTable("Users")
     .dropTable("Role")
     .dropTable("Categories")
