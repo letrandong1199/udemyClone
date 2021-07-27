@@ -1,7 +1,6 @@
 const createOneCourseResponseEnum = require("../enums/courseEnums/createOneCourseResponseEnum");
 module.exports = {
   validate(
-    name,
     title,
     sub_description,
     description,
@@ -12,12 +11,6 @@ module.exports = {
     promote,
     language
   ) {
-    if (name == null || name == "") {
-      return {
-        Code: createOneCourseResponseEnum.NAME_IS_EMPTY,
-        Isuccess: false,
-      };
-    }
     if (title == null || title == "") {
       return {
         Code: createOneCourseResponseEnum.TITLE_IS_EMPTY,
@@ -60,19 +53,21 @@ module.exports = {
         Isuccess: false,
       };
     }
+    /*
     if (promote == null || promote == "") {
       return {
         Code: createOneCourseResponseEnum.PROMOTE_IS_EMPTY,
         Isuccess: false,
       };
     }
+    */
     if (language == null || language == "") {
       return {
         Code: createOneCourseResponseEnum.LANGUAGE_IS_EMPTY,
         Isuccess: false,
       };
     }
-    console.log(typeof price);
+
     if (typeof price != "number") {
       return {
         Code: createOneCourseResponseEnum.PRICE_IS_INVALID,

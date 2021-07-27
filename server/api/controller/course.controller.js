@@ -7,7 +7,8 @@ router.post("/courses", async (req, res) => {
   res.json({ message });
 });
 router.get("/courses", async (req, res) => {
-  const message = await courseService.getAllCourse();
+  console.log(req.query);
+  const message = await courseService.getAllCourse(req);
   res.json({ message });
 });
 router.get("/courses/:id", async (req, res) => {
@@ -18,5 +19,6 @@ router.put("/courses/:id", async (req, res) => {
   const message = await courseService.updateOneCourse(req);
   res.json({ message });
 });
+
 
 module.exports = router;

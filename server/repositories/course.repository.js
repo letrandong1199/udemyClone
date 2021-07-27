@@ -1,6 +1,14 @@
 const db = require("../db/db");
 const operatorType = require("../utils/enums/operatorType");
 const courseRepository = {
+  getCourseByQuery(query) {
+    return db("Courses").where(qb => {
+      for (const [key, value] of Object.entries(query)) {
+        qb.whereIn(key, value)
+      }
+    })
+      .catch(() => operatorType.FAIL.NOT_EXIST);
+  },
   getCourseByName(name) {
     return db("Courses")
       .where("Name", name)
