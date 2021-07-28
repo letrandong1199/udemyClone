@@ -72,6 +72,7 @@ exports.up = function (knex) {
     .createTable("Lectures", function (table) {
       table.increments("Id").primary();
       table.string("Title").notNullable();
+      table.string("Duration");
       table.text("Description").notNullable().defaultTo("Description");
       table
         .integer("Section_Id")

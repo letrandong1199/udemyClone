@@ -234,6 +234,7 @@ const userService = {
 
   async refreshToken(req) {
     const { refreshToken } = req.body;
+    console.log('Client: ', refreshToken);
     if (refreshToken && refreshToken in tokenList) {
       try {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
