@@ -20,5 +20,4 @@ router.put("/courses/:id", async (req, res) => {
   res.json({ message });
 });
 
-
 module.exports = router;

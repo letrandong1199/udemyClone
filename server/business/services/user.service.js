@@ -18,6 +18,7 @@ const updateOneUserValidator = require("../../api/validators/userValidators/upda
 const updateOneUserResponseEnum = require("../../api/validators/enums/userEnums/updateOneUserResponseEnum");
 const getOneUserResponseEnum = require("../../api/validators/enums/userEnums/getOneUserResponseEnum");
 const getOneUserValidator = require("../../api/validators/userValidators/getOneUserValidator");
+const watchlistRepository = require("../../repositories/watchlist.repository");
 require("dotenv").config();
 const tokenList = {};
 
@@ -33,11 +34,37 @@ const userService = {
       if (user.length == 0) {
         return { Code: getOneUserResponseEnum.ID_IS_INVALID };
       }
+      const listWatchlist = await watchlistRepository.getWatchlistByUserId(
+        request.id
+      );
+      const listWatchlistResponse = await Promise.all(
+        listWatchlist.map(async (watchlist) => {
+          let course = await _entityRepository("Courses").getEntity(
+            watchlist.Course_Id
+          );
+          let category = await _entityRepository("Categories").getEntity(
+            course[0].Category_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course[0].Author_Id
+          );
+          return {
+            Course_Id: course[0].Id,
+            Name: course[0].Title,
+            Image: course[0].Thumbnail_Small,
+            Author: author[0].Full_Name,
+            Category: category[0].Name,
+            Sub_Description: course.Sub_Description,
+            //Promote: promote[0].Promote,
+          };
+        })
+      );
       const userResponse = {
         Id: user[0].Id,
         Email: user[0].Email,
         Full_Name: user[0].Full_Name,
         Password: user[0].Password,
+        Watch_Lists: listWatchlistResponse,
       };
       console.log(userResponse);
       return {

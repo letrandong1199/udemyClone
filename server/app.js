@@ -9,12 +9,22 @@ const promoteController = require("./api/controller/promote.controller");
 const courseController = require("./api/controller/course.controller");
 const sectionController = require("./api/controller/section.controller");
 const lectureController = require("./api/controller/lecture.controller");
+const mediaController = require("./api/controller/media.controller");
+const feedbackController = require("./api/controller/feedback.controller");
+const watchlistController = require("./api/controller/watchlist.controller");
+const enrolledcourseController = require("./api/controller/enrolledcourse.controller");
 require("dotenv").config();
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+app.use(express.json({ limit: "50mb" }));
+// app.use(
+//   express.urlencoded({
+//     limit: "100mb",
+//     extended: true,
+//     parameterLimit: 100000000,
+//   })
+// );
 var PORT = process.env.PORT || 8080;
 
 app.use(morgan("dev"));
@@ -31,6 +41,10 @@ app.use("/api/promote-controller", promoteController);
 app.use("/api/course-controller", courseController);
 app.use("/api/section-controller", sectionController);
 app.use("/api/lecture-controller", lectureController);
+app.use("/api/media-controller", mediaController);
+app.use("/api/feedback-controller", feedbackController);
+app.use("/api/watchlist-controller", watchlistController);
+app.use("/api/enrolledcourse-controller", enrolledcourseController);
 
 app.get("/err", function (req, res) {
   throw new Error("Error!!!");

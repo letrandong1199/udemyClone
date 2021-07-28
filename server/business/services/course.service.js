@@ -15,6 +15,11 @@ const getAllCourseResponseEnum = require("../../api/validators/enums/courseEnums
 const updateOneCourseValidator = require("../../api/validators/courseValidators/updateOneCourseValidator");
 const getOneCourseValidator = require("../../api/validators/courseValidators/getOneCourseValidator");
 const getOneCourseResponseEnum = require("../../api/validators/enums/courseEnums/getOneCourseResponseEnum");
+const sectionRepository = require("../../repositories/section.repository");
+const lectureRepository = require("../../repositories/lecture.repository");
+const mediaRepository = require("../../repositories/media.repository");
+const feedbackRepository = require("../../repositories/feedback.repository");
+const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 
 const courseService = {
   async createOneCourse(request) {
@@ -28,19 +33,23 @@ const courseService = {
         request.Category_Id,
         request.Author_Id,
         request.Promote,
-        request.Language_Id,
+        request.Language_Id
       );
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
 
       // Check category
-      const category = await _entityRepository("Categories").getEntity(request.Category_Id)
+      const category = await _entityRepository("Categories").getEntity(
+        request.Category_Id
+      );
       if (category.length == 0) {
         return { Code: createOneCourseResponseEnum.CATEGORY_IS_NOT_EXIST };
       }
       // Check author
-      const author = await _entityRepository("Users").getEntity(request.Author_Id)
+      const author = await _entityRepository("Users").getEntity(
+        request.Author_Id
+      );
       if (author.length == 0) {
         return { Code: createOneCourseResponseEnum.AUTHOR_IS_NOT_EXIST };
       }
@@ -54,7 +63,9 @@ const courseService = {
             }
       */
       const promote = request.promote;
-      const language = await _entityRepository("Categories").getEntity(request.Language_Id)
+      const language = await _entityRepository("Categories").getEntity(
+        request.Language_Id
+      );
 
       if (language.length == 0) {
         return { Code: createOneCourseResponseEnum.LANGUAGE_IS_NOT_EXIST };
@@ -68,24 +79,24 @@ const courseService = {
       try {
         const image = request.Image;
         const upLoadImageLarge = await cloudinary.uploader.upload(image, {
-          folder: 'udemy-clone-cloud',
+          folder: "udemy-clone-cloud",
         });
         const upLoadImageSmall = await cloudinary.uploader.upload(image, {
-          folder: 'udemy-clone-cloud',
+          folder: "udemy-clone-cloud",
           width: 128,
-          height: 128 * 9 / 16
+          height: (128 * 9) / 16,
         });
         const upLoadImageMedium = await cloudinary.uploader.upload(image, {
-          folder: 'udemy-clone-cloud',
+          folder: "udemy-clone-cloud",
           width: 512,
-          height: 512 * 9 / 16
+          height: (512 * 9) / 16,
         });
 
         var newImageLarge = upLoadImageLarge.secure_url;
         var newImageMedium = upLoadImageMedium.secure_url;
         var newImageSmall = upLoadImageSmall.secure_url;
       } catch (e) {
-        console.log('In course.service: ', e);
+        console.log("In course.service: ", e);
         return { Code: createOneCourseResponseEnum.IMAGE_IS_INVALID };
       }
 
@@ -103,7 +114,7 @@ const courseService = {
         Promote_Id: promote,
         Language_Id: language[0].Id,
       };
-      const ret = await _entityRepository("Courses").addEntity(newCourse)
+      const ret = await _entityRepository("Courses").addEntity(newCourse);
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneCourseResponseEnum.SERVER_ERROR };
       }
@@ -115,35 +126,34 @@ const courseService = {
   },
   async getAllCourse(request) {
     const query = request.query;
-    console.log('query', query);
+    console.log("query", query);
     const keyToColName = {
       language: "Language_Id",
       category: "Category_Id",
-      rating: "Rating"
-    }
+      rating: "Rating",
+    };
     const queryTable = {};
     const paging = {};
 
     for (const [key, value] of Object.entries(query)) {
       if (key === "limit") {
         paging[key] = parseInt(value);
-      }
-      else if (key === "page") {
+      } else if (key === "page") {
         paging["offset"] = (parseInt(value) - 1) * parseInt(query.limit);
-      }
-      else if (typeof value === "string" || typeof value === "number") {
+      } else if (typeof value === "string" || typeof value === "number") {
         console.log("Number");
         queryTable[keyToColName[key]] = Array(value);
       } else {
         queryTable[keyToColName[key]] = value;
       }
-
-
     }
-    console.log('object', queryTable);
-    console.log('object', paging);
+    console.log("object", queryTable);
+    console.log("object", paging);
     try {
-      const listCourse = await courseRepository.getCourseByQuery(queryTable, paging)
+      const listCourse = await courseRepository.getCourseByQuery(
+        queryTable,
+        paging
+      );
       const listAllCourseResponse = await Promise.all(
         listCourse.map(async (course) => {
           let category = await _entityRepository("Categories").getEntity(
@@ -184,7 +194,7 @@ const courseService = {
         request.body.Price,
         request.body.Category_Id,
         request.body.Promote,
-        request.body.Language_Id,
+        request.body.Language_Id
       );
       if (!resultValidator.Isuccess) {
         return { Code: updateOneCourseResponseEnum.Code };
@@ -207,37 +217,36 @@ const courseService = {
       }
 
       // Upload image
-      let newImageLarge = course[0].Thumbnail_Large;
-      let newImageMedium = course[0].Thumbnail_Medium;
-      let newImageSmall = course[0].Thumbnail_Small;
+      var newImageLarge = course[0].Thumbnail_Large;
+      var newImageMedium = course[0].Thumbnail_Medium;
+      var newImageSmall = course[0].Thumbnail_Small;
 
-      if (request.Image) {
+      if (request.body.Image) {
         try {
-          const image = request.Image;
+          const image = request.body.Image;
 
           const upLoadImageLarge = await cloudinary.uploader.upload(image, {
-            folder: 'udemy-clone-cloud',
+            folder: "udemy-clone-cloud",
           });
           const upLoadImageSmall = await cloudinary.uploader.upload(image, {
-            folder: 'udemy-clone-cloud',
+            folder: "udemy-clone-cloud",
             width: 128,
-            height: 128 * 9 / 16
+            height: (128 * 9) / 16,
           });
           const upLoadImageMedium = await cloudinary.uploader.upload(image, {
-            folder: 'udemy-clone-cloud',
+            folder: "udemy-clone-cloud",
             width: 512,
-            height: 512 * 9 / 16
+            height: (512 * 9) / 16,
           });
 
           newImageLarge = upLoadImageLarge.secure_url;
           newImageMedium = upLoadImageMedium.secure_url;
           newImageSmall = upLoadImageSmall.secure_url;
         } catch (e) {
-          console.log('In course.service: ', e);
+          console.log("In course.service: ", e);
           return { Code: createOneCourseResponseEnum.IMAGE_IS_INVALID };
         }
       }
-
 
       const category = await _entityRepository("Categories").getEntity(
         request.body.Category_Id
@@ -299,17 +308,69 @@ const courseService = {
       const promote = await _entityRepository("Promotes").getEntity(
         course[0].Promote_Id
       );
+      const listSections = await sectionRepository.getSectionByCourseId(
+        course[0].Id
+      );
+      //get list feedback
+      const listFeedbacks = await feedbackRepository.getFeedbackByCourseId(
+        course[0].Id
+      );
+      const listFeedbackResponse = await Promise.all(
+        listFeedbacks.map(async (feedback) => {
+          let user = await _entityRepository("Users").getEntity(
+            feedback.User_Id
+          );
+          return {
+            Feedback_Id: feedback.Id,
+            User_Name: user[0].Full_Name,
+            User_Email: user[0].Email,
+            Content: feedback.Content,
+          };
+        })
+      );
+      //get content of course
+      const content = await Promise.all(
+        listSections.map(async (section) => {
+          let listLectures = await lectureRepository.getLectureBySectionId(
+            section.Id
+          );
+          let listLectureResponse = await Promise.all(
+            listLectures.map(async (lecture) => {
+              let listMedia = await mediaRepository.getMediaByLectureId(
+                lecture.Id
+              );
+              let listMediaResponse = listMedia.map((media) => {
+                return {
+                  Media_Id: media.Id,
+                  Video_URL: media.Video_URL,
+                };
+              });
+              return {
+                Lecture_Id: lecture.Id,
+                Media: listMediaResponse,
+              };
+            })
+          );
+          return {
+            Section_Id: section.Id,
+            Section_Name: section.Name,
+            Lecture: listLectureResponse,
+          };
+        })
+      );
+      const numberRegister =
+        await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
       const courseResponse = {
         Name: course[0].Name,
         Image: course[0].Image,
         Sub_Description: course[0].Sub_Description,
         Description: course[0].Description,
         Price: course[0].Price,
-        //Promote: promote[0]?.Promote,
-        //Rating/number of user
-        //number of user register
-        //section,lecture,media
-        //feedback
+        Promote: promote[0].Promote,
+        Rating: course[0].Rating,
+        Content: content,
+        Feedback: listFeedbackResponse,
+        NumerOfRegister: numberRegister.length,
       };
       return {
         Code: getOneCourseResponseEnum.SUCCESS,
