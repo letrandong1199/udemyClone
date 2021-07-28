@@ -7,7 +7,7 @@ exports.up = function (knex) {
     .createTable("Users", function (table) {
       table.increments("Id").primary();
       table.string("Email").notNullable();
-      table.string("Full_Name").notNullable();
+      table.string("Name").notNullable();
       table.string("Password").notNullable();
       table.integer("Role_Id").unsigned().references("Id").inTable("Role");
       table.timestamp("Created_At").defaultTo(knex.fn.now());
@@ -37,7 +37,7 @@ exports.up = function (knex) {
       table.increments("Id").primary();
       table.string("Title").notNullable();
       table.text("Sub_Description").notNullable().defaultTo("Sub Description");
-      table.text("Description").notNullable().defaultTo("Description");
+      table.text("Description").notNullable();
       table.boolean("Is_Completed").notNullable().defaultTo(false);
       table.string("Thumbnail_Small").notNullable();
       table.string("Thumbnail_Medium").notNullable();
@@ -72,6 +72,7 @@ exports.up = function (knex) {
     .createTable("Lectures", function (table) {
       table.increments("Id").primary();
       table.string("Title").notNullable();
+      table.string("Duration");
       table.text("Description").notNullable().defaultTo("Description");
       table
         .integer("Section_Id")
