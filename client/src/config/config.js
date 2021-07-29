@@ -42,4 +42,13 @@ export const CREATE_USER = {
     PASSWORD_IS_LESS_THAN_6_LETTERS: "password_is_less_than_6_letters",
 }
 
+export const SIGN_IN = {
+    SUCCESS: "signin_success",
+    EMAIL_IS_EMPTY: "username_is_empty",
+    PASSWORD_IS_EMPTY: "password_is_empty",
+    WRONG_EMAIL: "wrong_email",
+    WRONG_PASSWORD: "wrong_password",
+    SERVER_ERROR: "server_error",
+}
+
 export default config;

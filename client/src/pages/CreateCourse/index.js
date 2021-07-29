@@ -103,6 +103,18 @@ function CreateCourse() {
         });
     }
 
+    const handleLoadLang = () => {
+        setIsPendingCategory(true)
+        console.log("Ngu");
+        languageService.getAll().then(response => {
+            const languagesArray = response.data.message.listAllResponse;
+
+            if (languagesArray !== undefined) { setLanguagesTree(languagesArray); }
+            setIsPendingCategory(false)
+        }).catch(error => {
+            setIsPendingCategory(false);
+        });
+    }
     const handleCreate = async () => {
         const author = authService.getCurrentUserId()
         console.log('author', author);
@@ -121,7 +133,7 @@ function CreateCourse() {
             Price: Number(price),
             Category_Id: category,
             Author_Id: authService.getCurrentUserId(),
-            Promote: Number(promote),
+            Promote: Number(1),
             Language_Id: language,
         };
         console.log(newCourse);
@@ -227,7 +239,7 @@ function CreateCourse() {
                             value={language}
                             onChange={(event) => setLanguage(event.target.value)}
                             label="Language"
-
+                            onOpen={handleLoadLang}
                         >
                             <MenuItem value=''>
                                 <em>None</em>

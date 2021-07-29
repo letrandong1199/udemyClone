@@ -16,7 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
 import AuthService from "../../services/auth.service";
 import { useHistory } from 'react-router-dom';
-import { CREATE_USER } from '../../config/config';
+import { CREATE_USER, SIGN_IN } from '../../config/config';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -207,11 +207,19 @@ const LoginTab = ({ value, index, handleLogin }) => {
         setLoading(true);
 
         AuthService.login(uname, password)
-            .then(() => {
+            .then((response) => {
                 setLoading(false);
-                setSnackContent("Login success");
-                //setOpenSnack(true)
-                history.goBack();
+                console.log('res', response);
+                if (response.Code === SIGN_IN.SUCCESS) {
+                    history.goBack();
+                } else {
+                    setSnackContent("Login success");
+                    setSnackContent(String(response.Code))
+                    //setIsPending(false);
+                    setSnackType('error');
+                    setOpenSnack(true);
+                }
+
             }, error => {
                 const resMessage =
                     (error.response &&
@@ -220,6 +228,7 @@ const LoginTab = ({ value, index, handleLogin }) => {
                     error.message ||
                     error.toString();
                 setSnackContent(resMessage);
+                setSnackType('error');
                 setOpenSnack(true)
                 setLoading(false);
             }

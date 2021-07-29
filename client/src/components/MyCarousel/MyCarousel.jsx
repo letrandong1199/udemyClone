@@ -1,8 +1,7 @@
 import ProductCardV from '../ProductCardV/ProductCardV.jsx';
-import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { Fragment } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import { useStyles } from './styles';
 import CategoryCard from '../CategoryCard/CategoryCard.jsx'
 import IconButton from '@material-ui/core/IconButton';
@@ -12,18 +11,22 @@ import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounde
 
 function MyCarousel(props) {
     const classes = useStyles(props);
-    let list_ = undefined;
-    const courses = props.courses;
+    const [listCourses, setListCourses] = useState(null);
 
-    list_ = courses.map((course, index) => {
-        return <Grid item key={index} style={{ scrollSnapAlign: 'start', }}>
-            <ProductCardV course={course} />
 
-        </Grid>
-    })
+    useEffect(() => {
+        if (props.courses) {
+            console.log('Chan');
+            setListCourses(props.courses.map((course, index) => {
+                return <Grid item key={index} style={{ scrollSnapAlign: 'start', }}>
+                    <ProductCardV course={course} />
+                </Grid>
+            }))
+        }
+    }, [props.course])
 
-    const containerRef = React.useRef(null);
-    const [state, setState] = React.useState({
+    const containerRef = useRef(null);
+    const [state, setState] = useState({
         scroller: null,
         itemWidth: 0,
         isPrevHidden: true,
@@ -46,14 +49,14 @@ function MyCarousel(props) {
         // Show remaining
     }
 
-    React.useEffect(() => {
-
+    useEffect(() => {
+        console.log('Qua');
         //const items = containerRef.current.childNodes;
         const scroller = containerRef.current;
         const itemWidth = containerRef.current.clientWidth;
         setState({ ...state, scroller, itemWidth });
 
-    }, [courses])
+    }, [listCourses])
 
     return (
         <Fragment>
@@ -67,9 +70,8 @@ function MyCarousel(props) {
                     <ArrowForwardIosRoundedIcon />
                 </IconButton>
                 <div className={classes.list} ref={containerRef}>
-                    {list_}
+                    {listCourses}
                 </div>
-
             </Grid>
         </Fragment >
     )

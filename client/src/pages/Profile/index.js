@@ -110,7 +110,7 @@ const AccountInfo = () => {
                             required
                             disabled={!editable}
                             onChange={(event) => setUser({ name: event.target.value })}
-                            value={user?.Full_Name}
+                            value={user?.Name}
                         />
                         {!editable && <Button variant="outlined" color="primary" onClick={handleClickEdit} >Edit</Button>}
                         {editable && <Fragment>

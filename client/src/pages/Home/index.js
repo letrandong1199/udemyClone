@@ -2,7 +2,7 @@
 //import Carousel from '../../components/Carousel/Carousel.jsx';
 import HomeSection from '../../components/HomeSection/HomeSection.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
-import React from 'react';
+
 import { courses } from '../../utils/dataSample';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -10,14 +10,13 @@ import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import PeopleOutlineRoundedIcon from '@material-ui/icons/PeopleOutlineRounded';
 import AllInclusiveRoundedIcon from '@material-ui/icons/AllInclusiveRounded';
 import { useStyles } from './styles';
-import useFetch from '../../utils/useFetch';
-import { lazy, Suspense } from 'react';
-import config from '../../config/config';
+import { lazy, Suspense, useState, Fragment, useEffect } from 'react';
+
 import LinearProgress from '@material-ui/core/LinearProgress';
+import courseService from '../../services/course.service.js';
+import categoryService from '../../services/category.service';
 const Carousel = lazy(() => import('../../components/Carousel/Carousel.jsx'))
 
-const courses1 = courses();
-const courses2 = courses();
 
 
 const HomeIntroBanner = () => {
@@ -44,23 +43,133 @@ const HomeIntroBanner = () => {
     )
 }
 
+const WeeklyHotCourses = () => {
+    const [courses, setCourses] = useState([]);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
 
-function Home(props) {
-    const { data: courses_, isPending: isPending1, error: error1 } = useFetch(`${config.HOST}:${config.PORT}/${config.COURSE_CONTROLLER}`);
-    const { data: categories, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/${config.CATEGORY_CONTROLLER}`);
+    useEffect(() => {
+        courseService.getAll().then(response => {
+            console.log(response.data.message.listAllResponse);
+            setCourses(response.data.message.listAllResponse);
+            setIsPending(false);
+        }).catch(error => {
+            setError(error);
+            setIsPending(false);
+        })
+    }, [])
+
+
+    return (
+        <Fragment>
+            {isPending && <div><LinearProgress /></div>}
+            {error && <div>{error}</div>}
+            {courses && <Carousel courses={courses} />}
+        </Fragment>
+    )
+}
+
+const MostViewedCourses = () => {
+    const [courses, setCourses] = useState([]);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        courseService.getAll().then(response => {
+            console.log(response.data.message.listAllResponse);
+            setCourses(response.data.message.listAllResponse);
+            setIsPending(false);
+        }).catch(error => {
+            setError(error);
+            setIsPending(false);
+        })
+    }, [])
+
+
+    return (
+        <Fragment>
+            {isPending && <div><LinearProgress /></div>}
+            {error && <div>{error}</div>}
+            {courses && <HomeSection title="Most popular courses" courses={courses} color="vibrant" />}
+        </Fragment>
+    )
+}
+
+const MostRecentCourses = () => {
+    const [courses, setCourses] = useState([]);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        courseService.getAll().then(response => {
+            console.log(response.data.message.listAllResponse);
+            setCourses(response.data.message.listAllResponse);
+            setIsPending(false);
+        }).catch(error => {
+            setError(error);
+            setIsPending(false);
+        })
+    }, [])
+
+
+    return (
+        <Fragment>
+            {isPending && <div><LinearProgress /></div>}
+            {error && <div>{error}</div>}
+            {courses && <HomeSection title="Most recent courses" courses={courses} />}
+        </Fragment>
+    )
+}
+
+const HotCategories = () => {
+    const [categories, setCategories] = useState([]);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        categoryService.getAll().then(response => {
+            console.log(response.data.message.listAllResponse);
+            setCategories(response.data.message.listAllResponse);
+            setIsPending(false);
+        }).catch(error => {
+            setError(error);
+            setIsPending(false);
+        })
+    }, [])
+
+
+    return (
+        <Fragment>
+            {isPending && <div><LinearProgress /></div>}
+            {error && <div>{error}</div>}
+            {categories && <HomeSection title="Hot categories" categories={categories} />}
+        </Fragment>
+    )
+}
+
+
+function Home() {
+    // Get course
+
+
+    const [weeklyHotCourse, setWeeklyHotCourse] = useState([]);
+    const [isPending2, setIsPending2] = useState(false);
+    const [isError2, setError2] = useState(null);
+
+    const [recentCourse, setRecentCourse] = useState([]);
+    const [isPending3, setIsPending3] = useState(false);
+    const [isError3, setError3] = useState(null);
+
+
 
     return (
         <div>
             <Suspense fallback={<div><LinearProgress />.</div>}>
-                {isPending1 && <div><LinearProgress /></div>}
-                {error1 && <div>{error1}</div>}
-                {courses_ && <Carousel courses={courses_} />}
+                <WeeklyHotCourses />
                 <HomeIntroBanner />
-                <HomeSection title="Most popular courses" courses={courses1} color="vibrant" />
-                <HomeSection title="Most recent courses" courses={courses2} />
-                {isPending && <div><LinearProgress /></div>}
-                {error && <div>{error}</div>}
-                {categories && <HomeSection categories={categories} title="Top categories" color="vibrant" />}
+                <MostViewedCourses />
+                <MostRecentCourses />
+                <HotCategories />
                 <Footer />
             </Suspense>
         </div >

@@ -17,6 +17,13 @@ class CourseService {
                 return response
             })
     }
+    getByQuery(query) {
+        let queryArray = [];
+        for (const [key, value] of Object.entries(query)) {
+            queryArray.push(`${key}=${value}`);
+        }
+        return axios.get(API_URL + '/courses?' + queryArray.join('&'))
+    }
 
 }
 

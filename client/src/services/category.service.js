@@ -6,6 +6,9 @@ class CategoryService {
     getAll() {
         return axios.get(API_URL + '/categories')
     }
+    getOne(id) {
+        return axios.get(API_URL + '/categories' + id)
+    }
 }
 
 export default new CategoryService();

@@ -31,7 +31,7 @@ const routes = [
         component: ProfilePage,
     },
     {
-        path: '/course',
+        path: '/course/:id',
         exact: false,
         public: true,
         component: ResultPage,

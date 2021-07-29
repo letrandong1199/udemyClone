@@ -16,8 +16,9 @@ import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
-
+import Skeleton from '@material-ui/lab/Skeleton';
 import {
+    Typography,
     ListItem,
     Divider,
     ListItemIcon,
@@ -36,13 +37,12 @@ import {
     Grid,
     Hidden,
     Drawer,
+    Popover,
 } from '@material-ui/core';
 
 import { Link, useLocation, useHistory } from 'react-router-dom';
 
 import { useStyles } from './styles';
-import config from '../../config/config';
-import useFetch from '../../utils/useFetch';
 import authService from '../../services/auth.service';
 import categoryService from '../../services/category.service';
 import usePrepareLink from '../../utils/usePrepareLink';
@@ -178,11 +178,11 @@ const NestedMenu = (props) => {
     };
 
     const handleOpen = () => {
-        setOpen(!open);
+        setOpen(true);
     };
 
     const handleClose = (event) => {
-        setOpen(false);
+        setOpen(false)
     };
 
     function handleListKeyDown(event) {
@@ -192,6 +192,83 @@ const NestedMenu = (props) => {
         }
     }
 
+    return (
+        <Fragment>
+            {props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup='true'
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                title='catg'
+                id='sub'
+            >
+                <ListItemText primary={props.text} className={clsx({ [classes.textExpandOpen]: open })} />
+                <ListItemIcon>
+                    <KeyboardArrowRightRoundedIcon className={clsx(classes.expand, {
+                        [classes.expandOpen]: open,
+                    })}
+                        onMouseOver={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label='show more' />
+                </ListItemIcon>
+            </MenuItem>}
+            {!props.hasChildren && <MenuItem
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup='true'
+                title='catg'
+                id='sub'
+            >
+                <ListItemText primary={props.text} />
+            </MenuItem>}
+
+            <Popper
+                open={open}
+                placement='right-start'
+                anchorEl={anchorRef}
+                keepMounted
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                role={undefined}
+                transition
+                style={{ zIndex: 1500, marginLeft: 3, }}>
+                {({ TransitionProps, placement }) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{ transformOrigin: placement === 'right-start' ? 'right start' : 'center bottom' }}
+                    >
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MenuList id='menu-list-grow' onKeyDown={handleListKeyDown}>
+                                    {props.children}
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
+        </Fragment >
+    )
+}
+
+const NestedMenu2 = (props) => {
+    const classes = useStyles();
+    const [anchorEl, setAnchorEl] = useState(null);
+    //const anchorRef = props.anchorRef;
+    const open = Boolean(anchorEl);
+    const id = open ? 'categories-menu' : undefined;
+    const [expanded, setExpanded] = useState(false);
+    const handleClick = async (event) => {
+
+    }
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+    const handleOpen = (event) => {
+        console.log('Sub', props.anchorRef);
+        setAnchorEl(props.anchorRef)
+    };
     return (
         <Fragment>
             {props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
@@ -219,28 +296,26 @@ const NestedMenu = (props) => {
                 <ListItemText primary={props.text} />
             </MenuItem>}
 
-            <Popper
+            <Popover
+                style={{ marginTop: 16 }}
+                anchorEl={anchorEl}
                 open={open}
-                placement='right-start'
-                anchorEl={anchorRef}
-                role={undefined}
-                transition
-                style={{ zIndex: 1500, marginLeft: 3, }}>
-                {({ TransitionProps, placement }) => (
-                    <Grow
-                        {...TransitionProps}
-                        style={{ transformOrigin: placement === 'right-start' ? 'right start' : 'center bottom' }}
-                    >
-                        <Paper>
-                            <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList id='menu-list-grow' onKeyDown={handleListKeyDown}>
-                                    {props.children}
-                                </MenuList>
-                            </ClickAwayListener>
-                        </Paper>
-                    </Grow>
-                )}
-            </Popper>
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+            >
+
+                <MenuList autoFocusItem={open} id='menu-list-grow'>
+                    {props.children}
+                </MenuList>
+
+            </Popover>
         </Fragment >
     )
 }
@@ -256,33 +331,9 @@ const CategoryNestedMap = (props) => {
 
 const CategoryMenu = (props) => {
     const classes = useStyles();
-
-    const [isPending, setIsPending] = useState(false)
-    const [categoriesTree, setCategoriesTree] = useState([]);
-
-    useEffect(() => {
-        categoryService.getAll().then(response => {
-            console.log('catg');
-            const categoriesArray = response.data.message.listAllResponse;
-            const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: null });
-            console.log(tree);
-            setCategoriesTree(categoriesArray);
-        })
-    }, [])
-
-
-
-
+    const anchorRef2 = useRef(null);
     const [open, setOpen] = useState(false);
     const anchorRef = useRef(null);
-    const anchorRef2 = useRef(null);
-
-
-
-    const handleOpen = () => {
-        setOpen((prevOpen) => !prevOpen);
-    };
-
 
     const handleClose = (event) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -291,43 +342,74 @@ const CategoryMenu = (props) => {
         setOpen(false);
     };
 
-    function handleListKeyDown(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            setOpen(false);
-        }
-    }
+    const id = open ? 'categories-menu' : undefined;
 
-    const prevOpen = useRef(open);
-    useEffect(() => {
-        if (prevOpen.current === true && open === false) {
-            anchorRef.current.focus();
+    const [isPending, setIsPending] = useState(false);
+    const [error, setError] = useState(null);
+    const [categoriesTree, setCategoriesTree] = useState([]);
+    const handleClick = async (event) => {
+        setOpen(!open)
+
+        if (!open) {
+            setIsPending(true);
+            await categoryService.getAll().then(response => {
+                const categoriesArray = response.data.message.listAllResponse;
+                const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: 'Parent_Id' });
+                setCategoriesTree(tree);
+                if (tree.length === 0) {
+                    throw Error("Not found");
+                }
+                setIsPending(false);
+
+            }).catch(err => {
+                setError(err);
+                setIsPending(false);
+                console.log('err', err);
+            })
         }
-        prevOpen.current = open;
-    }, [open]);
+    };
+
 
     return (
         <Fragment>
             <Button className={classes.categoriesButton}
                 ref={anchorRef}
-                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-controls={open ? 'button' : undefined}
                 aria-haspopup='true'
-                onClick={handleOpen}
+                onClick={handleClick}
                 title='catg'
             >
                 Categories <ExpandMoreIcon />
             </Button>
-            <Popper ref={anchorRef2} open={open} anchorEl={anchorRef.current} role={undefined} transition style={{ zIndex: 1500, marginTop: 16 }}>
+
+            <Popper
+                id={id}
+                ref={anchorRef2}
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                placement={'bottom-start'}
+                style={{ zIndex: 1500, marginTop: 16 }}>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
-                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                        style={{ transformOrigin: placement === 'bottom-start' ? 'left top' : 'left bottom' }}
                     >
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList autoFocusItem={open} id='menu-list-grow' onKeyDown={handleListKeyDown}>
-                                    {categoriesTree.map((category,
-                                        index) => <CategoryNestedMap key={index} anchorRef={anchorRef2.current} data={category} key={index} />)}
+                                <MenuList
+                                    autoFocusItem={open}
+                                    id='menu-list-grow'
+                                >
+                                    {error && <MenuItem>{error}</MenuItem>}
+                                    {isPending ? <Skeleton width={200} height={80}></Skeleton>
+                                        : categoriesTree.map((category,
+                                            index) => <CategoryNestedMap
+                                                key={index}
+                                                anchorRef={anchorRef2.current}
+                                                data={category} />)
+                                    }
                                 </MenuList>
                             </ClickAwayListener>
                         </Paper>
@@ -335,7 +417,7 @@ const CategoryMenu = (props) => {
                 )}
             </Popper>
 
-        </Fragment>
+        </Fragment >
     )
 }
 

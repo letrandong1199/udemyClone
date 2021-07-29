@@ -19,6 +19,13 @@ export const useStyles = makeStyles((theme) => ({
     },
     /* rgb(245, 247, 248)*/
     outerBanner: (props) => {
+        if (props.isPending) {
+            return {
+                minHeight: 660,
+                paddingTop: 250,
+                paddingBottom: 20,
+            }
+        }
         return {
             background: `center / cover no-repeat url(${props.thumbnail})`,
             //backgroundSize: 'cover !important',
@@ -28,6 +35,9 @@ export const useStyles = makeStyles((theme) => ({
         }
     },
     banner: (props) => {
+        if (props.isPending || props.loading) {
+            return { padding: 30 }
+        }
         const color = theme.palette.type === 'dark' ? props.data?.darkMuted : props.data?.lightMuted;
         const backgroundColor = 'radial-gradient(circle at 0%, ' + theme.palette.background.vibrant + ' 60%, ' + color + ' 80%)';
         return {
@@ -130,5 +140,13 @@ export const useStyles = makeStyles((theme) => ({
                 color: 'rgb(0, 86, 210)',
             }
         },
-    }
+    },
+    listRoot: {
+        width: '100%',
+        //maxWidth: ,
+        backgroundColor: theme.palette.background.paper,
+    },
+    nested: {
+        paddingLeft: theme.spacing(4),
+    },
 }));

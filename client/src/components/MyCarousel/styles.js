@@ -5,6 +5,7 @@ export const useStyles = makeStyles((theme) => ({
         position: 'relative',
         padding: '10px',
         justifyContent: 'center',
+        minHeight: '200px',
     },
 
     list: {

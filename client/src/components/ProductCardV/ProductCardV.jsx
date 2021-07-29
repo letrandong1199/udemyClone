@@ -28,15 +28,19 @@ function ProductCardV(props) {
 
     return (
         <Card className={classes.root} elevation={3}>
-            <Link to={`/detail/${props.course.id}`}>
+            <Link to={`/detail/${props.course.Id}`}>
                 <CardMedia
                     className={classes.media}
-                    image={props.course.thumb}
-                    title={props.course.title}
+                    image={props.course.Thumbnail_Medium}
+                    title={props.course.Title}
                 >
                     {<Typography className={classes.price}>
-                        {props.course.promote && <span style={{ textDecoration: 'line-through', color: 'darkred', marginRight: 5 }}>${props.course.price}</span>}
-                        ${props.course.promote ? props.course.promote : props.course.price}
+                        {props.course.Promote_Rate !== 0 && <span style={{ textDecoration: 'line-through', color: 'darkred', marginRight: 5 }}>${props.course.Price}</span>}
+                        {props.course.Promote_Rate !== 0
+                            ? (props.course.promote * props.course.Price)?.toFixed(2)
+                            : props.course.Price !== 0
+                                ? props.course.Price
+                                : 'Free'}
                     </Typography>}
                     {props.course.tag && <Typography className={classes.tag}>
                         {props.course.tag}
@@ -44,26 +48,31 @@ function ProductCardV(props) {
                 </CardMedia>
             </Link>
             <CardContent className={classes.content}>
-                <Link to={`/detail/${props.course.id}`}>
-                    <Typography variant="body2" style={{ fontSize: 10, textTransform: 'uppercase' }}>{props.course.categories_tree[props.course.categories_tree.length - 1]}</Typography>
+                <Link to={`/detail/${props.course.Id}`}>
+                    <Typography
+                        variant="body2"
+                        style={{ fontSize: 10, textTransform: 'uppercase' }}
+                    >
+                        {props.course.Category.Name}
+                    </Typography>
                 </Link>
                 <Grid container className={classes.header}>
-                    <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
+                    <Typography variant="subtitle1" className={classes.headerText}>{props.course.Title}</Typography>
                 </Grid>
-                <Typography variant="body2" color="textSecondary">{`by ${props.course.author}`}</Typography>
+                <Typography variant="body2" color="textSecondary">{`by ${props.course.Author.Name}`}</Typography>
                 <Grid container direction="row">
                     <Rating
-                        name={`hover-feedback-${props.name}-${props.id}`}
+                        name={`hover-feedback-${props.course.Id}`}
                         readOnly={true}
                         className={classes.rating}
-                        value={props.course.rating}
+                        value={props.course.Rating}
                         size="small"
                     />
-                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{props.course.num_rating}</Typography>
+                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{props.course?.num_rating}</Typography>
                 </Grid>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {props.course.description}
+                        {props.course.Sub_Description}
                     </Typography>
                 </Collapse>
                 <Hidden smUp>

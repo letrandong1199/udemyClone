@@ -8,8 +8,8 @@ class AuthService {
     login(username, password) {
         return axios
             .post(API_URL + "authenticate-user", {
-                email: username,
-                password
+                Email: username,
+                Password: password,
             })
             .then(response => {
                 console.log(response);
@@ -27,9 +27,9 @@ class AuthService {
 
     register(username, name, password) {
         return axios.post(API_URL + "users", {
-            email: username,
-            name,
-            password
+            Email: username,
+            Name: name,
+            Password: password,
         });
     };
 
