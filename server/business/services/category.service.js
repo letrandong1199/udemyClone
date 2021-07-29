@@ -12,7 +12,7 @@ const updateOneCategoryValidator = require("../../api/validators/categoryValidat
 const categoryRepository = require("../../repositories/category.repository");
 const _entityRepository = require("../../repositories/entity.repository");
 const categoryService = {
-  //Update one category
+  // Update one category
   async updateOneCategory(request) {
     try {
       const resultValidator = updateOneCategoryValidator.validate(
@@ -61,14 +61,23 @@ const categoryService = {
     }
   },
 
-  //Get all User
-  async getAllCategory() {
+  // Get all categories
+  async getAllCategory(request) {
+    const query = request.query;
+    const keyToColName = {
+      parent: 'Parent_Id',
+    };
+
+    for (const [key, value] of Object.entries(query)) {
+      queryTable[keyToColName[key]] = parseInt(value);
+    }
     try {
-      const listCategory = await _entityRepository("Categories").getEntities();
+      const listCategory = await categoryRepository.getCategoryByQuery(query);
       let listCategoryResponse = listCategory.map((category) => {
         return {
           Id: category.Id,
           Name: category.Name,
+          Parent_Id: category.Parent_Id,
         };
       });
       return {
@@ -80,7 +89,8 @@ const categoryService = {
       return { Code: getAllCategoryResponseEnum.SERVER_ERROR };
     }
   },
-  //Delete one user
+
+  // Delete one category
   async deleteOneCategory(request) {
     try {
       const resultValidator = deleteOneCategoryValidator.validate(
@@ -109,7 +119,7 @@ const categoryService = {
       console.log(e);
     }
   },
-  //Create one user
+  // Create one category
   async createOneCategory(request) {
     try {
       const resultValidator = createOneCategoryValidator.validate(request.name);

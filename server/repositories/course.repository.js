@@ -2,6 +2,7 @@ const db = require("../db/db");
 const operatorType = require("../utils/enums/operatorType");
 const courseRepository = {
   getCourseByQuery(query, paging) {
+    console.log(query, paging);
     return db("Courses").where(qb => {
       for (const [key, value] of Object.entries(query)) {
         qb.whereIn(key, value);
@@ -10,11 +11,14 @@ const courseRepository = {
     }).limit(paging.limit).offset(paging.offset)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
-  getCourseByName(name) {
-    return db("Courses")
-      .where("Name", name)
-      .catch(() => operatorType.FAIL.NOT_EXIST);
+  getCountCourses(query) {
+    return db("Courses").where(qb => {
+      for (const [key, value] of Object.entries(query)) {
+        qb.whereIn(key, value);
+      }
+    }).count('Id', { as: 'Count' }).first()
   },
+
   getCourseByTitle(title) {
     return db("Courses")
       .where("Title", title)

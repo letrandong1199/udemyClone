@@ -62,7 +62,7 @@ const courseService = {
               return { Code: createOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
             }
       */
-      const promote = request.promote;
+      const promote = request.Promote;
       const language = await _entityRepository("Categories").getEntity(
         request.Language_Id
       );
@@ -70,7 +70,7 @@ const courseService = {
       if (language.length == 0) {
         return { Code: createOneCourseResponseEnum.LANGUAGE_IS_NOT_EXIST };
       }
-      const course = await courseRepository.getCourseByName(request.Title);
+      const course = await courseRepository.getCourseByTitle(request.Title);
 
       if (course.length != 0) {
         return { Code: createOneCourseResponseEnum.NAME_IS_EXIST };
@@ -79,17 +79,19 @@ const courseService = {
       try {
         const image = request.Image;
         const upLoadImageLarge = await cloudinary.uploader.upload(image, {
-          folder: "udemy-clone-cloud",
+          folder: "udemy",
+          width: 750,
+          height: 422,
         });
         const upLoadImageSmall = await cloudinary.uploader.upload(image, {
-          folder: "udemy-clone-cloud",
-          width: 128,
-          height: (128 * 9) / 16,
+          folder: "udemy",
+          width: 240,
+          height: 135,
         });
         const upLoadImageMedium = await cloudinary.uploader.upload(image, {
-          folder: "udemy-clone-cloud",
-          width: 512,
-          height: (512 * 9) / 16,
+          folder: "udemy",
+          width: 480,
+          height: 270,
         });
 
         var newImageLarge = upLoadImageLarge.secure_url;
@@ -101,7 +103,6 @@ const courseService = {
       }
 
       const newCourse = {
-        Name: request.Title,
         Title: request.Title,
         Sub_Description: request.Sub_Description,
         Description: request.Description,
@@ -126,7 +127,6 @@ const courseService = {
   },
   async getAllCourse(request) {
     const query = request.query;
-    console.log("query", query);
     const keyToColName = {
       language: "Language_Id",
       category: "Category_Id",
@@ -149,35 +149,46 @@ const courseService = {
     }
     console.log("object", queryTable);
     console.log("object", paging);
+
     try {
+      const count = await courseRepository.getCountCourses(queryTable);
       const listCourse = await courseRepository.getCourseByQuery(
         queryTable,
         paging
       );
+
       const listAllCourseResponse = await Promise.all(
         listCourse.map(async (course) => {
           let category = await _entityRepository("Categories").getEntity(
             course.Category_Id
           );
-          /* let promote = await _entityRepository("Promotes").getEntity(
-             course.Promote_Id
-           );*/
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
           let author = await _entityRepository("Users").getEntity(
             course.Author_Id
           );
           return {
-            Name: course.Name,
-            Image: course.Image,
-            Author: author[0].Full_Name,
-            Category: category[0].Name,
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
             Sub_Description: course.Sub_Description,
-            //Promote: promote[0].Promote,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0].Promote,
+            Language_Id: course.Language_Id,
           };
         })
       );
       return {
         Code: getAllCourseResponseEnum.SUCCESS,
         listAllResponse: listAllCourseResponse,
+        Count: count.Count,
       };
     } catch (e) {
       console.log(e);
@@ -308,6 +319,52 @@ const courseService = {
       const promote = await _entityRepository("Promotes").getEntity(
         course[0].Promote_Id
       );
+      const author = await _entityRepository("Users").getEntity(
+        course[0].Author_Id
+      );
+      const language = await _entityRepository("Languages").getEntity(
+        course[0].Language_Id
+      );
+      const category = await _entityRepository("Categories").getEntity(
+        course[0].Category_Id
+      );
+      const categoryParent = await _entityRepository("Categories").getEntity(
+        category[0].Parent_Id
+      );
+      const listSimilarCourses = await courseRepository.getCourseByQuery({
+        Category_Id: [course[0].Category_Id],
+      }, {
+        limit: 10,
+        offset: 0
+      })
+      const listSimilarCourses_ = await Promise.all(
+        listSimilarCourses.map(async (course) => {
+          let category = await _entityRepository("Courses").getEntity(
+            course.Category_Id
+          );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0].Promote,
+            Language_Id: course.Language_Id,
+          };
+        })
+      );
       const listSections = await sectionRepository.getSectionByCourseId(
         course[0].Id
       );
@@ -341,36 +398,43 @@ const courseService = {
               );
               let listMediaResponse = listMedia.map((media) => {
                 return {
-                  Media_Id: media.Id,
+                  Id: media.Id,
                   Video_URL: media.Video_URL,
                 };
               });
               return {
-                Lecture_Id: lecture.Id,
+                Id: lecture.Id,
                 Media: listMediaResponse,
+                Title: lecture.Title
               };
             })
           );
           return {
-            Section_Id: section.Id,
+            Id: section.Id,
             Section_Name: section.Name,
-            Lecture: listLectureResponse,
+            Lectures: listLectureResponse,
           };
         })
       );
       const numberRegister =
         await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
       const courseResponse = {
-        Name: course[0].Name,
-        Image: course[0].Image,
+        Title: course[0].Title,
+        Thumbnail_Large: course[0].Thumbnail_Large,
+        Thumbnail_Medium: course[0].Thumbnail_Medium,
+        Thumbnail_Small: course[0].Thumbnail_Small,
         Sub_Description: course[0].Sub_Description,
         Description: course[0].Description,
+        Categories_Tree: [categoryParent[0], category[0]],
+        Language_Name: language[0].Name,
+        Similar_Courses: listSimilarCourses_,
+        Author: author[0],
         Price: course[0].Price,
         Promote: promote[0].Promote,
         Rating: course[0].Rating,
         Content: content,
         Feedback: listFeedbackResponse,
-        NumerOfRegister: numberRegister.length,
+        Number_Of_Enrolled: numberRegister.length,
       };
       return {
         Code: getOneCourseResponseEnum.SUCCESS,

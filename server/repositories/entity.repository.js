@@ -7,7 +7,7 @@ module.exports = (nameEntity) => {
       // console.log(entity);
       return db(nameEntity)
         .insert(entity)
-        .catch((e) => operatorType.FAIL.CREATE);
+        .catch((e) => { console.log(e); return operatorType.FAIL.CREATE });
     },
     //READ
     getEntities() {

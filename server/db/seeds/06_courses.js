@@ -23,9 +23,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn web design in 1 hour with 25+ simple-to-use rules and guidelines — tons of amazing web design resources included!',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/473160_d929_3.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/473160_d929_3.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/473160_d929_3.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/473160_d929_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/473160_d929_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/473160_d929_3.jpg',
             'Title': 'Web Design for Web Developers: Build Beautiful Websites!'
           },
           {
@@ -39,9 +39,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': "Learn how Javascript works, some basic API's and finally create a mini project.",
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/707962_71f5_4.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/707962_71f5_4.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/707962_71f5_4.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/707962_71f5_4.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/707962_71f5_4.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/707962_71f5_4.jpg',
             'Title': 'Javascript Essentials'
           },
           {
@@ -55,9 +55,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Create a responsive Q&A and Tab sections for your website by utilizing only HTML, CSS, and JavaScript (JS)',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/4038786_c662.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/4038786_c662.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/4038786_c662.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/4038786_c662.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/4038786_c662.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/4038786_c662.jpg',
             'Title': 'Q&A and Tab sections using HTML, CSS and JavaScript (JS)'
           },
           {
@@ -71,9 +71,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Build 2 websites (Counter & background video webs) using HTML, CSS, and JavaScript and learn bootstrap and Font Awesome.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/4020696_7018.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/4020696_7018.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/4020696_7018.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/4020696_7018.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/4020696_7018.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/4020696_7018.jpg',
             'Title': 'Learn HTML, CSS, and JavaScript through 2 simple projects.'
           },
           {
@@ -87,9 +87,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Code Your Very Own Dynamic Websites by Learning PHP Through Real-World Application & Examples',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/130064_22b3_11.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/130064_22b3_11.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/130064_22b3_11.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/130064_22b3_11.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/130064_22b3_11.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/130064_22b3_11.jpg',
             'Title': 'Practical PHP: Master the Basics and Code Dynamic Websites'
           },
           {
@@ -103,9 +103,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn the essentials of R Programming - R Beginner Level!',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/236676_881e_4.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/236676_881e_4.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/236676_881e_4.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/236676_881e_4.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/236676_881e_4.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/236676_881e_4.jpg',
             'Title': 'R Basics - R Programming Language Introduction'
           },
           {
@@ -119,9 +119,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn Data science / Machine Learning using Python (Scikit Learn)',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1555134_031f_3.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1555134_031f_3.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1555134_031f_3.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1555134_031f_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1555134_031f_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1555134_031f_3.jpg',
             'Title': 'Introduction to Data Science using Python (Module 1/3)'
           },
           {
@@ -135,9 +135,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'A Gentle Introduction to the Top Python Libraries used in Applied Machine Learning',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1198574_369c_3.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1198574_369c_3.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1198574_369c_3.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1198574_369c_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1198574_369c_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1198574_369c_3.jpg',
             'Title': 'The Top 5 Machine Learning Libraries in Python'
           },
           {
@@ -151,9 +151,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Begin to use R and ggplot while learning the basics of linear regression',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/487490_5f70_2.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/487490_5f70_2.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/487490_5f70_2.jpg"}}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/487490_5f70_2.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/487490_5f70_2.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/487490_5f70_2.jpg"}',
             'Title': 'R, ggplot, and Simple Linear Regression'
           },
           {
@@ -167,9 +167,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'NON TECHNICAL COURSE specifically created for AI/ML/DL Aspirants, gives insight about Road map to A.I',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/2155538_297b.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/2155538_297b.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/2155538_297b.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/2155538_297b.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/2155538_297b.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/2155538_297b.jpg',
             'Title': 'Welcome to Artificial Intelligence !'
           },
           {
@@ -183,9 +183,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Android app in Android studio. Learn Android app development now!',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/695836_2fba.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/695836_2fba.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/695836_2fba.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/695836_2fba.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/695836_2fba.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/695836_2fba.jpg',
             'Title': 'Mobile App Development in 27 Minutes: Android'
           },
           {
@@ -199,9 +199,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Build Android and iOS apps with a flutter framework',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1644780_cd06_3.jpg"}',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1644780_cd06_3.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1644780_cd06_3.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1644780_cd06_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1644780_cd06_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1644780_cd06_3.jpg',
             'Title': 'Learn Flutter - Beginners Course'
           },
           {
@@ -215,9 +215,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'We start learning Android Programming by understanding concepts and implementing them live!',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1000888_e8cb_3.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1000888_e8cb_3.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1000888_e8cb_3.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1000888_e8cb_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1000888_e8cb_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1000888_e8cb_3.jpg',
             'Title': 'Android Development from Scratch to Create Cool Apps!'
           },
           {
@@ -231,9 +231,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn iOS and Swift to become an app entrepreneur. Includes FREE AWS service, Swift tvOS and Sketch training.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/877482_cfa8_2.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/877482_cfa8_2.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/877482_cfa8_2.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/877482_cfa8_2.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/877482_cfa8_2.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/877482_cfa8_2.jpg',
             'Title': 'The Complete Swift iOS Developer - Create Real Apps in Swift'
           },
           {
@@ -247,9 +247,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn every step in iOS App Development with iOS app development tutorial, from creating to submitting to app store.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/20366_6760_9.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/20366_6760_9.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/20366_6760_9.jpg"}}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/20366_6760_9.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/20366_6760_9.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/20366_6760_9.jpg"}',
             'Title': 'This Is How You Make iPhone Apps - iOS Development Course'
           },
           {
@@ -263,9 +263,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'A Step by Step Instructional Guide on How To Create A Fully Functional Website Using WordPress in Around 1 Hour!',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/648102_bbdd_2.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/648102_bbdd_2.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/648102_bbdd_2.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/648102_bbdd_2.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/648102_bbdd_2.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/648102_bbdd_2.jpg',
             'Title': 'How To Create A Website using WordPress (Step by Step)'
           },
           {
@@ -279,9 +279,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn how to publish your own website live on the web in no time with this web hosting crash course.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/40017_84f0_5.jpg"}',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/40017_84f0_5.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/40017_84f0_5.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/40017_84f0_5.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/40017_84f0_5.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/40017_84f0_5.jpg',
             'Title': 'Web Hosting 101: Get Your Website Live on the Web in No Time'
           },
           {
@@ -295,9 +295,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learning the basics of Photoshop CC for Web Design Beginners',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/599170_aa50_3.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/599170_aa50_3.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/599170_aa50_3.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/599170_aa50_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/599170_aa50_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/599170_aa50_3.jpg',
             'Title': 'Photoshop CC for Web Design Beginners'
           },
           {
@@ -311,9 +311,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': "A beginner's guide to creating a WordPress website without any coding for your web design & SEO business.",
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/149006_b92e_8.jpg"}',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/149006_b92e_8.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/149006_b92e_8.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/149006_b92e_8.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/149006_b92e_8.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/149006_b92e_8.jpg',
             'Title': 'Create a WordPress Website for Your Web Design Business'
           },
           {
@@ -327,9 +327,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'The starting place for all the other HTML courses out there!',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1192478_0bde_8.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1192478_0bde_8.jpg"}}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1192478_0bde_8.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1192478_0bde_8.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1192478_0bde_8.jpg"}',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1192478_0bde_8.jpg',
             'Title': "HTML and CSS: The Super Fun Beginner's Course"
           },
           {
@@ -343,9 +343,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn how to design a logo that stands out from the crowd.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/399938_e897_5.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/399938_e897_5.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/399938_e897_5.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/399938_e897_5.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/399938_e897_5.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/399938_e897_5.jpg',
             'Title': 'Professional Logo Design in Adobe Illustrator'
           },
           {
@@ -359,9 +359,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'The power of the digital art standard at your finger tips',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1298462_38dd.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1298462_38dd.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1298462_38dd.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1298462_38dd.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1298462_38dd.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1298462_38dd.jpg',
             'Title': 'Photoshop Fundamentals'
           },
           {
@@ -375,9 +375,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': "A beginner's guide to the building blocks of digital art",
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1298438_2631.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1298438_2631.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1298438_2631.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1298438_2631.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1298438_2631.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1298438_2631.jpg',
             'Title': 'Art Fundamentals - Building Blocks of Digital Painting'
           },
           {
@@ -391,9 +391,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn to draw the figure from life in less than 45 minutes.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/17349_932f_8.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/17349_932f_8.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/17349_932f_8.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/17349_932f_8.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/17349_932f_8.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/17349_932f_8.jpg',
             'Title': 'Figure Drawing From Life Using The Reilly Technique.'
           },
           {
@@ -407,9 +407,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': "Logo Design! Not just the basics, it's the fundamentals. Lauren guides you in building and preparing a branded logo.",
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/270454_23ec_5.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/270454_23ec_5.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/270454_23ec_5.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/270454_23ec_5.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/270454_23ec_5.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/270454_23ec_5.jpg',
             'Title': 'Logo Design Fundamentals'
           },
           {
@@ -423,9 +423,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'A look at how the old ways of doing things get perpetuated causing us problems today.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/45551_8735_15.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/45551_8735_15.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/45551_8735_15.jpg"}}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/45551_8735_15.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/45551_8735_15.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/45551_8735_15.jpg"}',
             'Title': 'Analysis of Everyday Things.'
           },
           {
@@ -439,9 +439,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn more than 30 tools to potentialize your creative process and have innovative ideas.',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1898726_5870_3.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1898726_5870_3.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1898726_5870_3.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1898726_5870_3.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1898726_5870_3.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1898726_5870_3.jpg',
             'Title': 'Guide to Unblock Creativity and Have Original Ideas!'
           },
           {
@@ -455,9 +455,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Design of Knuckle Joint Elements based on Static load condition',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/3901046_c8ee.jpg"}',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/3901046_c8ee.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/3901046_c8ee.jpg"}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/3901046_c8ee.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/3901046_c8ee.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/3901046_c8ee.jpg',
             'Title': 'Design Simple Machine Element'
           },
           {
@@ -471,9 +471,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': 'Learn about new ways to think about defining new products and services. Understand success or failure with new products',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/4199640_d240_11.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/4199640_d240_11.jpg"}',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/4199640_d240_11.jpg"',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/4199640_d240_11.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/4199640_d240_11.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/4199640_d240_11.jpg',
             'Title': 'B03: New Product, Boom or Bust?, Plain & Simple'
           },
           {
@@ -487,9 +487,9 @@ function createCourses(knex) {
             'Promote_Id': 1,
             'Rating': 0,
             'Sub_Description': '顧客のデジタル革命の推進役となるために',
-            'Thumbnail_Large': '"https://img-c.udemycdn.com/course/750x422/1785082_7651_2.jpg"',
-            'Thumbnail_Medium': '"https://img-c.udemycdn.com/course/480x270/1785082_7651_2.jpg"',
-            'Thumbnail_Small': '"https://img-c.udemycdn.com/course/240x135/1785082_7651_2.jpg"}}',
+            'Thumbnail_Large': 'https://img-c.udemycdn.com/course/750x422/1785082_7651_2.jpg',
+            'Thumbnail_Medium': 'https://img-c.udemycdn.com/course/480x270/1785082_7651_2.jpg',
+            'Thumbnail_Small': 'https://img-c.udemycdn.com/course/240x135/1785082_7651_2.jpg"}',
             'Title': 'デジタルトランスフォーメーション(DX)とサービスデザイン'
           }
         ]

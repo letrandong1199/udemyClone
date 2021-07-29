@@ -9,7 +9,7 @@ router.post("/categories", authAdmin, async (req, res) => {
   res.json({ message }).end();
 });
 router.get("/categories", async (req, res) => {
-  const message = await categoryService.getAllCategory();
+  const message = await categoryService.getAllCategory(req);
   res.json({ message }).end();
 });
 router.delete("/categories/:id", authAdmin, async (req, res) => {

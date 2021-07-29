@@ -52,7 +52,7 @@ const userService = {
             Course_Id: course[0].Id,
             Name: course[0].Title,
             Image: course[0].Thumbnail_Small,
-            Author: author[0].Full_Name,
+            Author: author[0].Name,
             Category: category[0].Name,
             Sub_Description: course.Sub_Description,
             //Promote: promote[0].Promote,
@@ -62,7 +62,7 @@ const userService = {
       const userResponse = {
         Id: user[0].Id,
         Email: user[0].Email,
-        Full_Name: user[0].Full_Name,
+        Name: user[0].Name,
         Password: user[0].Password,
         Watch_Lists: listWatchlistResponse,
       };
@@ -80,8 +80,8 @@ const userService = {
     try {
       const resultValidator = updateOneUserValidator.validate(
         request.id,
-        request.body.fullname,
-        request.body.password
+        request.body.Name,
+        request.body.Password
       );
       console.log(request.body);
       if (!resultValidator.IsSuccess) {
@@ -93,8 +93,8 @@ const userService = {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
       }
       console.log(new Date());
-      user[0].Full_Name = request.body.fullname;
-      user[0].Password = bcrypt.hashSync(request.body.password);
+      user[0].Name = request.body.Name;
+      user[0].Password = bcrypt.hashSync(request.body.Password);
       user[0].updated_at = new Date();
       if (
         (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
@@ -182,9 +182,9 @@ const userService = {
     console.log("I'm here");
     try {
       const resultValidator = createOneUserValidator.validate(
-        request.email,
-        request.name,
-        request.password
+        request.Email,
+        request.Name,
+        request.Password
       );
       //console.log(resultValidator.IsSuccess);
       if (!resultValidator.IsSuccess) {
@@ -192,7 +192,7 @@ const userService = {
         return { Code: resultValidator.Code };
       }
       console.log("Now, I'm in the door of repository");
-      var user = await userRepository.getUserByEmail(request.email);
+      var user = await userRepository.getUserByEmail(request.Email);
       if (user != "") {
         return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
       }
@@ -202,9 +202,9 @@ const userService = {
       }
       console.log(roleOfUser[0]);
       const newUser = {
-        Email: request.email,
-        Full_Name: request.name,
-        Password: bcrypt.hashSync(request.password, 8),
+        Email: request.Email,
+        Name: request.Name,
+        Password: bcrypt.hashSync(request.Password, 8),
         Role_Id: roleOfUser[0].Id,
       };
       ret = await _entityRepository("Users").addEntity(newUser);
@@ -222,17 +222,17 @@ const userService = {
   async signIn(request) {
     try {
       const resultValidator = signInValidator.validate(
-        request.email,
-        request.password
+        request.Email,
+        request.Password
       );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const user = await userRepository.getUserByEmail(request.email);
+      const user = await userRepository.getUserByEmail(request.Email);
       if (user.length == 0) {
         return { Code: signInResponseEnum.WRONG_EMAIL };
       }
-      if (!bcrypt.compareSync(request.password, user[0].Password)) {
+      if (!bcrypt.compareSync(request.Password, user[0].Password)) {
         return { Code: signInResponseEnum.WRONG_PASSWORD };
       }
       const payload = {
@@ -241,14 +241,15 @@ const userService = {
         Role_Id: user[0].Role_Id,
       };
 
-      const jwToken = jwt.sign(payload, process.env.SECRET_KEY, {
+      const jwToken = await jwt.sign(payload, process.env.SECRET_KEY, {
         expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
       });
-      const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
+      const refreshToken = await jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
       });
       // Store refresh token in ...
       tokenList[refreshToken] = payload;
+      console.log(jwToken);
       return {
         Code: signInResponseEnum.SUCCESS,
         token: jwToken,

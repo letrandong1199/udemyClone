@@ -113,25 +113,45 @@ exports.up = function (knex) {
       table.primary("User_Id", "Course_Id");
     })
     .then(function (table) {
-      const trigFunc = `CREATE OR REPLACE FUNCTION calculate_avg_ratings() RETURNS trigger AS 
-      $BODY$ 
-      BEGIN 
-      UPDATE "Courses" 
-      SET "Rating"= (SELECT AVG("Rating") FROM "Enrolled_Courses" WHERE "Course_Id" = NEW."Course_Id")  
-      WHERE "Id" = NEW."Course_Id"; 
-      RETURN NEW;  
-      END; 
-      $BODY$ language plpgsql; `;
+      if (knex.client.config.client == 'pg') {
+        const trigFunc = `CREATE OR REPLACE FUNCTION calculate_avg_ratings() RETURNS trigger AS 
+                          $BODY$ 
+                          BEGIN 
+                          UPDATE "Courses" 
+                          SET "Rating"= (SELECT AVG("Rating") FROM "Enrolled_Courses" WHERE "Course_Id" = NEW."Course_Id")  
+                          WHERE "Id" = NEW."Course_Id"; 
+                          RETURN NEW;  
+                          END; 
+                          $BODY$ language plpgsql; `;
 
-      knex.raw(trigFunc).then(function (response) {
-        var trigger = `CREATE TRIGGER calAvgRating  
+        const triggerMysql = `CREATE TRIGGER calAvgRating AFTER INSERT ON enrolled_courses
+                              FOR EACH ROW
+                              UPDATE courses
+                              SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
+                              WHERE Course_Id = NEW.Course_Id)  
+                              WHERE Id = NEW.Course_Id; `
+
+        knex.raw(trigFunc).then(function (response) {
+          var trigger = `CREATE TRIGGER calAvgRating  
         AFTER INSERT OR UPDATE 
         ON "Enrolled_Courses" FOR EACH ROW EXECUTE PROCEDURE calculate_avg_ratings();`;
 
-        knex.raw(trigger).then(function (response) {
+
+          knex.raw(trigger).then(function (response) {
+            console.log("defined rating trigger");
+          });
+        });
+      } else if (knex.client.config.client == 'mysql' || knex.client.config.client == 'mysql2') {
+        const triggerMysql = `CREATE TRIGGER calAvgRating AFTER INSERT ON enrolled_courses
+                              FOR EACH ROW
+                              UPDATE courses
+                              SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
+                              WHERE Course_Id = NEW.Course_Id)  
+                              WHERE Id = NEW.Course_Id; `
+        knex.raw(triggerMysql).then(function (response) {
           console.log("defined rating trigger");
         });
-      });
+      }
     });
 };
 
