@@ -33,9 +33,9 @@ const courseRepository = {
       .where("Title", title)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
-  getCourseByAuthorAndCourseId(author_id) {
-    return db(Courses)
-      .where("Author_Id", author_id)
+  getCourseByCategoryId(category_id) {
+    return db("Courses")
+      .where("Category_Id", category_id)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
 };

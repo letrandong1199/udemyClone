@@ -11,6 +11,7 @@ const updateOneCategoryValidator = require("../../api/validators/categoryValidat
 
 const categoryRepository = require("../../repositories/category.repository");
 const _entityRepository = require("../../repositories/entity.repository");
+const courseRepository = require("../../repositories/course.repository");
 const categoryService = {
   // Update one category
   async updateOneCategory(request) {
@@ -36,7 +37,9 @@ const categoryService = {
       }
 
       if (!request.Parent_Id) {
-        const categoryParent = await _entityRepository("Categories").getEntity(request.Parent_Id)
+        const categoryParent = await _entityRepository("Categories").getEntity(
+          request.Parent_Id
+        );
         if (category.length == 0) {
           return { Code: createOneCategoryResponseEnum.PARENT_IS_NOT_EXIST };
         }
@@ -65,7 +68,7 @@ const categoryService = {
   async getAllCategory(request) {
     const query = request.query;
     const keyToColName = {
-      parent: 'Parent_Id',
+      parent: "Parent_Id",
     };
 
     for (const [key, value] of Object.entries(query)) {
@@ -107,6 +110,12 @@ const categoryService = {
       if (category.length == 0) {
         return { Code: deleteOneCategoryResponseEnum.CATEGORY_IS_NOT_EXIST };
       }
+      const course = await courseRepository.getCourseByCategoryId(
+        request.params.id
+      );
+      if (course.length != 0) {
+        return { Code: deleteOneCategoryResponseEnum.COURSE_IS_EXIST };
+      }
       if (
         (await _entityRepository("Categories").deleteEntity(
           request.params.id
@@ -132,7 +141,9 @@ const categoryService = {
       }
 
       if (!request.Parent_Id) {
-        const categoryParent = await _entityRepository("Categories").getEntity(request.Parent_Id)
+        const categoryParent = await _entityRepository("Categories").getEntity(
+          request.Parent_Id
+        );
         if (category.length == 0) {
           return { Code: createOneCategoryResponseEnum.PARENT_IS_NOT_EXIST };
         }
