@@ -78,7 +78,7 @@ const userService = {
   //Update one user
   async updateInfo(request) {
     try {
-      const resultValidator = updateOneUserValidator.validate(
+      const resultValidator = updateInfoValidator.validate(
         request.id,
         request.body.Name,
         request.body.Password
@@ -118,7 +118,7 @@ const userService = {
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const user = await _entityRepository("Users").getEntity(request.id);
+      const user = await _entityRepository("Users").getEntity(request.params.id);
       console.log(user);
       if (user.length == 0) {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
@@ -127,7 +127,7 @@ const userService = {
       user[0].Name = request.body.Name;
       user[0].updated_at = new Date();
       if (
-        (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
+        (await _entityRepository("Users").updateEntity(request.params.id, user[0])) ===
         operatorType.FAIL.UPDATE
       ) {
         return { Code: updateOneUserResponseEnum.SERVER_ERROR };
@@ -209,7 +209,7 @@ const userService = {
     }
   },
   //Create one user
-  async createOneUser(request) {
+  async signUp(request) {
     console.log("I'm here");
     try {
       const resultValidator = createOneUserValidator.validate(
@@ -228,6 +228,47 @@ const userService = {
         return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
       }
       const roleOfUser = await roleRepository.getRoleByName("User");
+      if (roleOfUser.length == 0) {
+        return { Code: createOneUserResponseEnum.ROLE_OFUSER_IS_INVALID };
+      }
+      console.log(roleOfUser[0]);
+      const newUser = {
+        Email: request.Email,
+        Name: request.Name,
+        Password: bcrypt.hashSync(request.Password, 8),
+        Role_Id: roleOfUser[0].Id,
+      };
+      ret = await _entityRepository("Users").addEntity(newUser);
+      console.log(ret);
+      // console.log(newUser);
+      if (ret === operatorType.FAIL.CREATE) {
+        return { Code: createOneUserResponseEnum.SERVER_ERROR };
+      }
+      return { Code: createOneUserResponseEnum.SUCCESS };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  //Create one instructor
+  async createOneInstructor(request) {
+    console.log("I'm here");
+    try {
+      const resultValidator = createOneUserValidator.validate(
+        request.Email,
+        request.Name,
+        request.Password
+      );
+      //console.log(resultValidator.IsSuccess);
+      if (!resultValidator.IsSuccess) {
+        console.log(resultValidator, "in user.service");
+        return { Code: resultValidator.Code };
+      }
+      console.log("Now, I'm in the door of repository");
+      var user = await userRepository.getUserByEmail(request.Email);
+      if (user != "") {
+        return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
+      }
+      const roleOfUser = await roleRepository.getRoleByName("Instructor");
       if (roleOfUser.length == 0) {
         return { Code: createOneUserResponseEnum.ROLE_OFUSER_IS_INVALID };
       }

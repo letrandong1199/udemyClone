@@ -3,19 +3,25 @@ const operatorType = require("../utils/enums/operatorType");
 const categoryRepository = require("./category.repository");
 const courseRepository = {
   getCourseByQuery(query, paging, search, sort) {
-    console.log(query, paging, search.category);
-    return db("Courses")
+    let filtered = db("Courses")
       .where((qb) => {
         for (const [key, value] of Object.entries(query)) {
           qb.whereIn(key, value);
         }
       })
-      .where("Title", "like", `%${search.search}%`)
-      .orWhereIn("Category_Id", search.category)
-      .orderBy(sort.ColName, sort.OrderBy)
-      .limit(paging.limit)
-      .offset(paging.offset)
-      .catch(() => operatorType.FAIL.NOT_EXIST);
+
+    if (search != undefined && search != null && (search.search || search.category)) {
+      filtered = filtered.where("Title", "like", `%${search.search}%`)
+        .orWhereIn("Category_Id", search.category)
+    }
+
+    if (sort && sort.ColName && sort.OrderBy) {
+      filtered = filtered.orderBy(sort.ColName, sort.OrderBy)
+    }
+    if (paging && paging.limit && paging.offset) {
+      filtered = filtered.limit(paging.limit).offset(paging.offset)
+    }
+    return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCountCourses(query) {
     return db("Courses")

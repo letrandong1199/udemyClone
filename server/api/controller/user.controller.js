@@ -4,9 +4,15 @@ const authAdmin = require("../middleware/authAdmin.mdw");
 const authTeacher = require("../middleware/authTeacher.mdw");
 const authUser = require("../middleware/authUser.mdw");
 const router = Router();
+router.post("/sign-up", async (req, res) => {
+  console.log(req.body);
+  const message = await userService.signUp(req.body);
+  res.json({ message }).end();
+});
+
 router.post("/users", async (req, res) => {
   console.log(req.body);
-  const message = await userService.createOneUser(req.body);
+  const message = await userService.createOneInstructor(req.body);
   res.json({ message }).end();
 });
 

@@ -131,8 +131,8 @@ const courseService = {
       language: "Language_Id",
       category: "Category_Id",
       rating: "Rating",
-      desc_rating: "Rating",
-      asc_price: "Price",
+      'desc-rating': "Rating",
+      'asc-price': "Price",
     };
     const queryTable = {};
     const paging = {};
@@ -155,13 +155,13 @@ const courseService = {
       } else if (key === "sort") {
         if (keyToColName[value] === "Rating") {
           sort["ColName"] = "Rating";
-          sort["Oderby"] = "desc";
+          sort["Orderby"] = "desc";
         } else if (keyToColName[value] === "Price") {
           sort["ColName"] = "Price";
-          sort["Oderby"] = "asc";
+          sort["Orderby"] = "asc";
         } else {
           sort["ColName"] = "Rating";
-          sort["Oderby"] = "desc";
+          sort["Orderby"] = "desc";
         }
       } else if (typeof value === "string" || typeof value === "number") {
         console.log("Number");
@@ -361,11 +361,12 @@ const courseService = {
       const categoryParent = await _entityRepository("Categories").getEntity(
         category[0].Parent_Id
       );
+      console.log('hi', [course[0].Category_Id]);
       const listSimilarCourses = await courseRepository.getCourseByQuery(
-        {
+        query = {
           Category_Id: [course[0].Category_Id],
         },
-        {
+        paging = {
           limit: 10,
           offset: 0,
         }
@@ -383,7 +384,6 @@ const courseService = {
           );
           return {
             Id: course.Id,
-            Name: course.Title,
             Title: course.Title,
             Sub_Description: course.Sub_Description,
             Description: course.Description,
@@ -452,6 +452,7 @@ const courseService = {
       const numberRegister =
         await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
       const courseResponse = {
+        Id: course[0].Id,
         Title: course[0].Title,
         Thumbnail_Large: course[0].Thumbnail_Large,
         Thumbnail_Medium: course[0].Thumbnail_Medium,

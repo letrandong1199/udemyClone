@@ -3,11 +3,11 @@ const enrolledcourseService = require("../../business/services/enrolledcourse.se
 const authTeacher = require("../middleware/authTeacher.mdw");
 const authUser = require("../middleware/authUser.mdw");
 const router = Router();
-router.post("/enrolledcourses", authUser, async (req, res) => {
+router.post("/enrolled-courses", authUser, async (req, res) => {
   const message = await enrolledcourseService.createOneEnrolledCourse(req);
   res.json({ message }).end();
 });
-router.put("/enrolledcourses", authUser, async (req, res) => {
+router.put("/enrolled-courses", authUser, async (req, res) => {
   const message = await enrolledcourseService.updateOneEnrolledCourse(req);
   res.json({ message }).end();
 });

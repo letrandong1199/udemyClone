@@ -99,7 +99,7 @@ exports.up = function (knex) {
     .createTable("Media_User", function (table) {
       table.integer("Media_Id").unsigned().references("Id").inTable("Media");
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
-      table.primary("Media_Id", "User_Id");
+      table.primary(["Media_Id", "User_Id"]);
     })
     .createTable("Watch_Lists", function (table) {
       table.increments("Id").primary();
@@ -110,7 +110,7 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.float("Rating").defaultTo(0.0);
-      table.primary("User_Id", "Course_Id");
+      table.primary(["User_Id", "Course_Id"]);
     })
     .then(function (table) {
       if (knex.client.config.client == 'pg') {

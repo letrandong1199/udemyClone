@@ -7,6 +7,7 @@ const _entityRepository = require("../../repositories/entity.repository");
 const operatorType = require("../../utils/enums/operatorType");
 const enrolledcourseService = {
   async createOneEnrolledCourse(request) {
+    console.log(request.body);
     try {
       const resultValidator = createOneEnrolledCourseValidator.validate(
         request.id,
