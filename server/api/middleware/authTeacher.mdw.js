@@ -16,7 +16,7 @@ module.exports = async (req, res, next) => {
       next();
     } catch (e) {
       console.log(e);
-      return res.json({ message: "Invalid_token" });
+      return res.status(401).json({ message: "Invalid_token" });
     }
   } else {
     return res.json({ message: "Token is not found" }).end();

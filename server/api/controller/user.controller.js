@@ -20,7 +20,7 @@ router.post("/refresh-token", async (req, res) => {
   res.json({ message }).end();
 });
 
-router.get("/users", authAdmin, async (req, res) => {
+router.get("/users", async (req, res) => {
   const message = await userService.getAllUser();
   res.json({ message }).end();
 });
@@ -40,8 +40,13 @@ router.delete("/users/:id", authAdmin, async (req, res) => {
   res.json({ message }).end();
 });
 
-router.put("/users/update-user", authUser, async (req, res) => {
+router.put("/users/:id", authAdmin, async (req, res) => {
   const message = await userService.updateOneUser(req);
+  res.json({ message }).end();
+});
+
+router.put("/users/update-user", authUser, async (req, res) => {
+  const message = await userService.updateInfo(req);
   res.json({ message }).end();
 });
 

@@ -76,7 +76,7 @@ const userService = {
     }
   },
   //Update one user
-  async updateOneUser(request) {
+  async updateInfo(request) {
     try {
       const resultValidator = updateOneUserValidator.validate(
         request.id,
@@ -108,6 +108,36 @@ const userService = {
     }
   },
 
+  async updateOneUser(request) {
+    try {
+      const resultValidator = updateOneUserValidator.validate(
+        request.params.id,
+        request.body.Name,
+      );
+      console.log(request.body);
+      if (!resultValidator.IsSuccess) {
+        return { Code: resultValidator.Code };
+      }
+      const user = await _entityRepository("Users").getEntity(request.id);
+      console.log(user);
+      if (user.length == 0) {
+        return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
+      }
+      console.log(new Date());
+      user[0].Name = request.body.Name;
+      user[0].updated_at = new Date();
+      if (
+        (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
+        operatorType.FAIL.UPDATE
+      ) {
+        return { Code: updateOneUserResponseEnum.SERVER_ERROR };
+      }
+      return { Code: updateOneUserResponseEnum.SUCCESS, newUser: user[0] };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
   //Get all User
   async getAllUser() {
     try {
@@ -122,8 +152,9 @@ const userService = {
             user.Role_Id
           );
           return {
-            Email: user.Id,
-            Full_Name: user.Full_Name,
+            Id: user.Id,
+            Email: user.Email,
+            Name: user.Name,
             Role: roleOfUser[0].Name,
           };
         })

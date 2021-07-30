@@ -14,6 +14,7 @@ const _entityRepository = require("../../repositories/entity.repository");
 const categoryService = {
   // Update one category
   async updateOneCategory(request) {
+    console.log(request.body);
     try {
       const resultValidator = updateOneCategoryValidator.validate(
         request.params.id,
@@ -122,11 +123,11 @@ const categoryService = {
   // Create one category
   async createOneCategory(request) {
     try {
-      const resultValidator = createOneCategoryValidator.validate(request.name);
+      const resultValidator = createOneCategoryValidator.validate(request.Name);
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const category = await categoryRepository.getCategoryByName(request.name);
+      const category = await categoryRepository.getCategoryByName(request.Name);
       if (category.length != 0) {
         return { Code: createOneCategoryResponseEnum.CATEGORY_IS_EXIST };
       }
