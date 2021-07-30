@@ -131,15 +131,38 @@ const courseService = {
       language: "Language_Id",
       category: "Category_Id",
       rating: "Rating",
+      desc_rating: "Rating",
+      asc_price: "Price",
     };
     const queryTable = {};
     const paging = {};
-
+    const search = {};
+    const sort = {};
     for (const [key, value] of Object.entries(query)) {
-      if (key === "limit") {
+      if (key === "search") {
+        const category = await categoryRepository.getCategoryByQuery(value);
+        if (category) {
+          let categorySearch = category.map((item) => {
+            return item.Id;
+          });
+          search["category"] = categorySearch;
+        }
+        search[key] = value;
+      } else if (key === "limit") {
         paging[key] = parseInt(value);
       } else if (key === "page") {
         paging["offset"] = (parseInt(value) - 1) * parseInt(query.limit);
+      } else if (key === "sort") {
+        if (keyToColName[value] === "Rating") {
+          sort["ColName"] = "Rating";
+          sort["Oderby"] = "desc";
+        } else if (keyToColName[value] === "Price") {
+          sort["ColName"] = "Price";
+          sort["Oderby"] = "asc";
+        } else {
+          sort["ColName"] = "Rating";
+          sort["Oderby"] = "desc";
+        }
       } else if (typeof value === "string" || typeof value === "number") {
         console.log("Number");
         queryTable[keyToColName[key]] = Array(value);
@@ -149,12 +172,18 @@ const courseService = {
     }
     console.log("object", queryTable);
     console.log("object", paging);
+    console.log("object", search);
+    console.log("object", sort);
 
     try {
-      const count = await courseRepository.getCountCourses(queryTable);
+      if (queryTable) {
+        var count = await courseRepository.getCountCourses(queryTable);
+      }
       const listCourse = await courseRepository.getCourseByQuery(
         queryTable,
-        paging
+        paging,
+        search,
+        sort
       );
 
       const listAllCourseResponse = await Promise.all(
@@ -178,6 +207,7 @@ const courseService = {
             Thumbnail_Medium: course.Thumbnail_Medium,
             Thumbnail_Large: course.Thumbnail_Large,
             Price: course.Price,
+            Rating: course.Rating,
             Category: category[0],
             Author: author[0],
             Promote_Rate: promote[0].Promote,
@@ -331,12 +361,15 @@ const courseService = {
       const categoryParent = await _entityRepository("Categories").getEntity(
         category[0].Parent_Id
       );
-      const listSimilarCourses = await courseRepository.getCourseByQuery({
-        Category_Id: [course[0].Category_Id],
-      }, {
-        limit: 10,
-        offset: 0
-      })
+      const listSimilarCourses = await courseRepository.getCourseByQuery(
+        {
+          Category_Id: [course[0].Category_Id],
+        },
+        {
+          limit: 10,
+          offset: 0,
+        }
+      );
       const listSimilarCourses_ = await Promise.all(
         listSimilarCourses.map(async (course) => {
           let category = await _entityRepository("Courses").getEntity(
@@ -405,7 +438,7 @@ const courseService = {
               return {
                 Id: lecture.Id,
                 Media: listMediaResponse,
-                Title: lecture.Title
+                Title: lecture.Title,
               };
             })
           );
