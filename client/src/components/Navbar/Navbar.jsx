@@ -38,6 +38,8 @@ import {
     Hidden,
     Drawer,
     Popover,
+    Autocomplete,
+    TextField,
 } from '@material-ui/core';
 
 import { Link, useLocation, useHistory } from 'react-router-dom';
@@ -162,6 +164,21 @@ const SearchBar = () => {
                 }}
                 inputProps={{ 'aria-label': 'search' }}
             />
+            {/*<Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                disableClearable
+                options={.map((option) => option.title)}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Search input"
+                        margin="normal"
+                        variant="outlined"
+                        InputProps={{ ...params.InputProps, type: 'search' }}
+                    />
+                )}
+                />*/}
         </div>
     )
 }

@@ -39,12 +39,32 @@ import { ListItemIcon, ListItemText } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import { Collapse } from '@material-ui/core';
 import PlayCircleFilledWhiteRoundedIcon from '@material-ui/icons/PlayCircleFilledWhiteRounded';
-
+import enrolledCourseService from '../../services/enrolledCourse.service';
+import Backdrop from '@material-ui/core/Backdrop';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { ENROLLED } from '../../config/config';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const Banner = ({ course, isPending }) => {
 
     const { data, loading, error: error2 } = usePalette(course?.Thumbnail_Small);
     const classes = useStyles({ data, thumbnail: course?.Thumbnail_Large, isPending, loading });
+
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [error1, setError1] = useState(null);
+
+    const [openSnack, setOpenSnack] = useState(false);
+    const [snackContent, setSnackContent] = useState(null);
+    const [snackType, setSnackType] = useState('success');
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
+
 
     const handleClick = (link) => (event) => {
         event.preventDefault();
@@ -53,6 +73,26 @@ const Banner = ({ course, isPending }) => {
     const categories = (categories_tree) => categories_tree?.map((category, index) => {
         return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
     });
+
+    const handleEnroll = () => {
+        setIsProcessing(true);
+        console.log(course);
+        enrolledCourseService.postOne({ Course_Id: course.Id }).then(response => {
+            if (response.data.message.Code !== ENROLLED.SUCCESS) {
+                throw Error(response.data.message.Code);
+            }
+            setSnackContent('Added');
+            setSnackType('success');
+            setOpenSnack(true);
+            setIsProcessing(false)
+        }).catch(error => {
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            setIsProcessing(false)
+            console.log(error);
+        })
+    }
 
     return (
         <Container className={classes.outerBanner}>
@@ -139,6 +179,7 @@ const Banner = ({ course, isPending }) => {
                                     size="large"
                                     variant="outlined"
                                     style={{ marginRight: 20, textTransform: 'none' }}
+                                    onClick={handleEnroll}
                                 >
                                     Enroll for {course?.price ? course?.price + '$' : 'free'}
                                 </Button>
@@ -156,7 +197,21 @@ const Banner = ({ course, isPending }) => {
                     </Grid>
                 </Grid>
             </Card >
+            <Backdrop className={classes.backdrop} open={isProcessing}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={4000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnack} severity={snackType}>
+                    {snackContent}
+                </Alert>
+            </Snackbar>
         </Container>
+
 
     )
 }
@@ -202,9 +257,9 @@ const PageNavigation = ({ course, isPending }) => {
                             ? <Skeleton variant='h6' />
                             :
                             <Fragment>
-                                <Typography variant="h6">{course.Title}</Typography>
+                                <Typography variant="h6">{course?.Title}</Typography>
                                 <Grid>
-                                    <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} >Enroll for {course.price ? course.price + '$' : 'free'}</Button>
+                                    <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} >Enroll for {course?.price ? course?.price + '$' : 'free'}</Button>
                                     <Button color="primary" size="large" variant="outlined" startIcon={<FavoriteBorderRoundedIcon />} style={{ marginRight: 20, textTransform: 'none' }} >{'Wishlist'}</Button>
                                 </Grid>
                             </Fragment>

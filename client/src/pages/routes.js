@@ -6,6 +6,7 @@ const ProfilePage = lazy(() => import('./Profile'));
 const ResultPage = lazy(() => import('./Result'));
 const CreateCoursePage = lazy(() => import('./CreateCourse'));
 const Page404 = lazy(() => import('./Page404'));
+const AdminPage = lazy(() => import('./Admin'));
 //import ProfilePage from './Profile';
 //import CourseDetailPage from './CourseDetail';
 //import HomePage from './Home';
@@ -18,7 +19,7 @@ const routes = [
         component: HomePage,
     },
     {
-        path: '/detail/:id',
+        path: '/course/detail/:id',
         exact: true,
         public: true,
         component: CourseDetailPage,
@@ -31,10 +32,16 @@ const routes = [
         component: ProfilePage,
     },
     {
-        path: '/course/:id',
-        exact: false,
+        path: '/course',
+        exact: true,
         public: true,
         component: ResultPage,
+    },
+    {
+        path: '/admin',
+        exact: false,
+        public: false,
+        component: AdminPage,
     },
     {
         path: '/create-course',
@@ -49,4 +56,5 @@ const routes = [
         component: Page404,
     }
 ];
+console.log('before');
 export default routes;

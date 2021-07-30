@@ -29,10 +29,25 @@ class UserService {
             }
         );
     };
-
-    getPublicContent() {
-        return axios.get(API_URL + 'all');
+    getAll() {
+        return axios.get(API_URL + '/users', { headers: authHeader() })
     }
+    deleteOne(id) {
+        return axios.delete(API_URL + '/users/' + id, { headers: authHeader() })
+    }
+    updateOne(id, data) {
+        return axios.put(API_URL + '/users/' + id, data, { headers: authHeader() }
+        )
+    }
+    postOne(user) {
+        return axios
+            .post(API_URL + '/users', user, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                return response
+            })
+    }
+
 
     getUserBoard() {
         return axios.get(API_URL + '/get-info', { headers: authHeader() });

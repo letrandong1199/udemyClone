@@ -9,8 +9,9 @@ import Navbar from './components/Navbar/Navbar.jsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import GetParameterPopups from './components/GetParameterPopups/GetParameterPopups';
-import { PrivateRouteUser } from './components/PrivateRoute';
+import { PrivateRouteUser, PrivateRouteAdmin } from './components/PrivateRoute';
 import { Suspense } from 'react';
+import { ROUTES } from './config/config';
 
 function App() {
   const [dark, setDark] = React.useState(false)
@@ -19,7 +20,7 @@ function App() {
     setDark(!dark);
     console.log(dark);
   }
-  //let location = useLocation();
+
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
       <Suspense fallback={<div><CircularProgress /></div>}>
@@ -29,7 +30,9 @@ function App() {
             {routes.map(({ component, path, ...rest }) => {
               return rest.public
                 ? <Route key={path} path={path} component={component} {...rest} />
-                : <PrivateRouteUser key={path} path={path} component={component} {...rest} />
+                : path === ROUTES.admin
+                  ? <PrivateRouteAdmin key={path} path={path} component={component} {...rest} />
+                  : <PrivateRouteUser key={path} path={path} component={component} {...rest} />
             })}
           </Switch>
           <GetParameterPopups />

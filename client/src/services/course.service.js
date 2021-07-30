@@ -1,6 +1,8 @@
 import axios from 'axios';
+import authHeader from './authHeader.service.js';
 
 const API_URL = 'http://localhost:8080/api/course-controller';
+
 class CourseService {
     getAll() {
         return axios.get(API_URL + '/courses')
@@ -17,12 +19,17 @@ class CourseService {
                 return response
             })
     }
+    deleteOne(id) {
+        return axios.delete(API_URL + '/courses/' + id, { headers: authHeader() })
+    }
     getByQuery(query) {
-        let queryArray = [];
-        for (const [key, value] of Object.entries(query)) {
-            queryArray.push(`${key}=${value}`);
-        }
-        return axios.get(API_URL + '/courses?' + queryArray.join('&'))
+        // [{cateory: asda}, {dasdas: dasd}]
+        console.log('In service', query);
+        const queryString = query?.map(item =>
+            `${item.label}=${item.value}`
+        ).join('&')
+        console.log('String', queryString);
+        return axios.get(API_URL + '/courses?' + queryString)
     }
 
 }

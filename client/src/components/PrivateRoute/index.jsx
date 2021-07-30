@@ -38,7 +38,7 @@ export const PrivateRouteAdmin = ({ component: Component, ...rest }) => (
         authService.isAdmin(props) === true
             ? <Component {...props} />
             : <Redirect to={{
-                pathname: '/login',
+                pathname: '/404',
                 state: { from: props.location }
             }} />
     )} />

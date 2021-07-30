@@ -32,8 +32,9 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import courseService from '../../services/course.service';
 import Skeleton from '@material-ui/lab/Skeleton';
 import languageService from '../../services/language.service';
+import useGetParameter from '../../utils/useGetParameter'
+import { useLocation, useHistory } from 'react-router-dom';
 
-const courses_list = courses();
 
 const TabPanel = forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -125,8 +126,12 @@ const HighlightSection = ({ courses, isPending }) => {
     )
 }
 
+
 const AllCoursesSection = ({ id }) => {
     const classes = useStyles();
+    const query = useGetParameter();
+    const location = useLocation();
+    const history = useHistory();
 
     const [courses, setCourses] = useState([]);
     const [isPending, setIsPending] = useState(true);
@@ -134,9 +139,32 @@ const AllCoursesSection = ({ id }) => {
     const [count, setCount] = useState(0);
     const [page, setPage] = useState(1);
     const [languages, setLanguages] = useState([]);
+
+    const [queryArray, setQueryArray] = useState([]);
+
     const [isPendingLang, setIsPendingLang] = useState(false);
     const [languagesQuery, setLanguagesQuery] = useState(null);
     const limit = 5;
+    const category = query.get('category');
+    const language = query.get('language');
+    //setPage(query.get('page'));
+    const replaceParams = (key, value) => {
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.delete(key);
+        searchParams.set(key, value);
+        history.push({ pathname: location.pathname, search: searchParams.toString() });
+    }
+
+    useEffect(() => {
+        if (category !== undefined && category !== null) {
+            setQueryArray([...queryArray, { label: 'category', value: category }])
+        }
+        if (language !== undefined && language !== null) {
+            setQueryArray([...queryArray, { label: 'language', value: language }])
+        }
+
+    }, [category, language])
+
     useEffect(() => {
         setIsPending(true);
         languageService.getAll().then(response => {
@@ -155,26 +183,24 @@ const AllCoursesSection = ({ id }) => {
     useEffect(() => {
         setIsPending(true);
         setTimeout(() => { console.log('test'); }, 3000);
-        const query = { 'category': id, page: page, limit: limit }
-        if (languagesQuery) {
-            query['language'] = languagesQuery[0].value;
+        if (queryArray.length !== 0 && queryArray) {
+            const queryWithPaging = [...queryArray, { label: 'page', value: page }, { label: 'limit', value: limit }];
+            courseService.getByQuery(queryWithPaging)
+                .then(response => {
+                    const listCourses = response.data.message.listAllResponse;
+                    if (listCourses?.length === 0) {
+                        //throw Error('No courses');
+                    }
+                    setCount(response.data.message.Count)
+                    setCourses(listCourses);
+                    setIsPending(false);
+                }).catch(error => {
+                    console.log(error);
+                    setError(error);
+                    setIsPending(false);
+                })
         }
-        courseService.getByQuery(query)
-            .then(response => {
-                console.log('Get', response.data);
-                const listCourses = response.data.message.listAllResponse;
-                if (listCourses?.length === 0) {
-                    //throw Error('No courses');
-                }
-                setCount(response.data.message.Count)
-                setCourses(listCourses);
-                setIsPending(false);
-            }).catch(error => {
-                console.log(error);
-                setError(error);
-                setIsPending(false);
-            })
-    }, [id, page, languagesQuery])
+    }, [id, page, queryArray])
 
     const options = [
         { label: 'Thing 1', value: 1 },
@@ -201,7 +227,8 @@ const AllCoursesSection = ({ id }) => {
         }),
     };
     const handleChangePage = (event, value) => {
-        setPage(value)
+        setPage(value);
+        replaceParams('page', value);
     }
 
     return (
@@ -259,7 +286,7 @@ const AllCoursesSection = ({ id }) => {
                     ? <Skeleton width='50%' height='50px' />
                     : <Pagination
                         page={page}
-                        count={(parseInt(count) / limit).toFixed(0)}
+                        count={parseInt((parseInt(count) / limit).toFixed(0))}
                         color="primary"
                         onChange={handleChangePage}
                     />
@@ -273,8 +300,6 @@ const AllCoursesSection = ({ id }) => {
 function Result() {
     const classes = useStyles();
 
-
-
     // Get id by url params
     const { id } = useParams();
 
@@ -285,7 +310,7 @@ function Result() {
     useEffect(() => {
         setIsPending(true);
         setTimeout(() => { console.log('test'); }, 5000);
-        courseService.getByQuery({ 'category': id })
+        courseService.getByQuery([{ label: 'category', value: id }])
             .then(response => {
                 console.log('Get', response.data.message.listAllResponse);
                 const listCourses = response.data.message.listAllResponse;

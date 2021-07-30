@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/user-controller/";
-const USER = 2;
-const ADMIN = 0;
+const USER = 3;
+const ADMIN = 1;
 const INSTRUCTOR = 1;
 class AuthService {
     login(username, password) {
@@ -68,7 +68,11 @@ class AuthService {
     };
     isAdmin() {
         const user = JSON.parse(localStorage.getItem('user'));
-        const role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
+        let role = null;
+        if (user && user.token) {
+            role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
+        }
+
         return Boolean(user && user.token && role === ADMIN);
     };
 }
