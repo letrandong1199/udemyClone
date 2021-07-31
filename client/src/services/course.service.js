@@ -25,11 +25,11 @@ class CourseService {
     getByQuery(query) {
         // [{cateory: asda}, {dasdas: dasd}]
         console.log('In service', query);
-        const queryString = query?.map(item =>
+        /*const queryString = query?.map(item =>
             `${item.label}=${item.value}`
-        ).join('&')
-        console.log('String', queryString);
-        return axios.get(API_URL + '/courses?' + queryString)
+        ).join('&')*/
+        //console.log('String', queryString);
+        return axios.get(API_URL + '/courses?' + query)
     }
 
 }

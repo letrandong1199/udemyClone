@@ -1,9 +1,9 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { CREATE_MEDIA } from '../config/config';
+const API_URL = 'http://localhost:8080/api/media-controller';
 
-const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
-
-class EnrolledCourseService {
+class MediaService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
@@ -33,21 +33,20 @@ class EnrolledCourseService {
             }
         );
     };
-    getAll() {
-        console.log("Cal service");
-        return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
-    };
-    getById(id) {
-        return axios.get(API_URL + '/enrolled-courses/' + id);
-    };
+
     postOne(data) {
+        console.log(data);
         return axios
-            .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+            .post(API_URL + '/medias', data, { headers: authHeader() })
             .then(response => {
                 console.log(response);
-                return response
+                if (response.data.message.Code !== CREATE_MEDIA.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
             })
     }
+
 }
 
-export default new EnrolledCourseService();
+export default new MediaService();

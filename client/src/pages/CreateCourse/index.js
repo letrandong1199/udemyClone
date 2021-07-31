@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import Typography from '@material-ui/core/Typography';
 import { useStyles } from './styles';
 import TextField from '@material-ui/core/TextField';
@@ -23,8 +23,516 @@ import languageService from '../../services/language.service';
 import authService from '../../services/auth.service';
 import courseService from '../../services/course.service';
 import Skeleton from '@material-ui/lab/Skeleton';
+import { Link, Switch, Route, useRouteMatch } from 'react-router-dom';
+import { Card, CardContent, InputBase, } from '@material-ui/core';
+import lectureService from '../../services/lecture.service';
+import sectionService from '../../services/section.service';
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
+import mediaService from '../../services/media.service';
 
-function CreateCourse() {
+const LectureCard = ({
+    lecture,
+    index,
+    handleSave,
+    handleEdit,
+    handleCancel,
+    handleChange,
+    handleDelete,
+    editable,
+    editLecture }) => {
+    const [selectedFile, setSelectedFile] = useState(undefined);
+    const handleUpload = (event) => {
+        if (!event.target.files || event.target.files.length === 0) {
+            setSelectedFile(undefined);
+            return;
+        }
+
+        setSelectedFile(event.target.files[0]);
+
+    }
+    const handleUploadVideo = (index) => () => {
+        const reader = new FileReader()
+        reader.readAsDataURL(selectedFile)
+        reader.onloadend = () => {
+            console.log("done");
+            mediaService.postOne({ Lecture_Id: lecture.Id, Video_URL: reader.result })
+        }
+    }
+
+    useEffect(() => {
+        console.log('Selected file', selectedFile);
+    }, [selectedFile, setSelectedFile])
+
+    console.log('In Lecture', editable);
+    return (
+        <Card
+            style={{
+                margin: 10,
+                marginTop: 30,
+                minHeight: 50,
+                minWidth: 500,
+                position: 'relative'
+            }}
+
+        >
+            <TextField
+                id={`lecture-name-${index}`}
+                value={editable.includes(`lecture-name-${index}`)
+                    ? editLecture?.Title
+                    : lecture?.Title}
+                placeholder='Name'
+                color='primary'
+                inputProps={
+                    { readOnly: !editable.includes(`lecture-name-${index}`) }
+                }
+                onChange={handleChange(index)}
+                style={{ margin: 10 }}
+            />
+            <input
+                accept="*"
+                id="contained-button-file"
+                multiple
+                type="file"
+                onChange={handleUpload}
+            />
+            <Button onClick={handleUploadVideo(index)}>
+                Upload
+            </Button>
+            <Grid
+                alignItems='center'
+                style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 10,
+                }}>
+                {editable.includes(`lecture-name-${index}`)
+                    ? <Fragment>
+                        <Button onClick={handleSave(index)}>
+                            Save
+                        </Button>
+                        <Button onClick={handleCancel(index)}>
+                            Cancel
+                        </Button>
+                    </Fragment>
+                    : <Fragment>
+                        <IconButton
+                            onClick={handleEdit(index)}
+                        >
+                            <EditRoundedIcon />
+                        </IconButton>
+                        <IconButton
+                            onClick={handleDelete(index)}
+                        >
+                            <HighlightOffIcon />
+                        </IconButton>
+                    </Fragment>
+                }
+            </Grid>
+
+        </Card>
+    )
+}
+
+const SectionCard = ({
+    section,
+    indexSection,
+    handleSave,
+    handleEdit,
+    handleCancel,
+    handleChange,
+    handleDelete,
+    editable,
+    editSection }) => {
+    const [lectures, setLectures] = useState([]);
+    const [newLecture, setNewLecture] = useState(null);
+    const [editLecture, setEditLecture] = useState({ Title: '' });
+    const [editableLecture, setEditableLecture] = useState([]);
+    const [isPending, setIsPending] = useState(false);
+
+    useEffect(() => {
+        lectureService.getById(section.Id).then(response => {
+            console.log('Res', response);
+            setLectures(response.listAllResponse);
+        }).catch(error => {
+            console.log('err', error);
+        })
+    }, [])
+
+    const handleAddLecture = () => {
+        const newLecture = {
+            Title: ''
+        }
+
+        setNewLecture(newLecture)
+
+        setEditableLecture(`lecture-name-edit`);
+    }
+    const handleChangeLecture = (index) => (event) => {
+        const changed = { ...editLecture, Title: event.target.value }
+        if (index === 'edit') {
+            setNewLecture(changed);
+        } else {
+            setEditLecture(changed);
+        }
+    }
+    const handleEditLecture = (index) => () => {
+        setEditLecture(lectures[index]);
+        setEditableLecture(`lecture-name-${index}`);
+    }
+    const handleDeleteLecture = (index) => () => {
+        let array = [...lectures];
+        array.splice(index, 1);
+        setLectures(array);
+
+        array = [...editableLecture];
+        const indexEdit = editable.indexOf(`lecture-name-${index}`);
+        if (indexEdit !== -1) {
+            array.splice(indexEdit, 1)
+            setEditableLecture(array);
+        }
+    }
+    const handleCancelLecture = (index) => () => {
+        setEditableLecture([]);
+        setNewLecture(null);
+        setEditLecture(null);
+    }
+
+    const handleSaveLecture = (index) => () => {
+        setIsPending(true)
+        console.log('save lecture', index);
+        if (newLecture) {
+            lectureService.postOne({ Title: newLecture.Title, Section_Id: section.Id }).then((response) => {
+                console.log('Res', response);
+                setIsPending(false);
+                let array = [...lectures];
+                array.push(response.New_Lecture);
+                console.log('Array Lec', array);
+                setLectures(array);
+                return handleCancelLecture(index)();
+            }).catch(error => {
+                console.log('err', error);
+            })
+
+        } else if (editLecture) {
+            lectureService.updateOne(editLecture.Id, { Title: editLecture.Title, Section_Id: section.Id }).then((response) => {
+                console.log('Res', response);
+                setIsPending(false);
+                let array = [...lectures];
+                array[index] = editLecture;
+                setLectures(array);
+                return handleCancelLecture(index)();
+            }).catch(error => {
+                console.log('err', error);
+            })
+        }
+    }
+    return (<Card
+        key={indexSection}
+        style={{
+            minHeight: 50,
+            minWidth: 500,
+            margin: 20,
+            background: 'rgb(241,241,241)',
+            position: 'relative'
+        }}
+    >
+        <TextField
+            id={`section-name-${indexSection}`}
+            value={editable.includes(`section-name-${indexSection}`)
+                ? editSection.Name
+                : section.Name}
+            placeholder='Name'
+            color='primary'
+            inputProps={
+                { readOnly: !editable.includes(`section-name-${indexSection}`) }
+            }
+            onChange={handleChange(indexSection)}
+            style={{ margin: 10 }}
+        />
+        {lectures.map((lecture, index) => {
+            return <LectureCard
+                lecture={lecture}
+                index={index}
+                editable={editableLecture}
+                editLecture={editLecture}
+                handleChange={handleChangeLecture}
+                handleEdit={handleEditLecture}
+                handleCancel={handleCancelLecture}
+                handleSave={handleSaveLecture}
+                handleDelete={handleDeleteLecture}
+
+            />
+        })}
+        {newLecture &&
+            <Card
+                key='new'
+                style={{
+                    minHeight: 50,
+                    minWidth: 500,
+                    margin: 20,
+
+                    position: 'relative'
+                }}
+            >
+                <TextField
+                    id={`lecture-name-edit`}
+                    value={newLecture.Title}
+                    variant='outlined'
+                    placeholder='Title'
+                    color='primary'
+                    inputProps={
+                        { readOnly: !editableLecture.includes(`lecture-name-edit`) }
+                    }
+                    onChange={handleChangeLecture('edit')}
+                    style={{ margin: 10 }}
+                />
+                <Grid
+                    alignItems='center'
+                    style={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                    }}>
+                    {editableLecture.includes(`lecture-name-edit`)
+                        ? <Fragment>
+                            <Button onClick={handleSaveLecture('edit')}>
+                                Save
+                            </Button>
+                            <Button onClick={handleCancelLecture('edit')}>
+                                Cancel
+                            </Button>
+                        </Fragment>
+                        : <Fragment>
+                            <IconButton
+                                onClick={handleEditLecture('edit')}
+                            >
+                                <EditRoundedIcon />
+                            </IconButton>
+                            <IconButton
+                                onClick={handleDeleteLecture('edit')}
+                            >
+                                <HighlightOffIcon />
+                            </IconButton>
+                        </Fragment>
+                    }
+                </Grid>
+
+
+            </Card>
+        }
+        <Grid
+            alignItems='center'
+            style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+            }}>
+            {editable.includes(`section-name-${indexSection}`)
+                ? <Fragment>
+                    <Button onClick={handleSave(indexSection)}>
+                        Save
+                    </Button>
+                    <Button onClick={handleCancel(indexSection)}>
+                        Cancel
+                    </Button>
+                </Fragment>
+                : <Fragment>
+                    <Button onClick={handleAddLecture}>
+                        Add lecture
+                    </Button>
+                    <IconButton
+                        onClick={handleEdit(indexSection)}
+                    >
+                        <EditRoundedIcon />
+                    </IconButton>
+                    <IconButton
+                        onClick={handleDelete(indexSection)}
+                    >
+                        <HighlightOffIcon />
+                    </IconButton>
+                </Fragment>
+            }
+        </Grid>
+
+
+    </Card>
+    )
+}
+
+const CreateLecture = ({ id }) => {
+    id = 31;
+    const [sections, setSections] = useState([]);
+    const [newSection, setNewSection] = useState(null);
+    const [editSection, setEditSection] = useState({ Name: '' });
+    const [editable, setEditable] = useState([]);
+    const [isPending, setIsPending] = useState(false);
+
+    useEffect(() => {
+        setIsPending(true);
+        sectionService.getById(id).then(response => {
+            console.log(response);
+            setIsPending(false);
+            setSections(response.listAllResponse);
+        }).catch(error => {
+            console.log('err', error);
+            setIsPending(false);
+        })
+    }, [])
+
+    const handleAddSection = () => {
+        const newSection = {
+            Name: ''
+        }
+        //let array = [...sections, newSection];
+        //setSections(array)
+        setNewSection(newSection)
+
+        setEditable(`section-name-edit`);
+    }
+    const handleChange = (index) => (event) => {
+        const changed = { ...editSection, Name: event.target.value }
+        if (index === 'edit') {
+            setNewSection(changed);
+        } else {
+            setEditSection(changed);
+        }
+    }
+    const handleEdit = (index) => () => {
+        setEditSection(sections[index]);
+        //setSections let array = [...editable, ]
+        setEditable(`section-name-${index}`);
+    }
+    const handleDelete = (index) => () => {
+        let array = [...sections];
+        array.splice(index, 1);
+        setSections(array);
+
+        array = [...editable];
+        const indexEdit = editable.indexOf(`section-name-${index}`);
+        if (indexEdit !== -1) {
+            array.splice(indexEdit, 1)
+            setEditable(array);
+        }
+    }
+    const handleCancel = (index) => () => {
+        let array = [...editable];
+        const indexEdit = editable.indexOf(`section-name-${index}`);
+        if (indexEdit !== -1) {
+            array.splice(indexEdit, 1)
+            setEditable(array);
+        }
+        setNewSection(null);
+        setEditSection(null);
+    }
+
+    const handleSave = (index) => () => {
+        setIsPending(true)
+        console.log('save');
+        if (newSection) {
+            sectionService.postOne({ Name: newSection.Name, Course_Id: id }).then((response) => {
+                console.log('Res', response);
+                setIsPending(false);
+                let array = [...sections];
+                array.push(response.New_Section);
+                setSections(array);
+                return handleCancel(index)();
+            }).catch(error => {
+                console.log('err', error);
+            })
+
+        } else if (editSection) {
+            sectionService.updateOne(editSection.Id, { Name: editSection.Name, Course_Id: id }).then((response) => {
+                console.log('Res', response);
+                setIsPending(false);
+                let array = [...sections];
+                array[index] = editSection;
+                setSections(array);
+                return handleCancel(index)();
+            }).catch(error => {
+                console.log('err', error);
+            })
+
+        }
+    }
+    return (
+        <Container>
+            <Button onClick={handleAddSection}>Add section</Button>
+            {sections.map((section, index) => {
+                return <SectionCard
+                    section={section}
+                    index={index}
+                    editable={editable}
+                    editSection={editSection}
+                    handleChange={handleChange}
+                    handleEdit={handleEdit}
+                    handleCancel={handleCancel}
+                    handleSave={handleSave}
+                    handleDelete={handleDelete}
+                />
+            })}
+            {newSection &&
+                <Card
+                    key='new'
+                    style={{
+                        minHeight: 50,
+                        minWidth: 500,
+                        margin: 20,
+                        background: 'rgb(241,241,241)',
+                        position: 'relative'
+                    }}
+                >
+                    <TextField
+                        id={`section-name-edit`}
+                        value={newSection.Name}
+                        variant='outlined'
+                        placeholder='Name'
+                        color='primary'
+                        inputProps={
+                            { readOnly: !editable.includes(`section-name-edit`) }
+                        }
+                        onChange={handleChange('edit')}
+                        style={{ margin: 10 }}
+                    />
+                    <Grid
+                        alignItems='center'
+                        style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                        }}>
+                        {editable.includes(`section-name-edit`)
+                            ? <Fragment>
+                                <Button onClick={handleSave('edit')}>
+                                    Save
+                                </Button>
+                                <Button onClick={handleCancel('edit')}>
+                                    Cancel
+                                </Button>
+                            </Fragment>
+                            : <Fragment>
+                                <IconButton
+                                    onClick={handleEdit('edit')}
+                                >
+                                    <EditRoundedIcon />
+                                </IconButton>
+                                <IconButton
+                                    onClick={handleDelete('edit')}
+                                >
+                                    <HighlightOffIcon />
+                                </IconButton>
+                            </Fragment>
+                        }
+                    </Grid>
+
+
+                </Card>
+            }
+
+        </Container >
+    )
+}
+
+const CreateCourse = () => {
     const classes = useStyles();
     const [category, setCategory] = useState('');
     const [title, setTitle] = useState('');
@@ -278,24 +786,32 @@ function CreateCourse() {
                     color='primary'
                     onClick={handleCreate}
                 >
-                    Create
+
                 </Button>
             </Container>
-
-            <Container className={classes.marginContainer}>
-                <Typography variant="h5" className={classes.title}>
-                    3. Lectures
-                </Typography>
-                <Typography variant="body1" className={classes.caption}>
-                    {"Lectures of this course."}
-                </Typography>
-
-
-            </Container>
-
 
         </div >
     )
 }
 
-export default CreateCourse;
+function Instructor() {
+    const { path, url } = useRouteMatch();
+    return (
+        <div>
+            <Switch>
+                <Route path={`${path}`} exact>
+                    <Link to={`${url}/create`}>Create course</Link>
+                    <Link to={`${url}/lecture`}>Create lecture</Link>
+                </Route>
+                <Route path={`${path}/create`}>
+                    <CreateCourse />
+                </Route>
+                <Route path={`${path}/lecture`}>
+                    <CreateLecture />
+                </Route>
+            </Switch>
+        </div>
+    )
+}
+
+export default Instructor;

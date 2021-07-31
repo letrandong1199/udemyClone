@@ -1,9 +1,11 @@
 import axios from "axios";
+import { SIGN_IN } from '../config/config';
 
 const API_URL = "http://localhost:8080/api/user-controller/";
 const USER = 3;
 const ADMIN = 1;
 const INSTRUCTOR = 1;
+
 class AuthService {
     login(username, password) {
         return axios
@@ -16,6 +18,10 @@ class AuthService {
                 if (response.data.message.token) {
                     window.localStorage.setItem("user", JSON.stringify(response.data.message));
                 }
+                if (response.data.message.Code !== SIGN_IN.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                console.log('Successfully');
 
                 return response.data.message;
             });
@@ -26,7 +32,7 @@ class AuthService {
     };
 
     register(username, name, password) {
-        return axios.post(API_URL + "users", {
+        return axios.post(API_URL + "sign-up", {
             Email: username,
             Name: name,
             Password: password,

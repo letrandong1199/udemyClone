@@ -1,9 +1,9 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
 
-const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
+const API_URL = 'http://localhost:8080/api/wishlist-controller';
 
-class EnrolledCourseService {
+class WishlistService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
@@ -34,20 +34,21 @@ class EnrolledCourseService {
         );
     };
     getAll() {
-        console.log("Cal service");
-        return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
+        return axios.get(API_URL + '/wishlists', { headers: authHeader() })
     };
     getById(id) {
-        return axios.get(API_URL + '/enrolled-courses/' + id);
+        return axios.get(API_URL + '/wishlists/' + id);
     };
     postOne(data) {
         return axios
-            .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+            .post(API_URL + '/wishlists', data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 return response
             })
     }
+    deleteOne(id) {
+        return axios.delete(API_URL + '/wishlists/' + id, { headers: authHeader() })
+    }
 }
 
-export default new EnrolledCourseService();
+export default new WishlistService();

@@ -16,9 +16,12 @@ import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
 import Fragment from 'react';
-
+import { ROUTES } from '../../config/config';
+import Button from '@material-ui/core/Button';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 function ProductCardV(props) {
     const classes = useStyles();
+
 
     const [expanded, setExpanded] = React.useState(false);
 
@@ -28,7 +31,7 @@ function ProductCardV(props) {
 
     return (
         <Card className={classes.root} elevation={3}>
-            <Link to={`/detail/${props.course.Id}`}>
+            <Link to={`${ROUTES.courseDetail}/${props.course.Id}`}>
                 <CardMedia
                     className={classes.media}
                     image={props.course.Thumbnail_Medium}
@@ -48,14 +51,12 @@ function ProductCardV(props) {
                 </CardMedia>
             </Link>
             <CardContent className={classes.content}>
-                <Link to={`/detail/${props.course.Id}`}>
-                    <Typography
-                        variant="body2"
-                        style={{ fontSize: 10, textTransform: 'uppercase' }}
-                    >
-                        {props.course.Category.Name}
-                    </Typography>
-                </Link>
+                <Typography
+                    variant="body2"
+                    style={{ fontSize: 10, textTransform: 'uppercase' }}
+                >
+                    {props.course.Category.Name}
+                </Typography>
                 <Grid container className={classes.header}>
                     <Typography variant="subtitle1" className={classes.headerText}>{props.course.Title}</Typography>
                 </Grid>
@@ -77,9 +78,16 @@ function ProductCardV(props) {
                 </Collapse>
                 <Hidden smUp>
                     <CardActions disableSpacing className={classes.action}>
-                        <IconButton size="small" aria-label="add to favorites">
-                            <FavoriteBorderRoundedIcon />
-                        </IconButton>
+                        {props.isEnrolled
+                            ? props.isWishlist
+                                ? <IconButton aria-label="remove to favorites" onClick={props.handleRemove}>
+                                    <HighlightOffRoundedIcon />
+                                </IconButton>
+                                : <Button onClick={props.handleLearn}>Learn</Button>
+                            : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
+                                <FavoriteBorderRoundedIcon />
+                            </IconButton>
+                        }
                         <IconButton
                             className={clsx(classes.expand, {
                                 [classes.expandOpen]: expanded,
@@ -99,9 +107,17 @@ function ProductCardV(props) {
 
                 <Divider />
                 <CardActions disableSpacing className={classes.action}>
-                    <IconButton aria-label="add to favorites">
-                        <FavoriteBorderRoundedIcon />
-                    </IconButton>
+
+                    {props.isWishlist && props.isWishlist !== undefined
+                        ? <IconButton aria-label="remove to favorites" onClick={props.handleRemove}>
+                            <HighlightOffRoundedIcon />
+                        </IconButton>
+                        : props.isEnrolled && props.isEnrolled !== undefined
+                            ? < Button onClick={props.handleLearn}>Learn</Button>
+                            : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
+                                <FavoriteBorderRoundedIcon />
+                            </IconButton>
+                    }
                     <IconButton
                         className={clsx(classes.expand, {
                             [classes.expandOpen]: expanded,

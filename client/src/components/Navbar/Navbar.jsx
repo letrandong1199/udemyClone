@@ -17,8 +17,8 @@ import Popper from '@material-ui/core/Popper';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Skeleton from '@material-ui/lab/Skeleton';
+
 import {
-    Typography,
     ListItem,
     Divider,
     ListItemIcon,
@@ -215,10 +215,12 @@ const NestedMenu = (props) => {
                 aria-haspopup='true'
                 onMouseEnter={handleOpen}
                 onMouseLeave={handleClose}
+                component={Link}
+                to={`${ROUTES.course}?category=${props.category.Id}`}
                 title='catg'
                 id='sub'
             >
-                <ListItemText primary={props.text} className={clsx({ [classes.textExpandOpen]: open })} />
+                <ListItemText primary={props.category.Name} className={clsx({ [classes.textExpandOpen]: open })} />
                 <ListItemIcon>
                     <KeyboardArrowRightRoundedIcon className={clsx(classes.expand, {
                         [classes.expandOpen]: open,
@@ -233,8 +235,10 @@ const NestedMenu = (props) => {
                 aria-haspopup='true'
                 title='catg'
                 id='sub'
+                component={Link}
+                to={`${ROUTES.course}?category=${props.category.Id}`}
             >
-                <ListItemText primary={props.text} />
+                <ListItemText primary={props.category.Name} />
             </MenuItem>}
 
             <Popper
@@ -339,7 +343,7 @@ const NestedMenu2 = (props) => {
 
 const CategoryNestedMap = (props) => {
     return (
-        <NestedMenu anchorRef={props.anchorRef} text={props.data.Name} hasChildren={props.data.children.length !== 0}>
+        <NestedMenu anchorRef={props.anchorRef} category={props.data} hasChildren={props.data.children.length !== 0}>
             {props.data.children.map((child,
                 index) => <CategoryNestedMap key={index} anchorRef={props.anchorRef} data={child} />)}
         </NestedMenu>
@@ -377,9 +381,10 @@ const CategoryMenu = (props) => {
                     throw Error("Not found");
                 }
                 setIsPending(false);
+                setError(false);
 
             }).catch(err => {
-                setError(err);
+                setError(err.message);
                 setIsPending(false);
                 console.log('err', err);
             })

@@ -11,12 +11,15 @@ import Tab from '@material-ui/core/Tab';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useStyles } from './styles';
-import { GET_ENUMS } from '../../config/config';
+import { GET_ENUMS, GET_PARAMS } from '../../config/config';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert from '@material-ui/lab/Alert';
-import AuthService from "../../services/auth.service";
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import authService from "../../services/auth.service";
 import { useHistory } from 'react-router-dom';
 import { CREATE_USER, SIGN_IN } from '../../config/config';
+import usePrepareLink from '../../utils/usePrepareLink';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -60,6 +63,12 @@ const RegisterTab = ({ value, index }) => {
     const [openSnack, setOpenSnack] = React.useState(false);
     const [snackContent, setSnackContent] = React.useState("");
     const [snackType, setSnackType] = React.useState("success");
+    const signInLink = usePrepareLink({
+        query: {
+            [GET_PARAMS.popup]: GET_ENUMS.popup.signIn
+        }
+    });
+    const history = useHistory();
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
@@ -72,30 +81,25 @@ const RegisterTab = ({ value, index }) => {
         event.preventDefault();
         setIsPending(true);
 
-        AuthService.register(uname, name, password).then(
+        authService.register(uname, name, password).then(
             response => {
-                setSnackContent(String(response.data.message.Code))
-                setIsPending(false);
-                setSnackType('error');
-                setOpenSnack(true);
-                if (response.data.message.Code === CREATE_USER.SUCCESS) {
-
+                if (response.data.message.Code !== CREATE_USER.SUCCESS) {
+                    throw Error(response.data.message.Code);
                 }
-            },
-            error => {
-                const resMessage =
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-
-                setError(resMessage);
+                //setSnackContent(String(response.data.message.Code))
+                //setIsPending(false);
+                //setSnackType('success');
+                //setOpenSnack(true);
+                history.push(signInLink);
+            })
+            .catch(error => {
+                setError(error.message);
                 setIsPending(false);
-                setSnackContent(resMessage);
-                setOpenSnack(resMessage);
+                setSnackType('error')
+                setSnackContent(error.message);
+                setOpenSnack(true);
             }
-        );
+            );
     }
     return (
         <TabPanel value={value} index={0}>
@@ -189,11 +193,12 @@ const RegisterTab = ({ value, index }) => {
 const LoginTab = ({ value, index, handleLogin }) => {
     const [uname, setUname] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-    const [error, setError] = React.useState(null);
+    const [errors, setErrors] = React.useState([]);
     const [openSnack, setOpenSnack] = React.useState(false);
     const [snackContent, setSnackContent] = React.useState(null);
     const [snackType, setSnackType] = React.useState(null);
     const [loading, setLoading] = React.useState(false);
+    const classes = useStyles();
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
@@ -206,28 +211,15 @@ const LoginTab = ({ value, index, handleLogin }) => {
         event.preventDefault();
         setLoading(true);
 
-        AuthService.login(uname, password)
+        authService.login(uname, password)
             .then((response) => {
-                setLoading(false);
-                console.log('res', response);
-                if (response.Code === SIGN_IN.SUCCESS) {
-                    history.goBack();
-                } else {
-                    setSnackContent("Login success");
-                    setSnackContent(String(response.Code))
-                    //setIsPending(false);
-                    setSnackType('error');
-                    setOpenSnack(true);
-                }
-
-            }, error => {
-                const resMessage =
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-                setSnackContent(resMessage);
+                //setLoading(false);
+                //setSnackContent("Login success");
+                //setSnackType('success');
+                //setOpenSnack(true);
+                history.goBack();
+            }).catch(error => {
+                setSnackContent(error.message);
                 setSnackType('error');
                 setOpenSnack(true)
                 setLoading(false);
@@ -242,13 +234,18 @@ const LoginTab = ({ value, index, handleLogin }) => {
                         startIcon={<MailOutlineRoundedIcon />}
                         variant="contained"
                         color="primary"
-                        style={{ height: 50, maxWidth: 580, width: '100%', margin: 'auto' }}>
+                        className={classes.button}
+                    >
                         Continue with google
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
                     <form style={{ maxWidth: 580, width: '100%', margin: 'auto' }}>
-                        <TextField id="txt-uname" variant="outlined" require="true" fullWidth label="Username"
+                        <TextField
+                            id="txt-uname"
+                            variant="outlined"
+                            required
+                            fullWidth label="Email"
                             style={{ marginBottom: 16 }}
                             InputProps={{
                                 startAdornment: (
@@ -257,10 +254,16 @@ const LoginTab = ({ value, index, handleLogin }) => {
                                     </InputAdornment>
                                 ),
                             }}
+                            type="email"
                             onChange={(event) => setUname(event.target.value)}
                         />
 
-                        <TextField id="txt-pass" variant="outlined" require="true" fullWidth label="Password"
+                        <TextField
+                            id="txt-pass"
+                            variant="outlined"
+                            required
+                            fullWidth
+                            label="Password"
                             type="password"
                             InputProps={{
                                 startAdornment: (
@@ -274,15 +277,19 @@ const LoginTab = ({ value, index, handleLogin }) => {
                     </form>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button style={{ maxWidth: 580, left: 60, padding: 0 }} color='primary'>Forget password?</Button>
+                    <Button
+                        className={classes.forgetButton}
+                        color='primary'
+                    >
+                        Forget password?</Button>
                 </Grid>
                 <Grid item xs={12} container>
                     <Button
                         variant="outlined"
                         color="primary"
                         size='large'
-                        style={{ height: 50, maxWidth: 580, width: '100%', margin: 'auto' }}
                         onClick={handleClickLogin}
+                        className={classes.button}
                     >
                         Login
                     </Button>
@@ -296,6 +303,9 @@ const LoginTab = ({ value, index, handleLogin }) => {
                             {snackContent}
                         </Alert>
                     </Snackbar>
+                    <Backdrop className={classes.backdrop} open={loading}>
+                        <CircularProgress color="inherit" />
+                    </Backdrop>
                 </Grid>
             </Grid>
         </TabPanel >
@@ -344,6 +354,7 @@ function RegisterAndLogin(props) {
             </Tabs>
             <RegisterTab value={value} index={0} />
             <LoginTab value={value} index={1} handleLogin={props.handleLogin} />
+
         </Paper >
     )
 };

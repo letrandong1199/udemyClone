@@ -1,9 +1,9 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { CREATE_SECTION, UPDATE_SECTION, GET_SECTION_BY_COURSE_ID } from '../config/config';
+const API_URL = 'http://localhost:8080/api/section-controller';
 
-const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
-
-class EnrolledCourseService {
+class SectionService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
@@ -33,21 +33,42 @@ class EnrolledCourseService {
             }
         );
     };
-    getAll() {
+    getAll(id) {
         console.log("Cal service");
-        return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
+        return axios.get(API_URL + '/sections', { headers: authHeader() })
     };
-    getById(id) {
-        return axios.get(API_URL + '/enrolled-courses/' + id);
+    getById(courseId) {
+        return axios.get(API_URL + '/sections/' + courseId, { headers: authHeader() })
+            .then(response => {
+                if (response.data.message.Code !== GET_SECTION_BY_COURSE_ID.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
     };
     postOne(data) {
+        console.log(data);
         return axios
-            .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+            .post(API_URL + '/sections', data, { headers: authHeader() })
             .then(response => {
                 console.log(response);
-                return response
+                if (response.data.message.Code !== CREATE_SECTION.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
+    }
+    updateOne(id, data) {
+        return axios
+            .put(API_URL + '/sections/' + id, data, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                if (response.data.message.Code !== UPDATE_SECTION.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
             })
     }
 }
 
-export default new EnrolledCourseService();
+export default new SectionService();

@@ -12,11 +12,13 @@ export const ROUTES = {
     courseDetail: "/course/detail",
     profile: "/profile",
     myLearning: "/my-learning",
+    wishlist: "/wishlist",
     createCourse: "/course/create",
     editCourse: "/course/edit",
     admin: "/admin",
     instructor: "/instructor",
-    search: "/course/search",
+    search: "/search",
+    course: "/course",
 }
 
 export const GET_PARAMS = {
@@ -103,5 +105,90 @@ export const ENROLLED = {
     RATING_IS_INVALID: "rating_is_invalid",
     SERVER_ERROR: "server_error",
 };
+
+export const ADD_WISHLIST = {
+    SUCCESS: "add_wishlist_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ENROLLED = {
+    SUCCESS: "get_all_course_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_WISHLIST = {
+    SUCCESS: "get_all_course_success",
+    SERVER_ERROR: "server_error",
+};
+export const CHANGE_PASSWORD = {
+    SUCCESS: "change_password_success",
+    PASSWORD_IS_EMPTY: "password_is_empty",
+    PASSWORD_IS_WRONG: "password_is_wrong",
+    NEW_PASSWORD_IS_EMPTY: "new_password_is_empty",
+    SERVER_ERROR: "server_error",
+    PASSWORD_IS_LESS_THAN_6_LETTERS: "password_is_less_than_6_letters",
+    NEW_PASSWORD_IS_LESS_THAN_6_LETTERS: "new_password_is_less_than_6_letters",
+    USER_IS_NOT_EXIST: "user_is_not_exist",
+};
+
+export const CREATE_SECTION = {
+    SUCCESS: "add_section_success",
+    SECTION_NAME_IS_EMPTY: "section_name_is_empty",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_ID_IS_INVALID: "course_id_is_invalid",
+    IS_NOT_AUTHOR: "is_not_author",
+    SECTION_NAME_IS_EXIST: "section_name_is_exist",
+    SERVER_ERROR: "server_error",
+};
+
+export const UPDATE_SECTION = {
+    SUCCESS: "update_section_success",
+    SECTION_NAME_IS_EMPTY: "section_name_is_empty",
+    SECTION_ID_IS_EMPTY: "section_id_is_empty",
+    SECTION_ID_IS_INVALID: "section_id_is_invalid",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_ID_INVALID: "course_id_is_invalid",
+    IS_NOT_AUTHOR: "is_not_author",
+    SECTION_NAME_IS_EXIST: "section_name_is_exist",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_SECTION_BY_COURSE_ID = {
+    SUCCESS: "get_all_section_success",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_ID_IS_EXIST: "course_id_is_exist",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_LECTURE_BY_SECTION_ID = {
+    SUCCESS: "get_lecture_success",
+    SECTION_ID_IS_EMPTY: "section_id_is_empty",
+    SECTION_ID_IS_EXIST: "section_id_is_exist",
+    SECTION_ID_IS_INVALID: "section_id_is_invalid",
+    SERVER_ERROR: "server_error",
+};
+export const CREATE_LECTURE = {
+    SUCCESS: "add_lecture_success",
+    LECTURE_TITLE_IS_EMPTY: "lecture_title_is_empty",
+    LECTURE_TITLE_IS_EXIST: "lecture_title_is_exist",
+    LECTURE_DESCRIPTION_IS_EMPTY: "lecture_description_title_is_empty",
+    SECTION_ID_IS_EMPTY: "section_id_is_empty",
+    SECTION_ID_IS_INVALID: "section_id_is_invalid",
+    IS_NOT_AUTHOR: "is_not_author",
+    SERVER_ERROR: "server_error",
+};
+export const CREATE_MEDIA = {
+    SUCCESS: "add_media_success",
+    LECTURE_ID_IS_EMPTY: "lecture_id_is_empty",
+    LECTURE_IS_NOT_EXIST: "lecture_is_not_exist",
+    VIDEO_IS_INVALID: "video_is_invalid",
+    IS_NOT_AUTHOR: "is_not_author",
+    SERVER_ERROR: "server_error",
+};
+
+
 
 export default config;

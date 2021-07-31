@@ -1,9 +1,10 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { GET_LECTURE_BY_SECTION_ID, CREATE_LECTURE } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
+const API_URL = 'http://localhost:8080/api/lecture-controller';
 
-class EnrolledCourseService {
+class LectureService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
@@ -35,14 +36,31 @@ class EnrolledCourseService {
     };
     getAll() {
         console.log("Cal service");
-        return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
+        return axios.get(API_URL + '/lectures', { headers: authHeader() })
     };
     getById(id) {
-        return axios.get(API_URL + '/enrolled-courses/' + id);
+        return axios.get(API_URL + '/lectures/' + id, { headers: authHeader() })
+            .then(response => {
+                if (response.data.message.Code !== GET_LECTURE_BY_SECTION_ID.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
     };
     postOne(data) {
         return axios
-            .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+            .post(API_URL + '/lectures', data, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                if (response.data.message.Code !== CREATE_LECTURE.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
+    }
+    updateOne(data) {
+        return axios
+            .put(API_URL + '/lectures', data, { headers: authHeader() })
             .then(response => {
                 console.log(response);
                 return response
@@ -50,4 +68,4 @@ class EnrolledCourseService {
     }
 }
 
-export default new EnrolledCourseService();
+export default new LectureService();

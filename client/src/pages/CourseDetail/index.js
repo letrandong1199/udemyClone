@@ -40,10 +40,11 @@ import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import { Collapse } from '@material-ui/core';
 import PlayCircleFilledWhiteRoundedIcon from '@material-ui/icons/PlayCircleFilledWhiteRounded';
 import enrolledCourseService from '../../services/enrolledCourse.service';
+import wishlistService from '../../services/wishlist.service.js';
 import Backdrop from '@material-ui/core/Backdrop';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { ENROLLED } from '../../config/config';
+import { ENROLLED, ADD_WISHLIST } from '../../config/config';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const Banner = ({ course, isPending }) => {
@@ -79,6 +80,25 @@ const Banner = ({ course, isPending }) => {
         console.log(course);
         enrolledCourseService.postOne({ Course_Id: course.Id }).then(response => {
             if (response.data.message.Code !== ENROLLED.SUCCESS) {
+                throw Error(response.data.message.Code);
+            }
+            setSnackContent('Added');
+            setSnackType('success');
+            setOpenSnack(true);
+            setIsProcessing(false)
+        }).catch(error => {
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            setIsProcessing(false)
+            console.log(error);
+        })
+    }
+    const handleAddWishlist = () => {
+        setIsProcessing(true);
+        console.log(course);
+        wishlistService.postOne({ Course_Id: course.Id }).then(response => {
+            if (response.data.message.Code !== ADD_WISHLIST.SUCCESS) {
                 throw Error(response.data.message.Code);
             }
             setSnackContent('Added');
@@ -189,6 +209,7 @@ const Banner = ({ course, isPending }) => {
                                     variant="outlined"
                                     startIcon={<FavoriteBorderRoundedIcon />}
                                     style={{ marginRight: 20, textTransform: 'none' }}
+                                    onClick={handleAddWishlist}
                                 >
                                     Wishlist
                                 </Button>

@@ -15,8 +15,7 @@ function HomeSection(props) {
     if (props.courses) {
         list_ = props.courses.map((course, index) => {
             return <Grid item key={index} >
-                <ProductCardV course={course} />
-
+                <ProductCardV course={course} isEnrolled={props.isEnrolled} isWishlist={props.isWishlist} />
             </Grid>
         })
     }
@@ -29,11 +28,11 @@ function HomeSection(props) {
 
     return (
         <Fragment>
-            <Grid className={classes.bigTitle}>
+            {!props.disableTitle && <Grid className={classes.bigTitle}>
                 <Typography variant="h5" style={{ fontWeight: 'bold' }}>
                     {props.title}
                 </Typography>
-            </Grid>
+            </Grid>}
             <Grid>
                 <Grid container
                     className={classes.homeSection}

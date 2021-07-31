@@ -147,6 +147,7 @@ const AllCoursesSection = ({ id }) => {
     const limit = 5;
     const category = query.get('category');
     const language = query.get('language');
+    const search = query.get('search');
     //setPage(query.get('page'));
     const replaceParams = (key, value) => {
         let searchParams = new URLSearchParams(location.search);
@@ -154,16 +155,34 @@ const AllCoursesSection = ({ id }) => {
         searchParams.set(key, value);
         history.push({ pathname: location.pathname, search: searchParams.toString() });
     }
+    const removeParams = (key, value) => {
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.delete(key);
+        history.push({ pathname: location.pathname, search: searchParams.toString() });
+    }
+    const addParams = (key, value) => {
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.set(key, value);
+        history.push({ pathname: location.pathname, search: searchParams.toString() });
+    }
 
-    useEffect(() => {
+    /*useEffect(() => {
+        console.log(query.toString());
         if (category !== undefined && category !== null) {
+            console.log('JS Ngu');
             setQueryArray([...queryArray, { label: 'category', value: category }])
         }
         if (language !== undefined && language !== null) {
             setQueryArray([...queryArray, { label: 'language', value: language }])
         }
-
-    }, [category, language])
+        if (search !== undefined && search !== null) {
+            console.log('I have');
+            setQueryArray([...queryArray, { label: 'search', value: search }])
+        }
+        console.log('category', category);
+        console.log('language', language);
+        console.log('search', search);
+    }, [category, language, search])*/
 
     useEffect(() => {
         setIsPending(true);
@@ -176,31 +195,38 @@ const AllCoursesSection = ({ id }) => {
             setLanguages(langDic);
             console.log(langDic);
         })
-
+        //setQueryArray([])
         setIsPending(false);
     }, [])
-
+    const querySearch = query.toString();
     useEffect(() => {
         setIsPending(true);
+        let queryString = query.toString();
+        console.log('qurey', queryString);
         setTimeout(() => { console.log('test'); }, 3000);
-        if (queryArray.length !== 0 && queryArray) {
-            const queryWithPaging = [...queryArray, { label: 'page', value: page }, { label: 'limit', value: limit }];
-            courseService.getByQuery(queryWithPaging)
+        if (queryString && queryString !== '') {
+            if (query.get('page')) {
+                queryString = queryString + `&limit=${limit}`
+            } else {
+                queryString = queryString + `&limit=${limit}&page=${page}`
+            }
+            //const queryWithPaging = [...queryArray, { label: 'page', value: page }, { label: 'limit', value: limit }];
+            courseService.getByQuery(queryString)
                 .then(response => {
                     const listCourses = response.data.message.listAllResponse;
                     if (listCourses?.length === 0) {
-                        //throw Error('No courses');
+                        throw Error('No courses');
                     }
                     setCount(response.data.message.Count)
                     setCourses(listCourses);
                     setIsPending(false);
                 }).catch(error => {
                     console.log(error);
-                    setError(error);
+                    setError(error.message);
                     setIsPending(false);
                 })
         }
-    }, [id, page, queryArray])
+    }, [id, page, querySearch])
 
     const options = [
         { label: 'Thing 1', value: 1 },
@@ -208,8 +234,13 @@ const AllCoursesSection = ({ id }) => {
     ];
     const [option, setOption] = useState([]);
     const handleChangeOption = (event) => {
-        setLanguagesQuery(event);
-        console.log(event);
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.delete('language');
+        let search = searchParams.toString();
+        event.forEach(item => {
+            search += `&language=${item.value}`
+        })
+        history.push({ pathname: location.pathname, search: search });
     };
     const handleDelete = (event) => {
 
@@ -307,25 +338,25 @@ function Result() {
     const [isPending, setIsPending] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        setIsPending(true);
-        setTimeout(() => { console.log('test'); }, 5000);
-        courseService.getByQuery([{ label: 'category', value: id }])
-            .then(response => {
-                console.log('Get', response.data.message.listAllResponse);
-                const listCourses = response.data.message.listAllResponse;
-                if (listCourses?.length === 0) {
-                    //throw Error('No courses');
-                }
-                setCourses(listCourses);
-                setIsPending(false);
-            }).catch(error => {
-                console.log(error);
-                setError(error);
-                setIsPending(false);
-
-            })
-    }, [id])
+    /*useEffect(() => {
+         setIsPending(true);
+         setTimeout(() => { console.log('test'); }, 5000);
+         courseService.getByQuery([{ label: 'category', value: id }])
+             .then(response => {
+                 console.log('Get', response.data.message.listAllResponse);
+                 const listCourses = response.data.message.listAllResponse;
+                 if (listCourses?.length === 0) {
+                     //throw Error('No courses');
+                 }
+                 setCourses(listCourses);
+                 setIsPending(false);
+             }).catch(error => {
+                 console.log(error);
+                 setError(error);
+                 setIsPending(false);
+ 
+             })
+     }, [id])*/
 
     return (
         <div>

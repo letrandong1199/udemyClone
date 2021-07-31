@@ -14,6 +14,7 @@ import Grid from '@material-ui/core/Grid';
 import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../config/config';
 
 function ProductCardH(props) {
     const classes = useStyles();
@@ -35,7 +36,7 @@ function ProductCardH(props) {
                 image={props.course?.Thumbnail_Small}
                 title={props.course?.Title}
                 component={Link}
-                to={`/detail/${props.course.Id}`}
+                to={`${ROUTES.courseDetail}/${props.course.Id}`}
                 children={<Typography
                     className={classes.price}
                 >

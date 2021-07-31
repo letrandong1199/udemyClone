@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { UPDATE_USER, CHANGE_PASSWORD } from '../config/config';
 
 const API_URL = 'http://localhost:8080/api/user-controller';
 class UserService {
@@ -38,6 +39,26 @@ class UserService {
     updateOne(id, data) {
         return axios.put(API_URL + '/users/' + id, data, { headers: authHeader() }
         )
+    }
+    updateInfo(data) {
+        return axios.put(API_URL + '/update-user', data, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                if (response.data.message.Code !== UPDATE_USER.SUCCESS) {
+                    throw Error(response.data.message.Code)
+                }
+                return response.data.message;
+            })
+    }
+    changePassword(data) {
+        return axios.put(API_URL + '/change-password', data, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                if (response.data.message.Code !== CHANGE_PASSWORD.SUCCESS) {
+                    throw Error(response.data.message.Code)
+                }
+                return response.data.message;
+            })
     }
     postOne(user) {
         return axios
