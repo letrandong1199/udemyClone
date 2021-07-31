@@ -9,6 +9,10 @@ router.post("/sign-up", async (req, res) => {
   const message = await userService.signUp(req.body);
   res.json({ message }).end();
 });
+router.put("/change-password", authUser, async (req, res) => {
+  const message = await userService.changePassword(req);
+  res.json({ message }).end();
+});
 
 router.post("/users", async (req, res) => {
   console.log(req.body);

@@ -131,8 +131,8 @@ const courseService = {
       language: "Language_Id",
       category: "Category_Id",
       rating: "Rating",
-      'desc-rating': "Rating",
-      'asc-price': "Price",
+      "desc-rating": "Rating",
+      "asc-price": "Price",
     };
     const queryTable = {};
     const paging = {};
@@ -197,6 +197,19 @@ const courseService = {
           let author = await _entityRepository("Users").getEntity(
             course.Author_Id
           );
+          let numberRegister =
+            await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+          let numberRating = 0;
+          if (numberRegister) {
+            let count = 0;
+            for (item of numberRegister) {
+              if (item.Rating !== 0) {
+                console.log(item);
+                count = count + 1;
+              }
+            }
+            numberRating = count;
+          }
           return {
             Id: course.Id,
             Name: course.Title,
@@ -212,6 +225,7 @@ const courseService = {
             Author: author[0],
             Promote_Rate: promote[0].Promote,
             Language_Id: course.Language_Id,
+            Number_Of_Rating: numberRating,
           };
         })
       );
@@ -361,15 +375,15 @@ const courseService = {
       const categoryParent = await _entityRepository("Categories").getEntity(
         category[0].Parent_Id
       );
-      console.log('hi', [course[0].Category_Id]);
+      console.log("hi", [course[0].Category_Id]);
       const listSimilarCourses = await courseRepository.getCourseByQuery(
-        query = {
+        (query = {
           Category_Id: [course[0].Category_Id],
-        },
-        paging = {
+        }),
+        (paging = {
           limit: 10,
           offset: 0,
-        }
+        })
       );
       const listSimilarCourses_ = await Promise.all(
         listSimilarCourses.map(async (course) => {
@@ -449,8 +463,19 @@ const courseService = {
           };
         })
       );
+      let numberRating = 0;
       const numberRegister =
         await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
+      if (numberRegister) {
+        let count = 0;
+        for (item of numberRegister) {
+          if (item.Rating !== 0) {
+            console.log(item);
+            count = count + 1;
+          }
+        }
+        numberRating = count;
+      }
       const courseResponse = {
         Id: course[0].Id,
         Title: course[0].Title,
@@ -469,6 +494,7 @@ const courseService = {
         Content: content,
         Feedback: listFeedbackResponse,
         Number_Of_Enrolled: numberRegister.length,
+        Number_Of_Rating: numberRating,
       };
       return {
         Code: getOneCourseResponseEnum.SUCCESS,

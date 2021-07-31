@@ -19,6 +19,8 @@ const updateOneUserResponseEnum = require("../../api/validators/enums/userEnums/
 const getOneUserResponseEnum = require("../../api/validators/enums/userEnums/getOneUserResponseEnum");
 const getOneUserValidator = require("../../api/validators/userValidators/getOneUserValidator");
 const watchlistRepository = require("../../repositories/watchlist.repository");
+const changePasswordResponseEnum = require("../../api/validators/enums/userEnums/changePasswordResponseEnum");
+const changePasswordValidator = require("../../api/validators/userValidators/changePasswordValidator");
 require("dotenv").config();
 const tokenList = {};
 
@@ -112,13 +114,15 @@ const userService = {
     try {
       const resultValidator = updateOneUserValidator.validate(
         request.params.id,
-        request.body.Name,
+        request.body.Name
       );
       console.log(request.body);
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const user = await _entityRepository("Users").getEntity(request.params.id);
+      const user = await _entityRepository("Users").getEntity(
+        request.params.id
+      );
       console.log(user);
       if (user.length == 0) {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
@@ -127,8 +131,10 @@ const userService = {
       user[0].Name = request.body.Name;
       user[0].updated_at = new Date();
       if (
-        (await _entityRepository("Users").updateEntity(request.params.id, user[0])) ===
-        operatorType.FAIL.UPDATE
+        (await _entityRepository("Users").updateEntity(
+          request.params.id,
+          user[0]
+        )) === operatorType.FAIL.UPDATE
       ) {
         return { Code: updateOneUserResponseEnum.SERVER_ERROR };
       }
@@ -316,9 +322,13 @@ const userService = {
       const jwToken = await jwt.sign(payload, process.env.SECRET_KEY, {
         expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
       });
-      const refreshToken = await jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
-      });
+      const refreshToken = await jwt.sign(
+        payload,
+        process.env.REFRESH_TOKEN_KEY,
+        {
+          expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
+        }
+      );
       // Store refresh token in ...
       tokenList[refreshToken] = payload;
       console.log(jwToken);
@@ -334,7 +344,7 @@ const userService = {
 
   async refreshToken(req) {
     const { refreshToken } = req.body;
-    console.log('Client: ', refreshToken);
+    console.log("Client: ", refreshToken);
     if (refreshToken && refreshToken in tokenList) {
       try {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
@@ -357,6 +367,34 @@ const userService = {
       return {
         Code: "Invalid request",
       };
+    }
+  },
+  async changePassword(request) {
+    try {
+      const resultValidator = changePasswordValidator.validate(
+        request.body.Password,
+        request.body.New_Password
+      );
+      if (!resultValidator.Isuccess) {
+        return { Code: resultValidator.Code };
+      }
+      const user = await _entityRepository("Users").getEntity(request.id);
+      if (user.length == 0) {
+        return { Code: changePasswordResponseEnum.USER_IS_NOT_EXIST };
+      }
+      if (!bcrypt.compareSync(request.body.Password, user[0].Password)) {
+        return { Code: changePasswordResponseEnum.PASSWORD_IS_WRONG };
+      }
+      user[0].Password = bcrypt.hashSync(request.body.New_Password, 8);
+      if (
+        (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
+        operatorType.FAIL.UPDATE
+      ) {
+        return { Code: changePasswordResponseEnum.SERVER_ERROR };
+      }
+      return { Code: changePasswordResponseEnum.SUCCESS };
+    } catch (e) {
+      console.log(e);
     }
   },
 };
