@@ -47,7 +47,7 @@ const mediaService = {
         // console.log(video);
         const videoUpload = await cloudinary.uploader.upload_large(video, {
           resource_type: "video",
-          upload_preset: "udemy-clone-cloud",
+          folder: "udemy",
           chunk_size: 100000000,
         });
         var newVideo = videoUpload.url;

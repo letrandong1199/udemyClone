@@ -16,14 +16,14 @@ const sectionService = {
   async createOneSection(request) {
     try {
       const resultValidator = createOneSectionValidator.validate(
-        request.body.name,
-        request.body.course_id
+        request.body.Name,
+        request.body.Course_Id
       );
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
       const course = await _entityRepository("Courses").getEntity(
-        request.body.course_id
+        request.body.Course_Id
       );
       if (course.length == 0) {
         return { Code: createOneSectionResponseEnum.COURSE_ID_IS_INVALID };
@@ -38,26 +38,25 @@ const sectionService = {
         }
       }
       const sectionByCourse = await sectionRepository.getSectionByCourseId(
-        request.body.course_id
+        request.body.Course_Id
       );
       console.log(request.body.name);
       if (sectionByCourse.length != 0) {
         for (let i = 0; i < sectionByCourse.length; i++)
-          if (sectionByCourse[i].Name == request.body.name) {
+          if (sectionByCourse[i].Name == request.body.Name) {
             return { Code: createOneSectionResponseEnum.SECTION_NAME_IS_EXIST };
           }
       }
       const newSection = {
-        Name: request.body.name,
-        Course_Id: request.body.course_id,
+        Name: request.body.Name,
+        Course_Id: request.body.Course_Id,
       };
-      if (
-        (await _entityRepository("Sections").addEntity(newSection)) ===
-        operatorType.FAIL.CREATE
-      ) {
+      const ret = await _entityRepository("Sections").addEntity(newSection)
+      newSection.Id = ret[0];
+      if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneSectionResponseEnum.SERVER_ERROR };
       }
-      return { Code: createOneSectionResponseEnum.SUCCESS };
+      return { Code: createOneSectionResponseEnum.SUCCESS, New_Section: newSection };
     } catch (e) {
       console.log(e);
     }
@@ -65,15 +64,15 @@ const sectionService = {
   async updateOneSection(request) {
     try {
       const resultValidator = updateOneSectionValidator.validate(
-        request.body.course_id,
-        request.body.name,
+        request.body.Course_Id,
+        request.body.Name,
         request.params.id
       );
       if (!resultValidator.Isuccess) {
         return { Code: updateOneSectionResponseEnum.Code };
       }
       const course = await _entityRepository("Courses").getEntity(
-        request.body.course_id
+        request.body.Course_Id
       );
       if (course.length == 0) {
         return { Code: updateOneSectionResponseEnum.COURSE_ID_IS_INVALID };
@@ -88,20 +87,20 @@ const sectionService = {
         }
       }
       const sectionByCourse = await sectionRepository.getSectionByCourseId(
-        request.body.course_id
+        request.body.Course_Id
       );
-      console.log(request.body.name);
+      console.log(request.body.Name);
       if (sectionByCourse.length != 0) {
         for (let i = 0; i < sectionByCourse.length; i++)
           if (
-            sectionByCourse[i].Name == request.body.name &&
+            sectionByCourse[i].Name == request.body.Name &&
             sectionByCourse[i].Id != request.params.id
           ) {
             return { Code: updateOneSectionResponseEnum.SECTION_NAME_IS_EXIST };
           }
       }
       const newSection = {
-        Name: request.body.name,
+        Name: request.body.Name,
       };
       if (
         (await _entityRepository("Sections").updateEntity(

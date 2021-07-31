@@ -16,15 +16,18 @@ const lectureService = {
   async createOneLecture(request) {
     try {
       const resultValidator = createOneLectureValidator.validate(
-        request.body.title,
-        request.body.description,
-        request.body.section_id
+        request.body.Title,
+        request.body.Description,
+        request.body.Section_Id
       );
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
+      if (request.body.Description === undefined) {
+        request.body.Description = '';
+      }
       const section = await _entityRepository("Sections").getEntity(
-        request.body.section_id
+        request.body.Section_Id
       );
       if (section.length == 0) {
         return { Code: createOneLectureResponseEnum.SECTION_ID_IS_INVALID };
@@ -42,29 +45,29 @@ const lectureService = {
         }
       }
       const lectureBySection = await lectureRepository.getLectureBySectionId(
-        request.body.section_id
+        request.body.Section_Id
       );
-      console.log(request.body.title);
+      console.log(request.body.Title);
       if (lectureBySection.length != 0) {
         for (let i = 0; i < lectureBySection.length; i++)
-          if (lectureBySection[i].Title == request.body.title) {
+          if (lectureBySection[i].Title == request.body.Title) {
             return {
               Code: createOneLectureResponseEnum.LECTURE_TITLE_IS_EXIST,
             };
           }
       }
       const newLecture = {
-        Title: request.body.title,
-        Description: request.body.description,
-        Section_Id: request.body.section_id,
+        Title: request.body.Title,
+        Description: request.body.Description,
+        Section_Id: request.body.Section_Id,
       };
-      if (
-        (await _entityRepository("Lectures").addEntity(newLecture)) ===
-        operatorType.FAIL.CREATE
+      const ret = await _entityRepository("Lectures").addEntity(newLecture);
+      newLecture['Id'] = ret[0];
+      if (ret === operatorType.FAIL.CREATE
       ) {
         return { Code: createOneLectureResponseEnum.SERVER_ERROR };
       }
-      return { Code: createOneLectureResponseEnum.SUCCESS };
+      return { Code: createOneLectureResponseEnum.SUCCESS, New_Lecture: newLecture };
     } catch (e) {
       console.log(e);
     }
