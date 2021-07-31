@@ -1,6 +1,6 @@
 const createOneUserResponseEnum = require("../enums/userEnums/createOneUserResponseEnum");
 const createOneUserValidator = {
-  validate(email, fullname, password, roleOfUser) {
+  validate(email, fullname, password) {
     if (fullname == null || fullname == "") {
       return {
         Code: createOneUserResponseEnum.NAME_IS_EMPTY,
