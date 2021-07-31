@@ -97,18 +97,35 @@ const enrolledcourseService = {
     try {
       const listEnrolled = await enrolledcourseRepository.getEnrolledCourseByUser(id);
 
-      let category = await _entityRepository("Categories").getEntity(
-        course.Category_Id
+      const listAllCourseResponse = await Promise.all(
+        listEnrolled.map(async (course) => {
+          let category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Rating: course.Rating,
+            Category: category[0],
+            Author: author[0],
+            Language_Id: course.Language_Id,
+          };
+        })
       );
 
-      let author = await _entityRepository("Users").getEntity(
-        course.Author_Id
-      );
-      listEnrolled['Author'] = author;
-      listEnrolled['Category'] = category;
       return {
         Code: getEnrolledCourseResponseEnum.SUCCESS,
-        listAllResponse: listEnrolled,
+        listAllResponse: listAllCourseResponse,
       };
     } catch (e) {
       console.log(e);

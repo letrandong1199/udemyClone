@@ -138,6 +138,7 @@ const courseService = {
     const paging = {};
     const search = {};
     const sort = {};
+
     for (const [key, value] of Object.entries(query)) {
       if (key === "search") {
         const category = await categoryRepository.getCategoryByQuery(value);
@@ -165,7 +166,14 @@ const courseService = {
         }
       } else if (typeof value === "string" || typeof value === "number") {
         console.log("Number");
-        queryTable[keyToColName[key]] = Array(value);
+        const number = parseInt(value)
+        const array = [number];
+        queryTable[keyToColName[key]] = array;
+      } else if (typeof value === "object") {
+        const result = value.map(function (x) {
+          return parseInt(x, 10);
+        });
+        queryTable[keyToColName[key]] = result;
       } else {
         queryTable[keyToColName[key]] = value;
       }
@@ -177,7 +185,7 @@ const courseService = {
 
     try {
       if (queryTable) {
-        var count = await courseRepository.getCountCourses(queryTable);
+        var count = await courseRepository.getCountCourses(queryTable, search, sort);
       }
       const listCourse = await courseRepository.getCourseByQuery(
         queryTable,
@@ -476,6 +484,106 @@ const courseService = {
       };
     } catch (e) {
       console.log(e);
+    }
+  },
+  async getAllCourse_(request) {
+    const query = request.query;
+    const keyToColName = {
+      language: "Language_Id",
+      category: "Category_Id",
+      rating: "Rating",
+      'desc-rating': "Rating",
+      'asc-price': "Price",
+    };
+    const queryTable = {};
+    const paging = {};
+    const search = {};
+    const sort = {};
+    for (const [key, value] of Object.entries(query)) {
+      if (key === "search") {
+        const category = await categoryRepository.getCategoryByQuery(value);
+        if (category) {
+          let categorySearch = category.map((item) => {
+            return item.Id;
+          });
+          search["category"] = categorySearch;
+        }
+        search[key] = value;
+      } else if (key === "limit") {
+        paging[key] = parseInt(value);
+      } else if (key === "page") {
+        paging["offset"] = (parseInt(value) - 1) * parseInt(query.limit);
+      } else if (key === "sort") {
+        if (keyToColName[value] === "Rating") {
+          sort["ColName"] = "Rating";
+          sort["Orderby"] = "desc";
+        } else if (keyToColName[value] === "Price") {
+          sort["ColName"] = "Price";
+          sort["Orderby"] = "asc";
+        } else {
+          sort["ColName"] = "Rating";
+          sort["Orderby"] = "desc";
+        }
+      } else if (typeof value === "string" || typeof value === "number") {
+        console.log("Number");
+        queryTable[keyToColName[key]] = Array(value);
+      } else {
+        queryTable[keyToColName[key]] = value;
+      }
+    }
+    console.log("object", queryTable);
+    console.log("object", paging);
+    console.log("object", search);
+    console.log("object", sort);
+
+    try {
+      if (queryTable) {
+        var count = await courseRepository.getCountCourses(queryTable, search, sort);
+      }
+      const listCourse = await courseRepository.getCourseByQuery(
+        queryTable,
+        paging,
+        search,
+        sort
+      );
+
+      const listAllCourseResponse = await Promise.all(
+        listCourse.map(async (course) => {
+          let category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Rating: course.Rating,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0].Promote,
+            Language_Id: course.Language_Id,
+          };
+        })
+      );
+      return {
+        Code: getAllCourseResponseEnum.SUCCESS,
+        listAllResponse: listAllCourseResponse,
+        Count: count.Count,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCourseResponseEnum.SERVER_ERROR };
     }
   },
 };
