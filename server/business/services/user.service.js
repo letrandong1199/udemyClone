@@ -314,7 +314,7 @@ const userService = {
       };
 
       const jwToken = await jwt.sign(payload, process.env.SECRET_KEY, {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
       });
       const refreshToken = await jwt.sign(payload, process.env.REFRESH_TOKEN_KEY, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
@@ -340,7 +340,7 @@ const userService = {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
         const payload = tokenList[refreshToken];
         const token = await jwt.sign(payload, process.env.SECRET_KEY, {
-          expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
+          expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
         });
         return {
           Code: signInResponseEnum.SUCCESS,

@@ -11,5 +11,9 @@ router.put("/enrolled-courses", authUser, async (req, res) => {
   const message = await enrolledcourseService.updateOneEnrolledCourse(req);
   res.json({ message }).end();
 });
+router.get("/enrolled-courses", authUser, async (req, res) => {
+  const message = await enrolledcourseService.getAllEnrolled(req)
+  res.json({ message }).end();
+})
 
 module.exports = router;

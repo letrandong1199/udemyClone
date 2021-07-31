@@ -43,7 +43,7 @@ app.use("/api/section-controller", sectionController);
 app.use("/api/lecture-controller", lectureController);
 app.use("/api/media-controller", mediaController);
 app.use("/api/feedback-controller", feedbackController);
-app.use("/api/watchlist-controller", watchlistController);
+app.use("/api/wishlist-controller", watchlistController);
 app.use("/api/enrolled-course-controller", enrolledcourseController);
 
 app.get("/err", function (req, res) {

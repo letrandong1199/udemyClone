@@ -22,5 +22,11 @@ const enrolledcourseRepository = {
       .where("Course_Id", course_id)
       .catch(() => operatorType.FAIL.READ);
   },
+  getEnrolledCourseByUser(user_id) {
+    return db("Enrolled_Courses")
+      .where("User_Id", user_id)
+      .join("Courses", `Enrolled_Courses.Course_Id`, `Courses.Id`)
+      .catch(() => operatorType.FAIL.READ);
+  },
 };
 module.exports = enrolledcourseRepository;

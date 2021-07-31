@@ -1,6 +1,7 @@
 const createOneEnrolledCourseValidator = require("../../api/validators/enrolledcourseValidators/createOneEnrolledCourseValidator");
 const createOneEnrolledCourseResponseEnum = require("../../api/validators/enums/enrolledcourseEnums/createOneEnrolledCourseResponseEnum");
 const updateOneEnrolledCourseResponseEnum = require("../../api/validators/enums/enrolledcourseEnums/updateOneEnrolledCourseResponseEnum");
+const getEnrolledCourseResponseEnum = require("../../api/validators/enums/enrolledcourseEnums/getEnrolledCourseResponseEnum");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 
 const _entityRepository = require("../../repositories/entity.repository");
@@ -90,5 +91,30 @@ const enrolledcourseService = {
       console.log(e);
     }
   },
+
+  async getAllEnrolled(request) {
+    const { id } = request;
+    try {
+      const listEnrolled = await enrolledcourseRepository.getEnrolledCourseByUser(id);
+
+      let category = await _entityRepository("Categories").getEntity(
+        course.Category_Id
+      );
+
+      let author = await _entityRepository("Users").getEntity(
+        course.Author_Id
+      );
+      listEnrolled['Author'] = author;
+      listEnrolled['Category'] = category;
+      return {
+        Code: getEnrolledCourseResponseEnum.SUCCESS,
+        listAllResponse: listEnrolled,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getEnrolledCourseResponseEnum.SERVER_ERROR };
+    }
+  },
+
 };
 module.exports = enrolledcourseService;
