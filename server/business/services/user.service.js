@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 
 const operatorType = require("../../utils/enums/operatorType");
 const createOneUserValidator = require("../../api/validators/userValidators/createOneUserValidator");
@@ -237,24 +238,82 @@ const userService = {
       if (roleOfUser.length == 0) {
         return { Code: createOneUserResponseEnum.ROLE_OFUSER_IS_INVALID };
       }
-      console.log(roleOfUser[0]);
-      const newUser = {
-        Email: request.Email,
-        Name: request.Name,
-        Password: bcrypt.hashSync(request.Password, 8),
-        Role_Id: roleOfUser[0].Id,
+      //Generate token
+      const payload = {
+        user: {
+          Email: request.Email,
+          Name: request.Name,
+          Password: bcrypt.hashSync(request.Password, 8),
+          Role_Id: roleOfUser[0].Id,
+        },
       };
-      ret = await _entityRepository("Users").addEntity(newUser);
-      console.log(ret);
-      // console.log(newUser);
-      if (ret === operatorType.FAIL.CREATE) {
-        return { Code: createOneUserResponseEnum.SERVER_ERROR };
-      }
+
+      const token = jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: 60 * 5,
+      });
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "udemyclone2021@gmail.com", // generated ethereal user
+          pass: "Udemyclone1234", // generated ethereal password
+        },
+      });
+      const url = `http://localhost:3000/api/user-controller/confirm-email/${token}`;
+      const mail = {
+        from: "udemyclone2021@gmail.com",
+        to: `${request.Name} <${request.Email}>`,
+        subject: "Confirmation Email",
+        html: `<h1>Email Confirmation</h1>
+        <h2>Hello ${request.Name}</h2>
+        <h3>This confirmation email is going to be invalid in 10 minutes</h3>
+        <p>Thank you for registering. Please confirm your email by clicking on the under button</p>
+        <form action=${url} method="post">
+          <button type="submit">Confirm</button>
+          </form>
+        </div>`,
+      };
+      transporter.sendMail(mail, (error, info) => {
+        if (error) {
+          console.log("Moaaaaaaaaaaa", error);
+          return { Code: createOneUserResponseEnum.CONFIRM_IS_ERROR };
+        }
+      });
       return { Code: createOneUserResponseEnum.SUCCESS };
     } catch (e) {
-      console.log(e);
+      console.log("mMoaaaa", e);
+      return { Code: createOneUserResponseEnum.SERVER_ERROR };
     }
   },
+  //Confirm email
+  async confirmEmail(request) {
+    try {
+      const decode = jwt.verify(request.params.token, process.env.SECRET_KEY);
+      const time = Date.now();
+      if (time >= decode.exp * 1000) {
+        return { Code: createOneUserResponseEnum.TOKEN_IS_EXPIRED };
+      } else {
+        const newUser = {
+          Email: decode.user.Email,
+          Name: decode.user.Name,
+          Password: bcrypt.hashSync(decode.user.Password, 8),
+          Role_Id: decode.user.Role_Id,
+        };
+        ret = await _entityRepository("Users").addEntity(newUser);
+        console.log(ret);
+        // console.log(newUser);
+        if (ret === operatorType.FAIL.CREATE) {
+          return { Code: createOneUserResponseEnum.SERVER_ERROR };
+        }
+        return { Code: createOneUserResponseEnum.SUCCESS };
+      }
+    } catch (e) {
+      console.log(e);
+      return { Code: createOneUserResponseEnum.SERVER_ERROR };
+    }
+  },
+
   //Create one instructor
   async createOneInstructor(request) {
     console.log("I'm here");
