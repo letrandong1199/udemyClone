@@ -4,11 +4,9 @@ const categoryRepository = require("./category.repository");
 const courseRepository = {
   getCourseByQuery(query, paging, search, sort) {
     let filtered = db("Courses")
-      .where((qb) => {
-        for (const [key, value] of Object.entries(query)) {
-          qb.whereIn(key, value);
-        }
-      })
+    for (const [key, value] of Object.entries(query)) {
+      filtered = filtered.whereIn(key, value);
+    }
 
     if (search != undefined && search != null && (search.search || search.category)) {
       filtered = filtered.where("Title", "like", `%${search.search}%`)
@@ -18,19 +16,28 @@ const courseRepository = {
     if (sort && sort.ColName && sort.OrderBy) {
       filtered = filtered.orderBy(sort.ColName, sort.OrderBy)
     }
-    if (paging && paging.limit && paging.offset) {
+    if (paging && paging.limit != null && paging.offset != null) {
       filtered = filtered.limit(paging.limit).offset(paging.offset)
     }
+    console.log(filtered.toSQL().toNative());
     return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
-  getCountCourses(query) {
-    return db("Courses")
+  getCountCourses(query, search, sort) {
+    let filtered = db("Courses")
       .where((qb) => {
         for (const [key, value] of Object.entries(query)) {
           qb.whereIn(key, value);
         }
       })
-      .count("Id", { as: "Count" })
+    if (search != undefined && search != null && (search.search || search.category)) {
+      filtered = filtered.where("Title", "like", `%${search.search}%`)
+        .orWhereIn("Category_Id", search.category)
+    }
+
+    if (sort && sort.ColName && sort.OrderBy) {
+      filtered = filtered.orderBy(sort.ColName, sort.OrderBy)
+    }
+    return filtered.count("Id", { as: "Count" })
       .first();
   },
 

@@ -59,7 +59,7 @@ router.put("/users/:id", authAdmin, async (req, res) => {
   res.json({ message }).end();
 });
 
-router.put("/users/update-user", authUser, async (req, res) => {
+router.put("/update-user", authUser, async (req, res) => {
   const message = await userService.updateInfo(req);
   res.json({ message }).end();
 });

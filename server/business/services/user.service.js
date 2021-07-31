@@ -16,10 +16,11 @@ const roleRepository = require("../../repositories/role.repository");
 const _entityRepository = require("../../repositories/entity.repository");
 const getAllUserResponseEnum = require("../../api/validators/enums/userEnums/getAllUserResponseEnum");
 const updateOneUserValidator = require("../../api/validators/userValidators/updateOneUserValidator");
+const updateInfoValidator = require("../../api/validators/userValidators/updateInfoValidator");
 const updateOneUserResponseEnum = require("../../api/validators/enums/userEnums/updateOneUserResponseEnum");
 const getOneUserResponseEnum = require("../../api/validators/enums/userEnums/getOneUserResponseEnum");
 const getOneUserValidator = require("../../api/validators/userValidators/getOneUserValidator");
-const watchlistRepository = require("../../repositories/watchlist.repository");
+const wishlistRepository = require("../../repositories/wishlist.repository");
 const changePasswordResponseEnum = require("../../api/validators/enums/userEnums/changePasswordResponseEnum");
 const changePasswordValidator = require("../../api/validators/userValidators/changePasswordValidator");
 require("dotenv").config();
@@ -37,13 +38,15 @@ const userService = {
       if (user.length == 0) {
         return { Code: getOneUserResponseEnum.ID_IS_INVALID };
       }
-      const listWatchlist = await watchlistRepository.getWatchlistByUserId(
+
+      /*
+      const listWishlist = await wishlistRepository.getWishlistByUserId(
         request.id
       );
-      const listWatchlistResponse = await Promise.all(
-        listWatchlist.map(async (watchlist) => {
+      const listWishlistResponse = await Promise.all(
+        listWishlist.map(async (wishlist) => {
           let course = await _entityRepository("Courses").getEntity(
-            watchlist.Course_Id
+            wishlist.Course_Id
           );
           let category = await _entityRepository("Categories").getEntity(
             course[0].Category_Id
@@ -62,12 +65,14 @@ const userService = {
           };
         })
       );
+      */
+
       const userResponse = {
         Id: user[0].Id,
         Email: user[0].Email,
         Name: user[0].Name,
-        Password: user[0].Password,
-        Watch_Lists: listWatchlistResponse,
+        //Password: user[0].Password,
+        //Wishlists: listWishlistResponse,
       };
       console.log(userResponse);
       return {
@@ -84,7 +89,6 @@ const userService = {
       const resultValidator = updateInfoValidator.validate(
         request.id,
         request.body.Name,
-        request.body.Password
       );
       console.log(request.body);
       if (!resultValidator.IsSuccess) {
@@ -97,7 +101,6 @@ const userService = {
       }
       console.log(new Date());
       user[0].Name = request.body.Name;
-      user[0].Password = bcrypt.hashSync(request.body.Password);
       user[0].updated_at = new Date();
       if (
         (await _entityRepository("Users").updateEntity(request.id, user[0])) ===

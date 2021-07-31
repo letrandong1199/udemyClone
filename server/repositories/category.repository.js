@@ -1,9 +1,8 @@
 const db = require("../db/db");
 const operatorType = require("../utils/enums/operatorType");
 const categoryRepository = {
-  getCategoryByQuery(query) {
+  getAllCategory(query) {
     return db("Categories")
-      .where(query)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   //READ BY NAME

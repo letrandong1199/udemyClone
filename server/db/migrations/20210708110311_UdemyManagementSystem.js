@@ -101,7 +101,7 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.primary(["Media_Id", "User_Id"]);
     })
-    .createTable("Watch_Lists", function (table) {
+    .createTable("Wishlists", function (table) {
       table.increments("Id").primary();
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
@@ -109,7 +109,7 @@ exports.up = function (knex) {
     .createTable("Enrolled_Courses", function (table) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
-      table.float("Rating").defaultTo(0.0);
+      table.float("Rating");
       table.primary(["User_Id", "Course_Id"]);
     })
     .then(function (table) {
@@ -157,17 +157,17 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTable("Feedbacks")
-    .dropTable("Enrolled_Courses")
-    .dropTable("Media_User")
-    .dropTable("Media")
-    .dropTable("Lectures")
-    .dropTable("Sections")
-    .dropTable("Watch_Lists")
-    .dropTable("Courses")
-    .dropTable("Promotes")
-    .dropTable("Users")
-    .dropTable("Role")
-    .dropTable("Categories")
-    .dropTable("Languages");
+    .dropTableIfExists("Feedbacks")
+    .dropTableIfExists("Enrolled_Courses")
+    .dropTableIfExists("Media_User")
+    .dropTableIfExists("Media")
+    .dropTableIfExists("Lectures")
+    .dropTableIfExists("Sections")
+    .dropTableIfExists("Wishlists")
+    .dropTableIfExists("Courses")
+    .dropTableIfExists("Promotes")
+    .dropTableIfExists("Users")
+    .dropTableIfExists("Role")
+    .dropTableIfExists("Categories")
+    .dropTableIfExists("Languages");
 };

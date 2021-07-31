@@ -70,13 +70,14 @@ const categoryService = {
     const query = request.query;
     const keyToColName = {
       parent: "Parent_Id",
-    };
+    }
 
     for (const [key, value] of Object.entries(query)) {
       queryTable[keyToColName[key]] = parseInt(value);
     }
     try {
-      const listCategory = await categoryRepository.getCategoryByQuery(query);
+      const listCategory = await categoryRepository.getAllCategory();
+      console.log('listCategory', listCategory);
       let listCategoryResponse = listCategory.map((category) => {
         return {
           Id: category.Id,
