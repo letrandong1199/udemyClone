@@ -7,12 +7,13 @@ module.exports = {
         Isuccess: false,
       };
     }
-    if (description == null || description == "") {
-      return {
-        Code: updateOneLectureResponseEnum.LECTURE_DESCRIPTION_IS_EMPTY,
-        Isuccess: false,
-      };
-    }
+    /*
+if (description == null || description == "") {
+  return {
+    Code: updateOneLectureResponseEnum.LECTURE_DESCRIPTION_IS_EMPTY,
+    Isuccess: false,
+  };
+}*/
     if (section_id == null || section_id == "") {
       return {
         Code: updateOneLectureResponseEnum.SECTION_ID_IS_EMPTY,

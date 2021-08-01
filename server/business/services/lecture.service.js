@@ -17,7 +17,6 @@ const lectureService = {
     try {
       const resultValidator = createOneLectureValidator.validate(
         request.body.Title,
-        request.body.Description,
         request.body.Section_Id
       );
       if (!resultValidator.Isuccess) {
@@ -71,19 +70,18 @@ const lectureService = {
   async updateOneLecture(request) {
     try {
       const resultValidator = updateOneLectureValidator.validate(
-        request.body.section_id,
-        request.body.title,
-        request.body.description,
+        request.body.Section_Id,
+        request.body.Title,
+        request.body.Description,
         request.params.id
       );
       if (!resultValidator.Isuccess) {
-        return { Code: updateOneLectureResponseEnum.Code };
+        return { Code: resultValidator.Code };
       }
-      console.log(request.body.section_id);
+
       const section = await _entityRepository("Sections").getEntity(
-        request.body.section_id
+        request.body.Section_Id
       );
-      console.log(section.length);
       if (section.length == 0) {
         return { Code: updateOneLectureResponseEnum.SECTION_ID_IS_INVALID };
       }
@@ -94,13 +92,12 @@ const lectureService = {
         return { Code: updateOneLectureResponseEnum.IS_NOT_AUTHOR };
       }
       const lectureBySection = await lectureRepository.getLectureBySectionId(
-        request.body.section_id
+        request.body.Section_Id
       );
-      console.log(request.body.title);
+
       if (lectureBySection.length != 0) {
         for (let i = 0; i < lectureBySection.length; i++)
-          if (
-            lectureBySection[i].Title == request.body.title &&
+          if (lectureBySection[i].Title == request.body.Title &&
             lectureBySection[i].Id != request.params.id
           ) {
             return {
@@ -108,14 +105,14 @@ const lectureService = {
             };
           }
       }
-      const newLecture = {
-        Title: request.body.title,
-        Description: request.body.description,
-      };
+
+
+      const updateContent = request.body;
+
       if (
         (await _entityRepository("Lectures").updateEntity(
           request.params.id,
-          newLecture
+          updateContent
         )) === operatorType.FAIL.CREATE
       ) {
         return { Code: updateOneLectureResponseEnum.SERVER_ERROR };
@@ -129,13 +126,20 @@ const lectureService = {
     try {
       const resultValidator = deleteOneLectureValidator.validate(
         request.params.id,
-        request.body.section_id
       );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
+
+      const lecture = await _entityRepository("Lectures").getEntity(
+        request.params.id
+      );
+      if (lecture.length == 0) {
+        return { Code: deleteOneLectureResponseEnum.LECTURE_ID_IS_NOT_EXIST };
+      }
+
       const section = await _entityRepository("Sections").getEntity(
-        request.body.section_id
+        lecture[0].Section_Id
       );
       console.log(section.length);
       if (section.length == 0) {
@@ -147,12 +151,8 @@ const lectureService = {
       if (course[0].Author_Id != request.id) {
         return { Code: deleteOneLectureResponseEnum.IS_NOT_AUTHOR };
       }
-      const lecture = await _entityRepository("Lectures").getEntity(
-        request.params.id
-      );
-      if (lecture.length == 0) {
-        return { Code: deleteOneLectureResponseEnum.LECTURE_ID_IS_NOT_EXIST };
-      }
+
+
       if (
         (await _entityRepository("Lectures").deleteEntity(
           request.params.id

@@ -1,6 +1,6 @@
 const createOneLectureResponseEnum = require("../enums/lectureEnums/createOneLectureResponseEnum");
 module.exports = {
-  validate(title, description, section_id) {
+  validate(title, section_id) {
     if (title == null || title == "") {
       return {
         Code: createOneLectureResponseEnum.LECTURE_TITLE_IS_EMPTY,

@@ -7,12 +7,7 @@ module.exports = deleteOneSectionValidator = {
         IsSuccess: false,
       };
     }
-    if (course_id == null || course_id == "") {
-      return {
-        Code: deleteOneSectionResponseEnum.COURSE_ID_IS_EMPTY,
-        IsSuccess: false,
-      };
-    }
+
     return { Code: deleteOneSectionResponseEnum.SUCCESS, IsSuccess: true };
   },
 };

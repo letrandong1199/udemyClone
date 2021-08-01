@@ -7,12 +7,7 @@ module.exports = deleteOneLectureValidator = {
         IsSuccess: false,
       };
     }
-    if (section_id == null || section_id == "") {
-      return {
-        Code: deleteOneLectureResponseEnum.SECTION_ID_IS_EMPTY,
-        IsSuccess: false,
-      };
-    }
+
     return { Code: deleteOneLectureResponseEnum.SUCCESS, IsSuccess: true };
   },
 };

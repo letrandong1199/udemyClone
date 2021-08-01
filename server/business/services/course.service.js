@@ -555,7 +555,7 @@ const courseService = {
           );
           return {
             Id: section.Id,
-            Section_Name: section.Name,
+            Name: section.Name,
             Lectures: listLectureResponse,
           };
         })

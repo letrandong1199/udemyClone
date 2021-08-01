@@ -110,19 +110,9 @@ const sectionService = {
     try {
       const resultValidator = deleteOneSectionValidator.validate(
         request.params.id,
-        request.body.course_id
       );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
-      }
-      const course = await _entityRepository("Courses").getEntity(
-        request.body.course_id
-      );
-      if (course.length == 0) {
-        return { Code: deleteOneSectionResponseEnum.COURSE_ID_IS_NOT_EXIST };
-      }
-      if (course[0].Author_Id != request.id) {
-        return { Code: deleteOneSectionResponseEnum.IS_NOT_AUTHOR };
       }
       const section = await _entityRepository("Sections").getEntity(
         request.params.id
@@ -130,6 +120,16 @@ const sectionService = {
       if (section.length == 0) {
         return { Code: deleteOneSectionResponseEnum.SECTION_ID_IS_NOT_EXIST };
       }
+      const course = await _entityRepository("Courses").getEntity(
+        section[0].Course_Id
+      );
+      if (course.length == 0) {
+        return { Code: deleteOneSectionResponseEnum.COURSE_ID_IS_NOT_EXIST };
+      }
+      if (course[0].Author_Id != request.id) {
+        return { Code: deleteOneSectionResponseEnum.IS_NOT_AUTHOR };
+      }
+
       if (
         (await _entityRepository("Sections").deleteEntity(
           request.params.id
