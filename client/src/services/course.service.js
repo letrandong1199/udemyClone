@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { GET_ONE_COURSE } from '../config/config';
 
 const API_URL = 'http://localhost:8080/api/course-controller';
 
@@ -30,6 +31,15 @@ class CourseService {
         ).join('&')*/
         //console.log('String', queryString);
         return axios.get(API_URL + '/courses?' + query)
+    }
+    getContentByCourseId(courseId) {
+        return axios.get(API_URL + '/my-learning/' + courseId, { headers: authHeader() })
+            .then(response => {
+                if (response.data.message.Code !== GET_ONE_COURSE.SUCCESS) {
+                    throw Error(response.data.message.Code)
+                }
+                return response.data.message;
+            })
     }
 
 }

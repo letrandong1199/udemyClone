@@ -18,17 +18,53 @@ import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import categoryService from '../../services/category.service';
 import listToTree from '../../utils/listToTree';
-import toDataUrl from '../../utils/toDataUrl';
 import languageService from '../../services/language.service';
 import authService from '../../services/auth.service';
 import courseService from '../../services/course.service';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Link, Switch, Route, useRouteMatch } from 'react-router-dom';
-import { Card, CardContent, InputBase, } from '@material-ui/core';
 import lectureService from '../../services/lecture.service';
 import sectionService from '../../services/section.service';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import mediaService from '../../services/media.service';
+import { withStyles } from '@material-ui/core/styles';
+import ListItem from '@material-ui/core/ListItem';
+import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
+import Divider from '@material-ui/core/Divider';
+import Pagination from '@material-ui/lab/Pagination';
+import Chip from '@material-ui/core/Chip';
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import { useLocation, useHistory } from 'react-router-dom';
+import { Card } from '@material-ui/core';
+import useGetParameter from '../../utils/useGetParameter';
+import AddRoundedIcon from '@material-ui/icons/AddRounded';
+import { ROUTES } from '../../config/config';
+import Tab from '@material-ui/core/Tab';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
+import TabPanel from '@material-ui/lab/TabPanel';
+import Tabs from '@material-ui/core/Tabs';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
+const BorderLinearProgress = withStyles((theme) => ({
+    root: {
+        height: 40,
+        width: '100%',
+        borderRadius: 5,
+    },
+    colorPrimary: {
+        backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
+    },
+    bar: {
+        borderRadius: 5,
+        backgroundColor: '#1a90ff',
+    },
+}))(LinearProgress);
 
 const LectureCard = ({
     lecture,
@@ -50,13 +86,55 @@ const LectureCard = ({
         setSelectedFile(event.target.files[0]);
 
     }
+
+    const [progress, setProgress] = useState(0);
+    const [isPending, setIsPending] = useState([]);
+
+    const handleSetIsPending = (index) => () => {
+        let array = [...isPending];
+        array.push(index);
+        setIsPending(array);
+    }
+
+    const handleClosePending = (index) => () => {
+        let array = [...isPending];
+        let index = isPending.indexOf(index)
+        if (index !== -1) {
+            array.splice(index);
+            setIsPending(array);
+        }
+    }
+
+    useEffect(() => {
+        console.log('Progrs', progress);
+    }, [progress])
     const handleUploadVideo = (index) => () => {
         const reader = new FileReader()
         reader.readAsDataURL(selectedFile)
+
         reader.onloadend = () => {
             console.log("done");
-            mediaService.postOne({ Lecture_Id: lecture.Id, Video_URL: reader.result })
+            handleSetIsPending(index);
+            mediaService.postOne({ Lecture_Id: lecture.Id, Video_URL: reader.result },
+                (event) => setProgress(Math.round((100 * event.loaded) / event.total)))
+                .then((response => {
+                    console.log('Index', isPending);
+                    console.log(response);
+                    console.log("Done ok");
+                    handleClosePending(index);
+                })).catch(error => {
+                    console.log(error);
+                })
         }
+    }
+    const handleSelectFile = (event) => {
+        if (!event.target.files || event.target.files.length === 0) {
+            setSelectedFile(undefined);
+            return;
+        }
+
+        setSelectedFile(event.target.files[0]);
+        console.log(event.target.files[0]);
     }
 
     useEffect(() => {
@@ -85,19 +163,12 @@ const LectureCard = ({
                 inputProps={
                     { readOnly: !editable.includes(`lecture-name-${index}`) }
                 }
+
+                InputProps={{ disableUnderline: !editable.includes(`lecture-name-${index}`) }}
                 onChange={handleChange(index)}
-                style={{ margin: 10 }}
+                style={{ margin: 20 }}
             />
-            <input
-                accept="*"
-                id="contained-button-file"
-                multiple
-                type="file"
-                onChange={handleUpload}
-            />
-            <Button onClick={handleUploadVideo(index)}>
-                Upload
-            </Button>
+
             <Grid
                 alignItems='center'
                 style={{
@@ -128,8 +199,67 @@ const LectureCard = ({
                     </Fragment>
                 }
             </Grid>
+            <Grid container style={{ margin: 10 }}>
+                <form>
+                    <input
+                        accept="video/*"
+                        id={`upload-video-${index}`}
+                        type="file"
+                        style={{ display: 'none' }}
+                        onChange={handleSelectFile}
+                    >
+                    </input>
+                    <TextField
+                        color='primary'
+                        variant='outlined'
+                        accept="video/*"
+                        id={`upload-video-${index}`}
+                        inputProps={{ readOnly: true }}
+                        value={isPending.includes(index) ? '' : selectedFile ? selectedFile.name : ''}
 
-        </Card>
+                        InputProps={{
+                            style: {
+                                background: `linear-gradient(90deg, #2E86DE ${progress}%, rgba(255, 255, 255, 0) ${progress}%)`,
+                            },
+
+                            endAdornment: selectedFile && selectedFile !== undefined
+                                ? !isPending.includes(index) && <IconButton
+                                    component='span'
+                                    variant='contained'
+                                    color='secondary'
+                                    onClick={() => { console.log('Hello hello'); setSelectedFile('') }}
+                                >
+                                    <HighlightOffIcon />
+                                </IconButton>
+                                : !isPending.includes(index) && <label for={`upload-video-${index}`}>
+                                    <IconButton
+                                        component='span'
+                                        variant='contained'
+                                        color='primary'
+                                    >
+                                        <AddRoundedIcon />
+                                    </IconButton>
+                                </label>
+                        }}
+                    >
+
+                    </TextField>
+
+                    <Button
+                        onClick={handleUploadVideo(index)}
+                        component='span'
+                        variant='contained'
+                        color='primary'
+                        size='small'
+                        style={{ marginLeft: 10 }}
+                    >
+                        Upload
+                    </Button>
+
+                </form>
+
+            </Grid>
+        </Card >
     )
 }
 
@@ -148,6 +278,17 @@ const SectionCard = ({
     const [editLecture, setEditLecture] = useState({ Title: '' });
     const [editableLecture, setEditableLecture] = useState([]);
     const [isPending, setIsPending] = useState(false);
+
+    const [openSnack, setOpenSnack] = useState(false);
+    const [snackContent, setSnackContent] = useState(null);
+    const [snackType, setSnackType] = useState('success');
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
 
     useEffect(() => {
         lectureService.getById(section.Id).then(response => {
@@ -180,16 +321,23 @@ const SectionCard = ({
         setEditableLecture(`lecture-name-${index}`);
     }
     const handleDeleteLecture = (index) => () => {
-        let array = [...lectures];
-        array.splice(index, 1);
-        setLectures(array);
-
-        array = [...editableLecture];
-        const indexEdit = editable.indexOf(`lecture-name-${index}`);
-        if (indexEdit !== -1) {
-            array.splice(indexEdit, 1)
-            setEditableLecture(array);
-        }
+        lectureService.deleteOne(lectures[index].Id)
+            .then((response) => {
+                setIsPending(false);
+                let array = [...lectures];
+                array.splice(index, 1);
+                setLectures(array);
+                setSnackContent('Deleted');
+                setSnackType('success');
+                setOpenSnack(true);
+                setIsPending(false);
+            }).catch(error => {
+                console.log('err', error);
+                setSnackContent(error.message);
+                setSnackType('error');
+                setOpenSnack(true);
+                setIsPending(false)
+            })
     }
     const handleCancelLecture = (index) => () => {
         setEditableLecture([]);
@@ -208,9 +356,17 @@ const SectionCard = ({
                 array.push(response.New_Lecture);
                 console.log('Array Lec', array);
                 setLectures(array);
+                setSnackContent('Added');
+                setSnackType('success');
+                setOpenSnack(true);
+                setIsPending(false);
                 return handleCancelLecture(index)();
             }).catch(error => {
                 console.log('err', error);
+                setSnackContent(error.message);
+                setSnackType('error');
+                setOpenSnack(true);
+                setIsPending(false)
             })
 
         } else if (editLecture) {
@@ -220,17 +376,26 @@ const SectionCard = ({
                 let array = [...lectures];
                 array[index] = editLecture;
                 setLectures(array);
+                setSnackContent('Updated');
+                setSnackType('success');
+                setOpenSnack(true);
+                setIsPending(false);
                 return handleCancelLecture(index)();
             }).catch(error => {
                 console.log('err', error);
+                setSnackContent(error.message);
+                setSnackType('error');
+                setOpenSnack(true);
+                setIsPending(false)
             })
         }
     }
+    const classes = useStyles();
     return (<Card
         key={indexSection}
         style={{
             minHeight: 50,
-            minWidth: 500,
+            minWidth: 700,
             margin: 20,
             background: 'rgb(241,241,241)',
             position: 'relative'
@@ -244,10 +409,13 @@ const SectionCard = ({
             placeholder='Name'
             color='primary'
             inputProps={
-                { readOnly: !editable.includes(`section-name-${indexSection}`) }
+                {
+                    readOnly: !editable.includes(`section-name-${indexSection}`),
+                }
             }
+            InputProps={{ disableUnderline: !editable.includes(`section-name-${indexSection}`) }}
             onChange={handleChange(indexSection)}
-            style={{ margin: 10 }}
+            style={{ margin: 20 }}
         />
         {lectures.map((lecture, index) => {
             return <LectureCard
@@ -283,6 +451,7 @@ const SectionCard = ({
                     inputProps={
                         { readOnly: !editableLecture.includes(`lecture-name-edit`) }
                     }
+                    InputProps={{ disableUnderline: !editableLecture.includes(`section-name-edit`) }}
                     onChange={handleChangeLecture('edit')}
                     style={{ margin: 10 }}
                 />
@@ -337,9 +506,6 @@ const SectionCard = ({
                     </Button>
                 </Fragment>
                 : <Fragment>
-                    <Button onClick={handleAddLecture}>
-                        Add lecture
-                    </Button>
                     <IconButton
                         onClick={handleEdit(indexSection)}
                     >
@@ -353,8 +519,27 @@ const SectionCard = ({
                 </Fragment>
             }
         </Grid>
+        <Grid container style={{ justifyContent: 'flex-end', paddingRight: 2 }}>
+            <Button onClick={handleAddLecture}
+                startIcon={<AddRoundedIcon />}
+            >
+                Add lecture
+            </Button>
+        </Grid>
 
-
+        <Backdrop open={isPending} className={classes.backdrop}>
+            <CircularProgress color="inherit" />
+        </Backdrop>
+        <Snackbar
+            open={openSnack}
+            autoHideDuration={4000}
+            onClose={handleCloseSnack}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+            <Alert onClose={handleCloseSnack} severity={snackType}>
+                {snackContent}
+            </Alert>
+        </Snackbar>
     </Card>
     )
 }
@@ -367,6 +552,18 @@ const CreateLecture = ({ id }) => {
     const [editable, setEditable] = useState([]);
     const [isPending, setIsPending] = useState(false);
 
+
+    const [openSnack, setOpenSnack] = useState(false);
+    const [snackContent, setSnackContent] = useState(null);
+    const [snackType, setSnackType] = useState('success');
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpenSnack(false);
+    };
+
     useEffect(() => {
         setIsPending(true);
         sectionService.getById(id).then(response => {
@@ -377,7 +574,7 @@ const CreateLecture = ({ id }) => {
             console.log('err', error);
             setIsPending(false);
         })
-    }, [])
+    }, [id])
 
     const handleAddSection = () => {
         const newSection = {
@@ -403,16 +600,24 @@ const CreateLecture = ({ id }) => {
         setEditable(`section-name-${index}`);
     }
     const handleDelete = (index) => () => {
-        let array = [...sections];
-        array.splice(index, 1);
-        setSections(array);
-
-        array = [...editable];
-        const indexEdit = editable.indexOf(`section-name-${index}`);
-        if (indexEdit !== -1) {
-            array.splice(indexEdit, 1)
-            setEditable(array);
-        }
+        setIsPending(true);
+        setTimeout(() => { console.log('timeup'); }, 5000);
+        sectionService.deleteOne(sections[index].Id)
+            .then((response) => {
+                let array = [...sections];
+                array.splice(index, 1);
+                setSections(array);
+                setSnackContent('Deleted');
+                setSnackType('success');
+                setOpenSnack(true);
+                setIsPending(false);
+            }).catch(error => {
+                setSnackContent(error.message);
+                setSnackType('error');
+                setOpenSnack(true);
+                setIsPending(false)
+                console.log('err', error);
+            })
     }
     const handleCancel = (index) => () => {
         let array = [...editable];
@@ -429,38 +634,56 @@ const CreateLecture = ({ id }) => {
         setIsPending(true)
         console.log('save');
         if (newSection) {
+            setTimeout(() => { console.log('test') }, 5000);
             sectionService.postOne({ Name: newSection.Name, Course_Id: id }).then((response) => {
                 console.log('Res', response);
-                setIsPending(false);
+
                 let array = [...sections];
                 array.push(response.New_Section);
                 setSections(array);
+                setSnackContent('Added');
+                setSnackType('success');
+                setOpenSnack(true);
+                setIsPending(false);
                 return handleCancel(index)();
             }).catch(error => {
                 console.log('err', error);
+                setSnackContent(error.message);
+                setSnackType('error');
+                setOpenSnack(true);
+                setIsPending(false)
             })
 
         } else if (editSection) {
+            setTimeout(() => { console.log('test') }, 5000);
+
             sectionService.updateOne(editSection.Id, { Name: editSection.Name, Course_Id: id }).then((response) => {
                 console.log('Res', response);
-                setIsPending(false);
                 let array = [...sections];
                 array[index] = editSection;
                 setSections(array);
+                setSnackContent('Updated');
+                setSnackType('success');
+                setOpenSnack(true);
+                setIsPending(false);
                 return handleCancel(index)();
             }).catch(error => {
                 console.log('err', error);
+                setSnackContent(error.message);
+                setSnackType('error');
+                setOpenSnack(true);
+                setIsPending(false)
             })
 
         }
     }
+    const classes = useStyles();
     return (
         <Container>
-            <Button onClick={handleAddSection}>Add section</Button>
             {sections.map((section, index) => {
                 return <SectionCard
                     section={section}
-                    index={index}
+                    indexSection={index}
                     editable={editable}
                     editSection={editSection}
                     handleChange={handleChange}
@@ -488,8 +711,12 @@ const CreateLecture = ({ id }) => {
                         placeholder='Name'
                         color='primary'
                         inputProps={
-                            { readOnly: !editable.includes(`section-name-edit`) }
+                            {
+                                readOnly: !editable.includes(`section-name-edit`),
+                                disableUnderline: true
+                            }
                         }
+                        InputProps={{ disableUnderline: !editable.includes(`section-name-edit`) }}
                         onChange={handleChange('edit')}
                         style={{ margin: 10 }}
                     />
@@ -527,7 +754,20 @@ const CreateLecture = ({ id }) => {
 
                 </Card>
             }
-
+            <Button onClick={handleAddSection} startIcon={<AddRoundedIcon />}>Add section</Button>
+            <Backdrop open={isPending} className={classes.backdrop}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={4000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnack} severity={snackType}>
+                    {snackContent}
+                </Alert>
+            </Snackbar>
         </Container >
     )
 }
@@ -546,10 +786,7 @@ const CreateCourse = () => {
     const [isPendingCategory, setIsPendingCategory] = useState(false);
     const [languagesTree, setLanguagesTree] = useState([]);
     const [isPendingLang, setIsPendingLang] = useState(false);
-    useEffect(() => {
 
-
-    }, [])
 
 
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -661,10 +898,12 @@ const CreateCourse = () => {
                     1. Thumbnail
                 </Typography>
                 <Typography variant="body1" className={classes.caption}>
-                    {"This thumbnail will show in course card (small size) and detail course (large size)."}
+                    {"This thumbnail will show in course card (small size) and detail course (large size). Recommend size: 750x422."}
                 </Typography>
                 <Grid container alignItems="center" className={classes.section}>
-                    <div className={classes.thumbnail} style={{ background: `url('${preview}') no-repeat center center content-box` }} />
+                    <div
+                        className={classes.thumbnail}
+                        style={{ background: `url('${preview}') no-repeat center center content-box` }} />
                     <input
                         accept="image/*"
                         id="contained-button-file"
@@ -794,20 +1033,199 @@ const CreateCourse = () => {
     )
 }
 
+const EditCourse = ({ id }) => {
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+    const classes = useStyles();
+    return (
+        <Container className={classes.tabsRoot}>
+            <TabContext value={value} >
+                <Tabs
+                    orientation="vertical"
+                    variant="fullWidth"
+                    onChange={handleChange}
+                    className={classes.tabs}
+
+                    aria-label="simple tabs example">
+                    <Tab label="Edit course " value="1" />
+                    <Tab label="Lectures" value="2" />
+                    <Tab label="Description" value="4" />
+                    <Tab label="Image" value="5" />
+                    <Tab label="Pricing and Public" value="6" />
+                </Tabs>
+                <TabPanel value="1">Item One</TabPanel>
+                <TabPanel value="2"><CreateLecture id={id} /></TabPanel>
+                <TabPanel value="3">Item Three</TabPanel>
+            </TabContext>
+        </Container >
+    )
+}
+
+const Dashboard = ({ url }) => {
+    const classes = useStyles();
+    const query = useGetParameter();
+    const location = useLocation();
+    const history = useHistory();
+
+    const [courses, setCourses] = useState([]);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
+    const [count, setCount] = useState(0);
+    const [page, setPage] = useState(1);
+
+    const limit = 5;
+
+
+    const replaceParams = (key, value) => {
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.delete(key);
+        searchParams.set(key, value);
+        history.push({ pathname: location.pathname, search: searchParams.toString() });
+    }
+
+
+    const querySearch = query.toString();
+    useEffect(() => {
+        setIsPending(true);
+        let queryString = query.toString();
+        setTimeout(() => { console.log('test'); }, 3000);
+        if (queryString && queryString !== '') {
+            if (query.get('page')) {
+                queryString = queryString + `&limit=${limit}`
+            } else {
+                queryString = queryString + `&limit=${limit}&page=${page}`
+            }
+            //const queryWithPaging = [...queryArray, { label: 'page', value: page }, { label: 'limit', value: limit }];
+            courseService.getByQuery(queryString)
+                .then(response => {
+                    const listCourses = response.data.message.listAllResponse;
+                    if (listCourses?.length === 0) {
+                        throw Error('No courses');
+                    }
+                    setCount(response.data.message.Count)
+                    setCourses(listCourses);
+                    setIsPending(false);
+                }).catch(error => {
+                    console.log(error);
+                    setError(error.message);
+                    setIsPending(false);
+                })
+        }
+    }, [page, querySearch])
+
+    const options = [
+        { label: 'Thing 1', value: 1 },
+        { label: 'Thing 2', value: 2 },
+    ];
+    const [option, setOption] = useState([]);
+    const handleChangeOption = (event) => {
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.delete('language');
+        let search = searchParams.toString();
+        event.forEach(item => {
+            search += `&language=${item.value}`
+        })
+        history.push({ pathname: location.pathname, search: search });
+    };
+    const handleDelete = (event) => {
+
+    }
+
+
+    const handleChangePage = (event, value) => {
+        setPage(value);
+        replaceParams('page', value);
+    }
+
+    return (
+        <div>
+
+            <Typography variant="h3" className={classes.bigTitle}>Instructor dashboard</Typography>
+            <Container className={classes.section}>
+                <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
+                    <Typography
+                        variant="h4"
+                        className={classes.title}
+                    >
+                        All course
+                    </Typography>
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        startIcon={<AddRoundedIcon />}
+                        component={Link}
+                        to={`${url}${ROUTES.createCourse}`}
+                    >
+                        New course
+                    </Button>
+                </Grid>
+
+                <Grid container className={classes.filterContainer}>
+                    <ReactMultiSelectCheckboxes
+                        placeholderButtonLabel="Language"
+                        options={options}
+                        //value={selectedOption}
+                        onChange={handleChangeOption}
+                        hideSearch={true}
+                        getDropdownButtonLabel={({ placeholderButtonLabel, value }) => placeholderButtonLabel}
+                        className={classes.selectStyles}
+                    />
+                </Grid>
+                <Grid container className={classes.chipsContainer}>
+                    {option.map((opt, index) => {
+                        return <Chip key={index} label={opt.label}
+                            onDelete={handleDelete} />
+                    })}
+                </Grid>
+
+                <List style={{ padding: 20 }}>
+                    {isPending
+                        ? <Skeleton height='100px' width='auto'><ListItem /></Skeleton>
+                        : courses?.map((course, index) =>
+                            <Fragment key={index}>
+                                <ListItem key={index}>
+                                    <ProductCardH course={course} />
+                                </ListItem>
+                                <Divider variant="middle" />
+                            </Fragment>)
+                    }
+                </List>
+
+                <Grid container alignItems="center" style={{ justifyContent: 'center', marginLeft: 20 }}>
+                    {isPending
+                        ? <Skeleton width='50%' height='50px' />
+                        : <Pagination
+                            page={page}
+                            count={parseInt((parseInt(count) / limit).toFixed(0))}
+                            color="primary"
+                            onChange={handleChangePage}
+                        />
+                    }
+                </Grid>
+
+            </Container >
+        </div >
+
+    )
+}
+//<Link to={`${url}/create`}>Create course</Link>
+//                   <Link to={`${url}/lecture`}>Create lecture</Link>
 function Instructor() {
     const { path, url } = useRouteMatch();
     return (
         <div>
             <Switch>
                 <Route path={`${path}`} exact>
-                    <Link to={`${url}/create`}>Create course</Link>
-                    <Link to={`${url}/lecture`}>Create lecture</Link>
+                    <Dashboard url={url} />
                 </Route>
-                <Route path={`${path}/create`}>
+                <Route path={`${path}${ROUTES.createCourse}`}>
                     <CreateCourse />
                 </Route>
-                <Route path={`${path}/lecture`}>
-                    <CreateLecture />
+                <Route path={`${path}${ROUTES.editCourse}`}>
+                    <EditCourse />
                 </Route>
             </Switch>
         </div>

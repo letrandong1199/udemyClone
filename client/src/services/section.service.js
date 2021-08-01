@@ -1,6 +1,11 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { CREATE_SECTION, UPDATE_SECTION, GET_SECTION_BY_COURSE_ID } from '../config/config';
+import {
+    CREATE_SECTION,
+    UPDATE_SECTION,
+    GET_SECTION_BY_COURSE_ID,
+    DELETE_SECTION
+} from '../config/config';
 const API_URL = 'http://localhost:8080/api/section-controller';
 
 class SectionService {
@@ -64,6 +69,17 @@ class SectionService {
             .then(response => {
                 console.log(response);
                 if (response.data.message.Code !== UPDATE_SECTION.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
+    }
+    deleteOne(id) {
+        return axios
+            .delete(API_URL + '/sections/' + id, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                if (response.data.message.Code !== DELETE_SECTION.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
                 return response.data.message;

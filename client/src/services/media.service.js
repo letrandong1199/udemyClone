@@ -34,10 +34,10 @@ class MediaService {
         );
     };
 
-    postOne(data) {
-        console.log(data);
+    postOne(data, onUploadProgress) {
+        console.log('video', data);
         return axios
-            .post(API_URL + '/medias', data, { headers: authHeader() })
+            .post(API_URL + '/medias', data, { onUploadProgress: onUploadProgress, headers: authHeader() })
             .then(response => {
                 console.log(response);
                 if (response.data.message.Code !== CREATE_MEDIA.SUCCESS) {

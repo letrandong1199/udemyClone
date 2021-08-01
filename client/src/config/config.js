@@ -188,7 +188,43 @@ export const CREATE_MEDIA = {
     IS_NOT_AUTHOR: "is_not_author",
     SERVER_ERROR: "server_error",
 };
+export const GET_ONE_COURSE = {
+    SUCCESS: "get_one_course_success",
+    IS_NOT_ENROLLED_COURSE: "is_not_enrolled_course",
+    SERVER_ERROR: "server_error",
+    ID_IS_INVALID: "id_is_invalid",
+    ID_IS_EMPTY: "id_is_empty",
+};
+export const DELETE_SECTION = {
+    SUCCESS: "delete_success",
+    SERVER_ERROR: "server_error",
+    COURSE_ID_IS_NOT_EXIST: "course_id_is_not_exist",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    SECTION_ID_IS_EMPTY: "section_id_is_empty",
+    SECTION_ID_IS_NOT_EXIST: "section_id_is_not_exist",
+    IS_NOT_AUTHOR: "is_not_author",
+};
 
-
+export const DELETE_LECTURE = {
+    SUCCESS: "delete_success",
+    SERVER_ERROR: "server_error",
+    SECTION_ID_IS_INVALID: "section_id_is_invalid",
+    SECTION_ID_IS_EMPTY: "section_id_is_empty",
+    LECTURE_ID_IS_EMPTY: "lecture_id_is_empty",
+    LECTURE_ID_IS_NOT_EXIST: "lecture_id_is_not_exist",
+    IS_NOT_AUTHOR: "is_not_author",
+};
+export const UPDATE_LECTURE = {
+    SUCCESS: "update_lecture_success",
+    LECTURE_TITLE_IS_EMPTY: "lecture_title_is_empty",
+    LECTURE_DESCRIPTION_IS_EMPTY: "lecture_description_is_empty",
+    LECTURE_ID_IS_EMPTY: "lecture_id_is_empty",
+    LECTURE_ID_IS_INVALID: "lecture_id_is_invalid",
+    SECTION_ID_IS_EMPTY: "section_id_is_empty",
+    SECTION_ID_IS_INVALID: "section_id_is_invalid",
+    IS_NOT_AUTHOR: "is_not_author",
+    LECTURE_TITLE_IS_EXIST: "lecture_title_is_exist",
+    SERVER_ERROR: "server_error",
+};
 
 export default config;

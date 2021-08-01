@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, forwardRef } from 'react'
+import { useState, useEffect, forwardRef } from 'react'
 import Typography from '@material-ui/core/Typography';
 import { useParams } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
@@ -6,28 +6,16 @@ import PropTypes from 'prop-types';
 import { useStyles } from './styles';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-import { courses } from '../../utils/dataSample';
-import ProductCardV from '../../components/ProductCardV/ProductCardV.jsx';
 import MyCarousel from '../../components/MyCarousel/MyCarousel.jsx';
 import Tab from '@material-ui/core/Tab';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
 import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
 import Divider from '@material-ui/core/Divider';
 import { Fragment } from 'react';
 import Pagination from '@material-ui/lab/Pagination';
-import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-import NativeSelect from '@material-ui/core/NativeSelect';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import courseService from '../../services/course.service';
 import Skeleton from '@material-ui/lab/Skeleton';

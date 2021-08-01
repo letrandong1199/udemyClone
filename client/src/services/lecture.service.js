@@ -1,6 +1,11 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { GET_LECTURE_BY_SECTION_ID, CREATE_LECTURE } from '../config/config';
+import {
+    GET_LECTURE_BY_SECTION_ID,
+    CREATE_LECTURE,
+    UPDATE_LECTURE,
+    DELETE_LECTURE,
+} from '../config/config';
 
 const API_URL = 'http://localhost:8080/api/lecture-controller';
 
@@ -58,12 +63,26 @@ class LectureService {
                 return response.data.message;
             })
     }
-    updateOne(data) {
+    updateOne(id, data) {
         return axios
-            .put(API_URL + '/lectures', data, { headers: authHeader() })
+            .put(API_URL + '/lectures/' + id, data, { headers: authHeader() })
             .then(response => {
                 console.log(response);
-                return response
+                if (response.data.message.Code !== UPDATE_LECTURE.SUCCESS) {
+                    throw new Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
+    }
+    deleteOne(id, data) {
+        return axios
+            .delete(API_URL + '/lectures/' + id, { headers: authHeader() })
+            .then(response => {
+                console.log(response);
+                if (response.data.message.Code !== DELETE_LECTURE.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
             })
     }
 }

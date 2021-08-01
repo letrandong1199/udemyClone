@@ -1,10 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
-    backdrop: {
-        zIndex: theme.zIndex.snackbar + 1,
-        color: '#fff',
-    },
     bigTitle: {
         padding: 50,
         textAlign: 'center',

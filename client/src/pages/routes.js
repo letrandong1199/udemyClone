@@ -7,6 +7,7 @@ const ResultPage = lazy(() => import('./Result'));
 const CreateCoursePage = lazy(() => import('./CreateCourse'));
 const Page404 = lazy(() => import('./Page404'));
 const AdminPage = lazy(() => import('./Admin'));
+const LearningPage = lazy(() => import('./Learning'));
 //import ProfilePage from './Profile';
 //import CourseDetailPage from './CourseDetail';
 //import HomePage from './Home';
@@ -36,6 +37,12 @@ const routes = [
         exact: true,
         public: true,
         component: ResultPage,
+    },
+    {
+        path: '/learning/:id',
+        exact: true,
+        public: true,
+        component: LearningPage,
     },
     {
         path: '/admin',
