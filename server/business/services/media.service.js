@@ -50,6 +50,7 @@ const mediaService = {
           folder: "udemy",
           chunk_size: 100000000,
         });
+        console.log('back', videoUpload);
         var newVideo = videoUpload.url;
       } catch (e) {
         console.log(e);

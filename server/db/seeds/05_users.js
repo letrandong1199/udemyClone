@@ -9,7 +9,7 @@ function createUsers(knex) {
   return knex("Users")
     .del()
     .then(function () {
-      return knex("Users").insert(
+      return knex("Users").returning("Id").insert(
         [
           {
             'Email': 'jonas_schmedtmann@udemy.com',

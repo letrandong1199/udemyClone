@@ -9,7 +9,7 @@ function createLanguages(knex) {
   return knex("Languages")
     .del()
     .then(function () {
-      return knex("Languages").insert(
+      return knex("Languages").returning("Id").insert(
         [
           { 'Id': 1, 'Name': 'English' },
           { 'Id': 2, 'Name': 'Indian' },

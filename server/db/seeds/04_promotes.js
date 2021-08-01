@@ -9,7 +9,7 @@ function createPromotes(knex) {
   return knex("Promotes")
     .del()
     .then(function () {
-      return knex("Promotes").insert([
+      return knex("Promotes").returning("Id").insert([
         { Id: 1, Promote: 0 },
       ]);
     })
