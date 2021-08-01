@@ -32,15 +32,9 @@ const mediaService = {
       const course = await _entityRepository("Courses").getEntity(
         section[0].Section_Id
       );
-      //   const author = await _entityRepository("Users").getEntity(request.id);
-      //   const roleAuthor = await _entityRepository("Role").getEntity(
-      //     author[0].Role_Id
-      //   );
-      //   if (roleAuthor[0].Name != "Admin") {
-      //     if (course[0].Author_Id != request.id) {
-      //       return { Code: createOneMediaResponseEnum.IS_NOT_AUTHOR };
-      //     }
-      //   }
+      if (course[0].Author_Id != request.id) {
+        return { Code: createOneMediaResponseEnum.IS_NOT_AUTHOR };
+      }
       //upload video
       try {
         const video = request.body.Video_URL;
@@ -51,13 +45,20 @@ const mediaService = {
           chunk_size: 100000000,
         });
         var newVideo = videoUpload.url;
+        var videoDuration = videoUpload.duration;
       } catch (e) {
         console.log(e);
         return { Code: createOneMediaResponseEnum.VIDEO_IS_INVALID };
       }
+      let newIsPreview = false;
+      if (request.body.Is_Preview) {
+        newIsPreview = request.body.Is_Preview;
+      }
       const newMedia = {
         Lecture_Id: request.body.Lecture_Id,
         Video_URL: newVideo,
+        Duration: videoDuration,
+        Is_Preview: newIsPreview,
       };
       const ret = await _entityRepository("Media").addEntity(newMedia);
       if (ret === operatorType.FAIL.CREATE) {
@@ -94,16 +95,11 @@ const mediaService = {
       const course = await _entityRepository("Courses").getEntity(
         section[0].Section_Id
       );
-      //   const author = await _entityRepository("Users").getEntity(request.id);
-      //   const roleAuthor = await _entityRepository("Role").getEntity(
-      //     author[0].Role_Id
-      //   );
-      //   if (roleAuthor[0].Name != "Admin") {
-      //     if (course[0].Author_Id != request.id) {
-      //       return { Code: updateOneMediaResponseEnum.IS_NOT_AUTHOR };
-      //     }
-      //   }
+      if (course[0].Author_Id != request.id) {
+        return { Code: updateOneMediaResponseEnum.IS_NOT_AUTHOR };
+      }
       var newVideo = media[0].Video_URL;
+      var newVideoDuration = media[0].Duration;
       if (request.body.Video_URL) {
         try {
           const video = request.body.Video_URL;
@@ -113,11 +109,18 @@ const mediaService = {
             chunk_size: 100000000,
           });
           newVideo = videoUpload.url;
+          newVideoDuration = videoUpload.duration;
         } catch (e) {
           return { Code: updateOneMediaResponseEnum.VIDEO_IS_INVALID };
         }
       }
       media[0].Video_URL = newVideo;
+      media[0].Duration = newVideoDuration;
+      let newIsPreview = false;
+      if (request.body.Is_Preview) {
+        newIsPreview = request.body.Is_Preview;
+      }
+      media[0].Is_Preview = newIsPreview;
       if (
         (await _entityRepository("Media").updateEntity(
           request.params.id,
@@ -152,15 +155,9 @@ const mediaService = {
       const course = await _entityRepository("Courses").getEntity(
         section[0].Section_Id
       );
-      //   const author = await _entityRepository("Users").getEntity(request.id);
-      //   const roleAuthor = await _entityRepository("Role").getEntity(
-      //     author[0].Role_Id
-      //   );
-      //   if (roleAuthor[0].Name != "Admin") {
-      //     if (course[0].Author_Id != request.id) {
-      //       return { Code: updateOneMediaResponseEnum.IS_NOT_AUTHOR };
-      //     }
-      //   }
+      if (course[0].Author_Id != request.id) {
+        return { Code: updateOneMediaResponseEnum.IS_NOT_AUTHOR };
+      }
       if (
         (await _entityRepository("Media").deleteEntity(request.params.id)) ===
         operatorType.FAIL.DELETE

@@ -12,6 +12,7 @@ module.exports = async (req, res, next) => {
       if (Role[0].Name != "Admin") {
         return res.json({ message: "Unauthorize" }).end();
       }
+      req.id = payload.User_Id;
       next();
     } catch (e) {
       console.log(e);

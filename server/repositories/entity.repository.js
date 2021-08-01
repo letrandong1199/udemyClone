@@ -4,10 +4,13 @@ module.exports = (nameEntity) => {
   return {
     //CREATE
     addEntity(entity) {
-      // console.log(entity);
+      console.log(entity);
       return db(nameEntity)
         .insert(entity)
-        .catch((e) => { console.log(e); return operatorType.FAIL.CREATE });
+        .catch((e) => {
+          console.log(e);
+          return operatorType.FAIL.CREATE;
+        });
     },
     //READ
     getEntities() {

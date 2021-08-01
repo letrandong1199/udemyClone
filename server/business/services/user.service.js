@@ -88,7 +88,7 @@ const userService = {
     try {
       const resultValidator = updateInfoValidator.validate(
         request.id,
-        request.body.Name,
+        request.body.Name
       );
       console.log(request.body);
       if (!resultValidator.IsSuccess) {

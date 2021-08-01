@@ -24,7 +24,7 @@ const lectureService = {
         return { Code: resultValidator.Code };
       }
       if (request.body.Description === undefined) {
-        request.body.Description = '';
+        request.body.Description = "";
       }
       const section = await _entityRepository("Sections").getEntity(
         request.body.Section_Id
@@ -35,14 +35,8 @@ const lectureService = {
       const course = await _entityRepository("Courses").getEntity(
         section[0].Course_Id
       );
-      const author = await _entityRepository("Users").getEntity(request.id);
-      const roleAuthor = await _entityRepository("Role").getEntity(
-        author[0].Role_Id
-      );
-      if (roleAuthor[0].Name != "Admin") {
-        if (course[0].Author_Id != request.id) {
-          return { Code: createOneLectureResponseEnum.IS_NOT_AUTHOR };
-        }
+      if (course[0].Author_Id != request.id) {
+        return { Code: createOneLectureResponseEnum.IS_NOT_AUTHOR };
       }
       const lectureBySection = await lectureRepository.getLectureBySectionId(
         request.body.Section_Id
@@ -62,12 +56,14 @@ const lectureService = {
         Section_Id: request.body.Section_Id,
       };
       const ret = await _entityRepository("Lectures").addEntity(newLecture);
-      newLecture['Id'] = ret[0];
-      if (ret === operatorType.FAIL.CREATE
-      ) {
+      newLecture["Id"] = ret[0];
+      if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneLectureResponseEnum.SERVER_ERROR };
       }
-      return { Code: createOneLectureResponseEnum.SUCCESS, New_Lecture: newLecture };
+      return {
+        Code: createOneLectureResponseEnum.SUCCESS,
+        New_Lecture: newLecture,
+      };
     } catch (e) {
       console.log(e);
     }
@@ -94,14 +90,8 @@ const lectureService = {
       const course = await _entityRepository("Courses").getEntity(
         section[0].Course_Id
       );
-      const author = await _entityRepository("Users").getEntity(request.id);
-      const roleAuthor = await _entityRepository("Role").getEntity(
-        author[0].Role_Id
-      );
-      if (roleAuthor[0].Name != "Admin") {
-        if (course[0].Author_Id != request.id) {
-          return { Code: updateOneLectureResponseEnum.IS_NOT_AUTHOR };
-        }
+      if (course[0].Author_Id != request.id) {
+        return { Code: updateOneLectureResponseEnum.IS_NOT_AUTHOR };
       }
       const lectureBySection = await lectureRepository.getLectureBySectionId(
         request.body.section_id
@@ -154,14 +144,8 @@ const lectureService = {
       const course = await _entityRepository("Courses").getEntity(
         section[0].Course_Id
       );
-      const author = await _entityRepository("Users").getEntity(request.id);
-      const roleAuthor = await _entityRepository("Role").getEntity(
-        author[0].Role_Id
-      );
-      if (roleAuthor[0].Name != "Admin") {
-        if (course[0].Author_Id != request.id) {
-          return { Code: deleteOneLectureResponseEnum.IS_NOT_AUTHOR };
-        }
+      if (course[0].Author_Id != request.id) {
+        return { Code: deleteOneLectureResponseEnum.IS_NOT_AUTHOR };
       }
       const lecture = await _entityRepository("Lectures").getEntity(
         request.params.id

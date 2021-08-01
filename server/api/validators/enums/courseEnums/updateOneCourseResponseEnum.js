@@ -17,5 +17,6 @@ module.exports = {
   LANGUAGE_IS_NOT_EXIST: "language_is_not_exist",
   CATEGORY_IS_NOT_EXIST: "category_is_not_exist",
   ID_IS_INVALID: "id_is_invalid",
+  IS_COMPLETED_IS_EMPTY: "is_completed_is_empty",
   SERVER_ERROR: "server_error",
 };

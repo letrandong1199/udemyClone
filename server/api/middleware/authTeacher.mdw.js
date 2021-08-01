@@ -9,10 +9,10 @@ module.exports = async (req, res, next) => {
       const payload = jwt.verify(token, process.env.SECRET_KEY);
       const Role = await entityRepository("Role").getEntity(payload.Role_Id);
       console.log(Role[0].Name);
-      if (Role[0].Name != "Teacher" && Role[0].Name != "Admin") {
+      if (Role[0].Name != "Instructor") {
         return res.json({ message: "Unauthorize" }).end();
       }
-      req.author_id = payload.User_Id;
+      req.id = payload.User_Id;
       next();
     } catch (e) {
       console.log(e);

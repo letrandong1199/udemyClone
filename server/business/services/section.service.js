@@ -28,14 +28,8 @@ const sectionService = {
       if (course.length == 0) {
         return { Code: createOneSectionResponseEnum.COURSE_ID_IS_INVALID };
       }
-      const author = await _entityRepository("Users").getEntity(request.id);
-      const roleAuthor = await _entityRepository("Role").getEntity(
-        author[0].Role_Id
-      );
-      if (roleAuthor[0].Name != "Admin") {
-        if (course[0].Author_Id != request.id) {
-          return { Code: createOneSectionResponseEnum.IS_NOT_AUTHOR };
-        }
+      if (course[0].Author_Id != request.id) {
+        return { Code: createOneSectionResponseEnum.IS_NOT_AUTHOR };
       }
       const sectionByCourse = await sectionRepository.getSectionByCourseId(
         request.body.Course_Id
@@ -51,12 +45,15 @@ const sectionService = {
         Name: request.body.Name,
         Course_Id: request.body.Course_Id,
       };
-      const ret = await _entityRepository("Sections").addEntity(newSection)
+      const ret = await _entityRepository("Sections").addEntity(newSection);
       newSection.Id = ret[0];
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneSectionResponseEnum.SERVER_ERROR };
       }
-      return { Code: createOneSectionResponseEnum.SUCCESS, New_Section: newSection };
+      return {
+        Code: createOneSectionResponseEnum.SUCCESS,
+        New_Section: newSection,
+      };
     } catch (e) {
       console.log(e);
     }
@@ -77,14 +74,8 @@ const sectionService = {
       if (course.length == 0) {
         return { Code: updateOneSectionResponseEnum.COURSE_ID_IS_INVALID };
       }
-      const author = await _entityRepository("Users").getEntity(request.id);
-      const roleAuthor = await _entityRepository("Role").getEntity(
-        author[0].Role_Id
-      );
-      if (roleAuthor[0].Name != "Admin") {
-        if (course[0].Author_Id != request.id) {
-          return { Code: updateOneSectionResponseEnum.IS_NOT_AUTHOR };
-        }
+      if (course[0].Author_Id != request.id) {
+        return { Code: updateOneSectionResponseEnum.IS_NOT_AUTHOR };
       }
       const sectionByCourse = await sectionRepository.getSectionByCourseId(
         request.body.Course_Id
@@ -130,14 +121,8 @@ const sectionService = {
       if (course.length == 0) {
         return { Code: deleteOneSectionResponseEnum.COURSE_ID_IS_NOT_EXIST };
       }
-      const author = await _entityRepository("Users").getEntity(request.id);
-      const roleAuthor = await _entityRepository("Role").getEntity(
-        author[0].Role_Id
-      );
-      if (roleAuthor[0].Name != "Admin") {
-        if (course[0].Author_Id != request.id) {
-          return { Code: deleteOneSectionResponseEnum.IS_NOT_AUTHOR };
-        }
+      if (course[0].Author_Id != request.id) {
+        return { Code: deleteOneSectionResponseEnum.IS_NOT_AUTHOR };
       }
       const section = await _entityRepository("Sections").getEntity(
         request.params.id

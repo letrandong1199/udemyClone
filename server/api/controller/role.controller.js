@@ -2,7 +2,7 @@ const Router = require("express");
 const roleService = require("../../business/services/role.service");
 const authAdmin = require("../middleware/authAdmin.mdw");
 const router = Router();
-router.post("/roles", authAdmin, async (req, res) => {
+router.post("/roles", async (req, res) => {
   console.log(req.body);
   const message = await roleService.createOneRole(req.body);
   res.json({ message }).end();

@@ -37,12 +37,12 @@ exports.up = function (knex) {
       table.increments("Id").primary();
       table.string("Title").notNullable();
       table.text("Sub_Description").notNullable().defaultTo("Sub Description");
-      table.text("Description").notNullable();
+      table.text("Description").defaultTo("");
       table.boolean("Is_Completed").notNullable().defaultTo(false);
-      table.string("Thumbnail_Small").notNullable();
-      table.string("Thumbnail_Medium").notNullable();
-      table.string("Thumbnail_Large").notNullable();
-      table.float("Price").notNullable().defaultTo(0.0);
+      table.string("Thumbnail_Small").defaultTo("");
+      table.string("Thumbnail_Medium").defaultTo("");
+      table.string("Thumbnail_Large").defaultTo("");
+      table.float("Price").defaultTo(0.0);
       table.float("Rating");
       table
         .integer("Category_Id")
@@ -88,6 +88,8 @@ exports.up = function (knex) {
         .references("Id")
         .inTable("Lectures");
       table.string("Video_URL");
+      table.boolean("Is_Preview").defaultTo(false);
+      table.float("Duration");
     })
 
     .createTable("Feedbacks", function (table) {
@@ -99,6 +101,7 @@ exports.up = function (knex) {
     .createTable("Media_User", function (table) {
       table.integer("Media_Id").unsigned().references("Id").inTable("Media");
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
+      table.float("Played");
       table.primary(["Media_Id", "User_Id"]);
     })
     .createTable("Wishlists", function (table) {
@@ -113,7 +116,7 @@ exports.up = function (knex) {
       table.primary(["User_Id", "Course_Id"]);
     })
     .then(function (table) {
-      if (knex.client.config.client == 'pg') {
+      if (knex.client.config.client == "pg") {
         const trigFunc = `CREATE OR REPLACE FUNCTION calculate_avg_ratings() RETURNS trigger AS 
                           $BODY$ 
                           BEGIN 
@@ -129,25 +132,27 @@ exports.up = function (knex) {
                               UPDATE courses
                               SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
                               WHERE Course_Id = NEW.Course_Id)  
-                              WHERE Id = NEW.Course_Id; `
+                              WHERE Id = NEW.Course_Id; `;
 
         knex.raw(trigFunc).then(function (response) {
           var trigger = `CREATE TRIGGER calAvgRating  
         AFTER INSERT OR UPDATE 
         ON "Enrolled_Courses" FOR EACH ROW EXECUTE PROCEDURE calculate_avg_ratings();`;
 
-
           knex.raw(trigger).then(function (response) {
             console.log("defined rating trigger");
           });
         });
-      } else if (knex.client.config.client == 'mysql' || knex.client.config.client == 'mysql2') {
+      } else if (
+        knex.client.config.client == "mysql" ||
+        knex.client.config.client == "mysql2"
+      ) {
         const triggerMysql = `CREATE TRIGGER calAvgRating AFTER INSERT ON enrolled_courses
                               FOR EACH ROW
                               UPDATE courses
                               SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
                               WHERE Course_Id = NEW.Course_Id)  
-                              WHERE Id = NEW.Course_Id; `
+                              WHERE Id = NEW.Course_Id; `;
         knex.raw(triggerMysql).then(function (response) {
           console.log("defined rating trigger");
         });
@@ -157,17 +162,17 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTableIfExists("Feedbacks")
-    .dropTableIfExists("Enrolled_Courses")
-    .dropTableIfExists("Media_User")
-    .dropTableIfExists("Media")
-    .dropTableIfExists("Lectures")
-    .dropTableIfExists("Sections")
-    .dropTableIfExists("Wishlists")
-    .dropTableIfExists("Courses")
-    .dropTableIfExists("Promotes")
-    .dropTableIfExists("Users")
-    .dropTableIfExists("Role")
-    .dropTableIfExists("Categories")
-    .dropTableIfExists("Languages");
+    .dropTable("Feedbacks")
+    .dropTable("Enrolled_Courses")
+    .dropTable("Media_User")
+    .dropTable("Media")
+    .dropTable("Lectures")
+    .dropTable("Sections")
+    .dropTable("Wishlists")
+    .dropTable("Courses")
+    .dropTable("Promotes")
+    .dropTable("Users")
+    .dropTable("Role")
+    .dropTable("Categories")
+    .dropTable("Languages");
 };
