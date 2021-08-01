@@ -10,7 +10,7 @@ function createCourses(knex) {
   return knex("Courses")
     .del()
     .then(function () {
-      return knex("Courses").insert(
+      return knex("Courses").returning("Id").insert(
         [
           {
             'Author_Id': 2,

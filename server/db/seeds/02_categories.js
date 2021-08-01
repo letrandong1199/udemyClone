@@ -5,7 +5,7 @@ exports.seed = function (knex) {
   return knex("Categories")
     .del()
     .then(async function () {
-      return knex("Categories").insert(
+      return knex("Categories").returning("Id").insert(
         [
           { 'Id': 1, 'Name': 'Development', 'Parent_Id': null },
           { 'Id': 2, 'Name': 'Design', 'Parent_Id': null },

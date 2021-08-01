@@ -9,7 +9,7 @@ function createSections(knex) {
   return knex("Sections")
     .del()
     .then(function () {
-      return knex("Sections").insert(
+      return knex("Sections").returning("Id").insert(
         [
           { 'Course_Id': 1, 'Id': 1, 'Name': 'Course Introduction' },
           { 'Course_Id': 1, 'Id': 2, 'Name': 'The 25+ Guidelines Of Amazing Web Design' },

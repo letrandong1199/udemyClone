@@ -44,6 +44,7 @@ const mediaService = {
           folder: "udemy",
           chunk_size: 100000000,
         });
+        console.log('back', videoUpload);
         var newVideo = videoUpload.url;
         var videoDuration = videoUpload.duration;
       } catch (e) {

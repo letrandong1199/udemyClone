@@ -9,7 +9,7 @@ function createLectures(knex) {
   return knex("Lectures")
     .del()
     .then(function () {
-      return knex("Lectures").insert(
+      return knex("Lectures").returning("Id").insert(
         [
           {
             'Description': '',
