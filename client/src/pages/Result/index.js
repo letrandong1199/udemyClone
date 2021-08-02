@@ -127,50 +127,26 @@ const AllCoursesSection = ({ id }) => {
     const [count, setCount] = useState(0);
     const [page, setPage] = useState(1);
     const [languages, setLanguages] = useState([]);
+    const [selectedLanguages, setSelectedLanguages] = useState([]);
 
-    const [queryArray, setQueryArray] = useState([]);
-
-    const [isPendingLang, setIsPendingLang] = useState(false);
-    const [languagesQuery, setLanguagesQuery] = useState(null);
     const limit = 5;
-    const category = query.get('category');
+
     const language = query.get('language');
-    const search = query.get('search');
-    //setPage(query.get('page'));
+
+
     const replaceParams = (key, value) => {
         let searchParams = new URLSearchParams(location.search);
         searchParams.delete(key);
         searchParams.set(key, value);
         history.push({ pathname: location.pathname, search: searchParams.toString() });
     }
-    const removeParams = (key, value) => {
-        let searchParams = new URLSearchParams(location.search);
-        searchParams.delete(key);
-        history.push({ pathname: location.pathname, search: searchParams.toString() });
-    }
-    const addParams = (key, value) => {
-        let searchParams = new URLSearchParams(location.search);
-        searchParams.set(key, value);
-        history.push({ pathname: location.pathname, search: searchParams.toString() });
-    }
 
-    /*useEffect(() => {
-        console.log(query.toString());
-        if (category !== undefined && category !== null) {
-            console.log('JS Ngu');
-            setQueryArray([...queryArray, { label: 'category', value: category }])
-        }
+    useEffect(() => {
         if (language !== undefined && language !== null) {
-            setQueryArray([...queryArray, { label: 'language', value: language }])
+            setSelectedLanguages(language);
         }
-        if (search !== undefined && search !== null) {
-            console.log('I have');
-            setQueryArray([...queryArray, { label: 'search', value: search }])
-        }
-        console.log('category', category);
-        console.log('language', language);
-        console.log('search', search);
-    }, [category, language, search])*/
+
+    }, [language])
 
     useEffect(() => {
         setIsPending(true);
@@ -183,14 +159,14 @@ const AllCoursesSection = ({ id }) => {
             setLanguages(langDic);
             console.log(langDic);
         })
-        //setQueryArray([])
         setIsPending(false);
     }, [])
+
     const querySearch = query.toString();
+
     useEffect(() => {
         setIsPending(true);
         let queryString = query.toString();
-        console.log('qurey', queryString);
         setTimeout(() => { console.log('test'); }, 3000);
         if (queryString && queryString !== '') {
             if (query.get('page')) {
@@ -228,23 +204,14 @@ const AllCoursesSection = ({ id }) => {
         event.forEach(item => {
             search += `&language=${item.value}`
         })
+        setSelectedLanguages(event);
         history.push({ pathname: location.pathname, search: search });
     };
     const handleDelete = (event) => {
 
     }
 
-    const styles = {
-        menu: (provided, state) => ({
-            border: '1px solid',
-            borderRadius: 5
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            borderRadius: 5,
 
-        }),
-    };
     const handleChangePage = (event, value) => {
         setPage(value);
         replaceParams('page', value);
@@ -257,7 +224,7 @@ const AllCoursesSection = ({ id }) => {
                 <ReactMultiSelectCheckboxes
                     placeholderButtonLabel="Language"
                     options={languages}
-                    //value={selectedOption}
+                    value={selectedLanguages}
                     onChange={handleChangeOption}
                     hideSearch={true}
                     getDropdownButtonLabel={({ placeholderButtonLabel, value }) => placeholderButtonLabel}

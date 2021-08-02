@@ -15,7 +15,6 @@ import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
-import Fragment from 'react';
 import { ROUTES } from '../../config/config';
 import Button from '@material-ui/core/Button';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';

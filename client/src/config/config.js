@@ -19,6 +19,7 @@ export const ROUTES = {
     instructor: "/instructor",
     search: "/search",
     course: "/course",
+    learn: "/learn",
 }
 
 export const GET_PARAMS = {
@@ -226,5 +227,84 @@ export const UPDATE_LECTURE = {
     LECTURE_TITLE_IS_EXIST: "lecture_title_is_exist",
     SERVER_ERROR: "server_error",
 };
+
+export const GET_MEDIA_BY_LECTURE_ID = {
+    SUCCESS: "get_media_success",
+    LECTURE_ID_IS_EMPTY: "lecture_id_is_empty",
+    LECTURE_ID_IS_EXIST: "lecture_id_is_exist",
+    LECTURE_ID_IS_INVALID: "lecture_id_is_invalid",
+    SERVER_ERROR: "server_error",
+};
+export const DELETE_MEDIA = {
+    SUCCESS: "delete_media_success",
+    SERVER_ERROR: "server_error",
+    LECTURE_ID_IS_INVALID: "lecture_id_is_invalid",
+    LECTURE_ID_IS_EMPTY: "lecture_id_is_empty",
+    MEDIA_ID_IS_EMPTY: "media_id_is_empty",
+    MEDIA_ID_IS_NOT_EXIST: "media_id_is_not_exist",
+    IS_NOT_AUTHOR: "is_not_author",
+};
+export const UPDATE_MEDIA = {
+    SUCCESS: "update_media_success",
+    LECTURE_ID_IS_INVALID: "lecture_id_is_invalid",
+    VIDEO_IS_INVALID: "video_is_invalid",
+    LECTURE_ID_IS_EMPTY: "lecture_id_is_empty",
+    LECTURE_IS_NOT_EXIST: "lecture_is_not_exist",
+    ID_IS_INVALID: "id_is_invalid",
+    SERVER_ERROR: "server_error",
+};
+
+export const UPDATE_COURSE = {
+    SUCCESS: "update_course_success",
+    NAME_IS_EMPTY: "name_is_empty",
+    NAME_IS_EXIST: "name_is_exist",
+    TITLE_IS_EMPTY: "title_is_empty",
+    TITLE_IS_EXIST: "title_is_exist",
+    SUB_DESCRIPTION_IS_EMPTY: "sub_description_is_empty",
+    DESCRIPTION_IS_EMPTY: "description_is_empty",
+    IMAGE_IS_EMPTY: "image_is_empty",
+    PRICE_IS_EMPTY: "price_is_empty",
+    CATEGORY_IS_EMPTY: "category_is_empty",
+    LANGUAGE_IS_EMPTY: "language_is_empty",
+    PROMOTE_IS_EMPTY: "promote_is_empty",
+    PROMOTE_IS_NOT_EXIST: "promote_is_not_exist",
+    PRICE_IS_INVALID: "price_is_invalid",
+    IMAGE_IS_INVALID: "image_is_invalid",
+    LANGUAGE_IS_NOT_EXIST: "language_is_not_exist",
+    CATEGORY_IS_NOT_EXIST: "category_is_not_exist",
+    ID_IS_INVALID: "id_is_invalid",
+    IS_COMPLETED_IS_EMPTY: "is_completed_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ALL_COURSE = {
+    SUCCESS: "get_all_course_success",
+    SERVER_ERROR: "server_error",
+    AUTHOR_IS_NOT_COURSE: "author_has_not_course",
+};
+
+export const CREATE_COURSE = {
+    SUCCESS: "add_course_success",
+    NAME_IS_EMPTY: "name_is_empty",
+    NAME_IS_EXIST: "name_is_exist",
+    TITLE_IS_EMPTY: "title_is_empty",
+    TITLE_IS_EXIST: "title_is_exist",
+    SUB_DESCRIPTION_IS_EMPTY: "sub_description_is_empty",
+    DESCRIPTION_IS_EMPTY: "description_is_empty",
+    IMAGE_IS_EMPTY: "image_is_empty",
+    PRICE_IS_EMPTY: "price_is_empty",
+    CATEGORY_IS_EMPTY: "category_is_empty",
+    AUTHOR_IS_EMPTY: "author_is_empty",
+    LANGUAGE_IS_EMPTY: "language_is_empty",
+    PROMOTE_IS_EMPTY: "promote_is_empty",
+    PROMOTE_IS_NOT_EXIST: "promote_is_not_exist",
+    PRICE_IS_INVALID: "price_is_invalid",
+    IMAGE_IS_INVALID: "image_is_invalid",
+    AUTHOR_IS_NOT_EXIST: "author_is_not_exist",
+    LANGUAGE_IS_NOT_EXIST: "language_is_not_exist",
+    CATEGORY_IS_NOT_EXIST: "category_is_not_exist",
+    SERVER_ERROR: "server_error",
+};
+
 
 export default config;

@@ -10,13 +10,10 @@ import Rating from '@material-ui/lab/Rating';
 import { usePalette } from 'react-palette'
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { empty_course } from '../../utils/dataSample';
 import { useStyles } from './styles';
 import { useParams } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
@@ -25,7 +22,6 @@ import Avatar from '@material-ui/core/Avatar';
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import MyCarousel from '../../components/MyCarousel/MyCarousel.jsx';
-import { courses } from '../../utils/dataSample';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import AppBar from '@material-ui/core/AppBar';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
@@ -53,7 +49,6 @@ const Banner = ({ course, isPending }) => {
     const classes = useStyles({ data, thumbnail: course?.Thumbnail_Large, isPending, loading });
 
     const [isProcessing, setIsProcessing] = useState(false);
-    const [error1, setError1] = useState(null);
 
     const [openSnack, setOpenSnack] = useState(false);
     const [snackContent, setSnackContent] = useState(null);

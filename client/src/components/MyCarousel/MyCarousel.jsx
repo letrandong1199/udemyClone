@@ -1,9 +1,7 @@
 import ProductCardV from '../ProductCardV/ProductCardV.jsx';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import { Fragment, useState, useEffect, useRef } from 'react'
 import { useStyles } from './styles';
-import CategoryCard from '../CategoryCard/CategoryCard.jsx'
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
@@ -23,7 +21,7 @@ function MyCarousel(props) {
                 </Grid>
             }))
         }
-    }, [props.course])
+    }, [props.courses])
 
     const containerRef = useRef(null);
     const [state, setState] = useState({

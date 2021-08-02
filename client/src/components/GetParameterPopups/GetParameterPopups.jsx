@@ -1,4 +1,4 @@
-import { GET_ENUMS, GET_PARAMS } from '../../config/config';
+import { GET_ENUMS } from '../../config/config';
 import useGetPopupState from '../../utils/useGetPopupState';
 import RegisterAndLoginPopup from '../RegisterAndLoginPopup/RegisterAndLoginPopup.jsx';
 

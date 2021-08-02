@@ -18,7 +18,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import authService from "../../services/auth.service";
 import { useHistory } from 'react-router-dom';
-import { CREATE_USER, SIGN_IN } from '../../config/config';
+import { CREATE_USER } from '../../config/config';
 import usePrepareLink from '../../utils/usePrepareLink';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
@@ -57,7 +57,6 @@ const RegisterTab = ({ value, index }) => {
     const [uname, setUname] = React.useState(null);
     const [name, setName] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-    const [email, setEmail] = React.useState(null);
     const [isPending, setIsPending] = React.useState(false);
     const [error, setError] = React.useState(null);
     const [openSnack, setOpenSnack] = React.useState(false);
@@ -94,6 +93,7 @@ const RegisterTab = ({ value, index }) => {
             })
             .catch(error => {
                 setError(error.message);
+                console.log(error);
                 setIsPending(false);
                 setSnackType('error')
                 setSnackContent(error.message);
@@ -193,7 +193,6 @@ const RegisterTab = ({ value, index }) => {
 const LoginTab = ({ value, index, handleLogin }) => {
     const [uname, setUname] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-    const [errors, setErrors] = React.useState([]);
     const [openSnack, setOpenSnack] = React.useState(false);
     const [snackContent, setSnackContent] = React.useState(null);
     const [snackType, setSnackType] = React.useState(null);

@@ -19,15 +19,14 @@ import Hidden from '@material-ui/core/Hidden';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
-import { Divider, CssBaseline } from "@material-ui/core";
+import { CssBaseline } from "@material-ui/core";
 import { Fragment } from 'react';
 import { useHistory, useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
-import config from '../../config/config';
+
 import clsx from 'clsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import HomeSection from '../../components/HomeSection/HomeSection.jsx'
 import userService from '../../services/user.service';
-import authService from '../../services/auth.service';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import enrolledCourseService from '../../services/enrolledCourse.service';

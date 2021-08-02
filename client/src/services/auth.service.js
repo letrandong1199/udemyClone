@@ -14,7 +14,6 @@ class AuthService {
                 Password: password,
             })
             .then(response => {
-                console.log(response);
                 if (response.data.message.token) {
                     window.localStorage.setItem("user", JSON.stringify(response.data.message));
                 }
@@ -45,8 +44,6 @@ class AuthService {
         return axios.post(API_URL + "refresh-token", {
             refreshToken: user.refreshToken
         }).then(response => {
-            console.log(response);
-
             return response.data.message;
         });
     };
@@ -63,7 +60,6 @@ class AuthService {
 
     isUser() {
         const user = JSON.parse(localStorage.getItem('user'));
-        console.log(user);
         return Boolean(user && user.token);
     };
 

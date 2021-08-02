@@ -1,16 +1,9 @@
-import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import VpnKeyRoundedIcon from '@material-ui/icons/VpnKeyRounded';
 import React from 'react';
 import useStyles from './styles'
-import useFetch from '../../utils/useFetch';
-import { Avatar } from "@material-ui/core";
-//import Link from '@material-ui/core/Link';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -18,17 +11,10 @@ import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import { Toolbar } from "@material-ui/core";
 import Hidden from '@material-ui/core/Hidden';
-import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
-import { Divider, CssBaseline } from "@material-ui/core";
-import { Fragment } from 'react';
-import { BrowserRouter as Router, useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
-import config from '../../config/config';
-import clsx from 'clsx';
+import { useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import HomeSection from '../../components/HomeSection/HomeSection.jsx'
-import UserService from '../../services/user.service';
 import {
     DataGrid,
 
@@ -36,13 +22,12 @@ import {
 import courseService from '../../services/course.service';
 import userService from '../../services/user.service';
 import categoryService from '../../services/category.service';
-import languageService from '../../services/language.service';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import CloseIcon from '@material-ui/icons/Close'
 import IconButton from '@material-ui/core/IconButton';
 import Backdrop from '@material-ui/core/Backdrop';
-import { Snackbar } from '@material-ui/core';
+import { Snackbar, CssBaseline } from '@material-ui/core';
 import { Alert } from '@material-ui/lab'
 import {
     DELETE_CATEGORY, UPDATE_CATEGORY, CREATE_CATEGORY,

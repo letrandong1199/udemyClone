@@ -3,7 +3,6 @@
 import HomeSection from '../../components/HomeSection/HomeSection.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
 
-import { courses } from '../../utils/dataSample';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
@@ -150,17 +149,6 @@ const HotCategories = () => {
 
 function Home() {
     // Get course
-
-
-    const [weeklyHotCourse, setWeeklyHotCourse] = useState([]);
-    const [isPending2, setIsPending2] = useState(false);
-    const [isError2, setError2] = useState(null);
-
-    const [recentCourse, setRecentCourse] = useState([]);
-    const [isPending3, setIsPending3] = useState(false);
-    const [isError3, setError3] = useState(null);
-
-
 
     return (
         <div>

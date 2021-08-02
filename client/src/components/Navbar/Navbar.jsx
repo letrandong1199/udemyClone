@@ -37,9 +37,6 @@ import {
     Grid,
     Hidden,
     Drawer,
-    Popover,
-    Autocomplete,
-    TextField,
 } from '@material-ui/core';
 
 import { Link, useLocation, useHistory } from 'react-router-dom';
@@ -270,6 +267,7 @@ const NestedMenu = (props) => {
     )
 }
 
+/*
 const NestedMenu2 = (props) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -339,7 +337,7 @@ const NestedMenu2 = (props) => {
             </Popover>
         </Fragment >
     )
-}
+}*/
 
 const CategoryNestedMap = (props) => {
     return (
@@ -469,13 +467,13 @@ function Navbar(props) {
                 break;
             default: setSelectedIndex(-1);
         }
-    }, [location])
+    }, [location.pathname])
 
     const [isLogin, setIsLogin] = useState(authService.isUser())
+    const auth = authService.isUser();
     useEffect(() => {
         setIsLogin(authService.isUser())
-        console.log('Number');
-    }, [authService.isUser()])
+    }, [auth])
     const handleSignOut = () => {
         authService.logout();
         setIsLogin(false);
@@ -511,7 +509,7 @@ function Navbar(props) {
             {isLogin &&
                 <List>
                     {['Wishlist'].map((text, index) => (
-                        <ListItem key={index} button key={text}>
+                        <ListItem key={index} button>
                             <ListItemIcon>{<FavoriteRoundedIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>

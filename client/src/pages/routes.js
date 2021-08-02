@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { ROUTES } from '../config/config';
 
 const HomePage = lazy(() => import('./Home'));
 const CourseDetailPage = lazy(() => import('./CourseDetail'));
@@ -8,50 +9,48 @@ const CreateCoursePage = lazy(() => import('./CreateCourse'));
 const Page404 = lazy(() => import('./Page404'));
 const AdminPage = lazy(() => import('./Admin'));
 const LearningPage = lazy(() => import('./Learning'));
-//import ProfilePage from './Profile';
-//import CourseDetailPage from './CourseDetail';
-//import HomePage from './Home';
+
 
 const routes = [
     {
-        path: '/',
+        path: ROUTES.home,
         exact: true,
         public: true,
         component: HomePage,
     },
     {
-        path: '/course/detail/:id',
+        path: `${ROUTES.courseDetail}/:id`,
         exact: true,
         public: true,
         component: CourseDetailPage,
     },
     {
-        path: '/profile',
+        path: ROUTES.profile,
         exact: false,
         public: false,
         private: true,
         component: ProfilePage,
     },
     {
-        path: '/course',
+        path: ROUTES.course,
         exact: true,
         public: true,
         component: ResultPage,
     },
     {
-        path: '/learning/:id',
+        path: `${ROUTES.course}${ROUTES.learn}/:id`,
         exact: true,
         public: true,
         component: LearningPage,
     },
     {
-        path: '/admin',
+        path: ROUTES.admin,
         exact: false,
         public: false,
         component: AdminPage,
     },
     {
-        path: '/create-course',
+        path: ROUTES.instructor,
         exact: false,
         public: true,
         component: CreateCoursePage,
@@ -63,5 +62,4 @@ const routes = [
         component: Page404,
     }
 ];
-console.log('before');
 export default routes;

@@ -26,6 +26,14 @@ export const useStyles = makeStyles((theme) => ({
         borderRadius: theme.shape.borderRadius,
         minHeight: 300,
         backgroundSize: 'contain !important',
+        position: 'relative',
+
+        '& > *': {
+            width: 'calc(100% - 20px)',
+            height: 'calc(100% - 20px)',
+            background: 'rgb(71,71,71, 0.5)',
+            position: 'absolute',
+        }
     },
     title: {
         padding: 16,
@@ -46,7 +54,7 @@ export const useStyles = makeStyles((theme) => ({
     editorEditor: {
         border: "1px solid #C0C0C0",
         borderRadius: theme.shape.borderRadius,
-        minHeight: 300,
+        minHeight: 200,
     },
     wrapperEditor: {
         //backgroundColor: theme.palette.background.default,
@@ -56,8 +64,11 @@ export const useStyles = makeStyles((theme) => ({
         }
     },
     marginContainer: {
-        margin: 40,
+        margin: 20,
         width: 'auto',
+        '& button': {
+            marginLeft: 14
+        }
     },
     tabsRoot: {
         flexGrow: 1,
@@ -66,6 +77,7 @@ export const useStyles = makeStyles((theme) => ({
         height: '100%',
     },
     tabs: {
+        minWidth: 190,
         borderRight: `1px solid ${theme.palette.divider}`,
         '& > *': {
             textAlign: 'left',
@@ -73,5 +85,9 @@ export const useStyles = makeStyles((theme) => ({
                 alignItems: 'flex-start',
             }
         }
+    },
+    instructions: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
     },
 }));

@@ -14,9 +14,8 @@ import Grid from '@material-ui/core/Grid';
 import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../config/config';
 
-function ProductCardH(props) {
+function ProductCardH({ course, loading, linkTo }) {
     const classes = useStyles();
 
     const [expanded, setExpanded] = React.useState(false);
@@ -33,46 +32,46 @@ function ProductCardH(props) {
         >
             <CardMedia
                 className={classes.media}
-                image={props.course?.Thumbnail_Small}
-                title={props.course?.Title}
+                image={course?.Thumbnail_Small || '/assets/image.svg'}
+                title={course?.Title}
                 component={Link}
-                to={`${ROUTES.courseDetail}/${props.course.Id}`}
+                to={linkTo}
                 children={<Typography
                     className={classes.price}
                 >
-                    {props.course?.Price}$
+                    {course?.Price}$
                 </Typography>
                 }
             />
             <CardContent
                 className={classes.content}
                 component={Link}
-                to={`/detail/${props.course.Id}`}>
+                to={linkTo}>
                 <Grid container className={classes.limit}>
                     <Typography variant="subtitle1" className={classes.headerText}>
-                        {props.course?.Title}
+                        {course?.Title}
                     </Typography>
                 </Grid>
                 <Grid container className={classes.limit}>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {props.course?.Sub_Description}
+                        {course?.Category?.Name}
                     </Typography>
                 </Grid>
-                <Typography variant="body2">{props.course?.Author?.Name}</Typography>
+                <Typography variant="body2">{course?.Author?.Name}</Typography>
                 <Grid container direction="row" alignItems="center">
-                    <Typography variant="subtitle1">{props.course?.Rating?.toFixed(1)}</Typography>
+                    <Typography variant="subtitle1">{course?.Rating?.toFixed(1)}</Typography>
                     <Rating
-                        name={`hover-feedback-${props.course?.Id}`}
+                        name={`hover-feedback-${course?.Id}`}
                         readOnly={true}
                         className={classes.rating}
-                        value={props.course?.Rating}
+                        value={course?.Rating}
                         size="small"
                     />
-                    {/* <Typography variant="body2">({props.course?.num_rating})</Typography>*/}
+                    {<Typography variant="body2">({course?.Number_Of_Rating})</Typography>}
                 </Grid>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {props.course?.Sub_Description}
+                        {course?.Sub_Description}
                     </Typography>
                 </Collapse>
             </CardContent >
@@ -93,7 +92,6 @@ function ProductCardH(props) {
                     </IconButton>
                 </CardActions>
             </Hidden>
-
         </Card >
     )
 };
