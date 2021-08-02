@@ -4,10 +4,13 @@ module.exports = (nameEntity) => {
   return {
     //CREATE
     addEntity(entity) {
-      // console.log(entity);
+      console.log(entity);
       return db(nameEntity)
         .insert(entity)
-        .catch(() => operatorType.FAIL.CREATE);
+        .catch((e) => {
+          console.log(e);
+          return operatorType.FAIL.CREATE;
+        });
     },
     //READ
     getEntities() {
@@ -18,6 +21,15 @@ module.exports = (nameEntity) => {
       return db(nameEntity)
         .where("Id", id)
         .catch(() => operatorType.FAIL.READ);
+    },
+    //UPDATE BY ID
+    updateEntity(id, entity) {
+      return db(nameEntity)
+        .where("Id", id)
+        .update(entity)
+        .catch(() => {
+          return operatorType.FAIL.UPDATE;
+        });
     },
     //DELETE
     deleteEntity(id) {

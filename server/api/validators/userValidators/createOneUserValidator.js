@@ -1,6 +1,6 @@
-const createOneResponseUserEnum = require("./enums/createOneUserResponseEnum");
+const createOneUserResponseEnum = require("../enums/userEnums/createOneUserResponseEnum");
 const createOneUserValidator = {
-  validate(email, fullname, password, roleOfUser) {
+  validate(email, fullname, password) {
     if (fullname == null || fullname == "") {
       return {
         Code: createOneUserResponseEnum.NAME_IS_EMPTY,
@@ -25,12 +25,12 @@ const createOneUserValidator = {
         IsSuccess: false,
       };
     }
-    if (roleOfUser == null || roleOfUser == "") {
-      return {
-        Code: createOneUserResponseEnum.ROLE_OF_USER_IS_EMPTY,
-        IsSuccess: false,
-      };
-    }
+    // if (roleOfUser == null || roleOfUser == "") {
+    //   return {
+    //     Code: createOneUserResponseEnum.ROLE_OF_USER_IS_EMPTY,
+    //     IsSuccess: false,
+    //   };
+    // }
     return { Code: createOneUserResponseEnum.SUCCESS, IsSuccess: true };
   },
 };
