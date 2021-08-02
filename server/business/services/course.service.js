@@ -98,7 +98,7 @@ const courseService = {
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneCourseResponseEnum.SERVER_ERROR };
       }
-      newCourse.Course_Id = ret[0];
+      newCourse.Id = ret[0];
       return { Code: createOneCourseResponseEnum.SUCCESS, newCourse };
     } catch (e) {
       console.log(e);
@@ -239,7 +239,7 @@ const courseService = {
         request.body.Language_Id,
         request.body.Is_Completed
       );
-      console.log(resultValidator);
+
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
@@ -247,10 +247,11 @@ const courseService = {
       const course = await _entityRepository("Courses").getEntity(
         request.params.id
       );
+
       if (course.length == 0) {
         return { Code: updateOneCourseResponseEnum.ID_IS_INVALID };
       }
-      console.log(course);
+
       const titleCourse = await courseRepository.getCourseByTitle(
         request.body.Title
       );
@@ -266,31 +267,32 @@ const courseService = {
       }
 
       // Upload image
-      var newImageLarge = course[0].Thumbnail_Large;
-      var newImageMedium = course[0].Thumbnail_Medium;
-      var newImageSmall = course[0].Thumbnail_Small;
+      let newImageLarge = course[0].Thumbnail_Large;
+      let newImageMedium = course[0].Thumbnail_Medium;
+      let newImageSmall = course[0].Thumbnail_Small;
 
       if (request.body.Image) {
         try {
           const image = request.body.Image;
-
           const upLoadImageLarge = await cloudinary.uploader.upload(image, {
-            folder: "udemy-clone-cloud",
+            folder: "udemy",
+            width: 750,
+            height: 422,
           });
           const upLoadImageSmall = await cloudinary.uploader.upload(image, {
-            folder: "udemy-clone-cloud",
-            width: 128,
-            height: (128 * 9) / 16,
+            folder: "udemy",
+            width: 240,
+            height: 135,
           });
           const upLoadImageMedium = await cloudinary.uploader.upload(image, {
-            folder: "udemy-clone-cloud",
-            width: 512,
-            height: (512 * 9) / 16,
+            folder: "udemy",
+            width: 480,
+            height: 270,
           });
 
-          newImageLarge = upLoadImageLarge.url;
-          newImageMedium = upLoadImageMedium.url;
-          newImageSmall = upLoadImageSmall.url;
+          newImageLarge = upLoadImageLarge.secure_url;
+          newImageMedium = upLoadImageMedium.secure_url;
+          newImageSmall = upLoadImageSmall.secure_url;
         } catch (e) {
           console.log("In course.service: ", e);
           return { Code: createOneCourseResponseEnum.IMAGE_IS_INVALID };
@@ -578,16 +580,35 @@ const courseService = {
       if (listCourse.length == 0) {
         return { Code: getAllCourseResponseEnum.AUTHOR_IS_NOT_COURSE };
       }
-      const listAllCourseResponse = listCourse.map(async (course) => {
+      const listAllCourseResponse = await Promise.all(listCourse.map(async (course) => {
+        const category = await _entityRepository("Categories").getEntity(
+          course.Category_Id
+        );
+        let numberRating = 0;
+        const numberRegister =
+          await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+        if (numberRegister) {
+          let count = 0;
+          for (item of numberRegister) {
+            if (item.Rating !== 0) {
+              count = count + 1;
+            }
+          }
+          numberRating = count;
+        }
         return {
           Id: course.Id,
           Title: course.Title,
+          Category: category[0],
+          Number_Of_Rating: numberRating,
+          Number_Of_Enrolled: numberRegister,
           Thumbnail_Small: course.Thumbnail_Small,
           Thumbnail_Medium: course.Thumbnail_Medium,
           Thumbnail_Large: course.Thumbnail_Large,
           Is_Completed: course.Is_Completed,
         };
-      });
+      }))
+
       return {
         Code: getAllCourseResponseEnum.SUCCESS,
         listAllResponse: listAllCourseResponse,
@@ -654,7 +675,7 @@ const courseService = {
           );
           return {
             Id: section.Id,
-            Section: section.Name,
+            Name: section.Name,
             Lectures: listLectureResponse,
           };
         })
@@ -670,7 +691,7 @@ const courseService = {
         Category: category[0],
         Language: language[0],
         Price: course[0].Price,
-        Promote: promote[0].Promote,
+        Promote: promote[0] ? promote[0].Promote : null,
         Content: content,
         Is_Completed: course[0].Is_Completed,
       };

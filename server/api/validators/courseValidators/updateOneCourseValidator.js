@@ -50,12 +50,13 @@ module.exports = {
         Isuccess: false,
       };
     }
+    /*
     if (is_completed == null || is_completed == "") {
       return {
         Code: updateOneCourseResponseEnum.IS_COMPLETED_IS_EMPTY,
         Isuccess: false,
       };
-    }
+    }*/
     // if (typeof price != "number") {
     //   return {
     //     Code: updateOneCourseResponseEnum.PRICE_IS_INVALID,

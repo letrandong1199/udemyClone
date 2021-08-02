@@ -15,12 +15,12 @@ const promoteService = {
       const listPromote = await _entityRepository("Promotes").getEntities();
       let listPromoteResponse = listPromote.map((promote) => {
         return {
-          Id: Promote.Id,
+          Id: promote.Id,
           Promote: promote.Promote,
           Start_Time: promote.Start_Time,
           End_Time: promote.End_Time,
         };
-      });
+      })
       return {
         Code: getAllPromoteResponseEnum.SUCCESS,
         listAllResponse: listPromoteResponse,

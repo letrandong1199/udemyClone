@@ -7,11 +7,11 @@ router.post("/medias", authTeacher, async (req, res) => {
   const message = await mediaService.createOneMedia(req);
   res.json({ message }).end();
 });
-router.put("/medias/:id", authorTeacher, async (req, res) => {
+router.put("/medias/:id", authTeacher, async (req, res) => {
   const message = await mediaService.updateOneMedia(req);
   res.json({ message }).end();
 });
-router.get("/medias/:id", authoTeacher, async (req, res) => {
+router.get("/medias/:id", authTeacher, async (req, res) => {
   const message = await mediaService.getMediaByLecture(req);
   res.json({ message }).end();
 });
