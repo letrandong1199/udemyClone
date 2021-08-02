@@ -9,17 +9,34 @@
     {
       "user_id": 0,
       "course_id": 1,
+      "course_info": {
+        "title": "Python for Everybody Specialization",
+        "thumb": "/assets/3.jpg",
+        "author": "Author 2",
+        "description": "Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.",
+        "price": 19,
+        "rating": 3,
+        "num_rating": 100,
+        "num_enrolled": 100,
+        "categories_tree": [
+          "Computer Science",
+          "Software Development"
+        ],
+        "language": [
+          "Eng",
+          "Vi",
+          "Jp"
+        ]
+      },
       "created_at": "15/01/2015"
     }
   ],
   "users": [
     {
-      "id": 0,
-      "name": "DK",
       "uname": "tdk",
-      "role": 0,
-      "email": "tdk@kh.com",
-      "password": "123456"
+      "password": "123456",
+      "name": "Trần Đình Khoát",
+      "id": 0
     },
     {
       "uname": "zzf7ktx",
@@ -34,6 +51,55 @@
       "password": "123",
       "email": null,
       "id": 2
+    },
+    {
+      "uname": "tdkhoat",
+      "name": "Trần Đình Khoát",
+      "password": "asd123",
+      "email": null,
+      "id": 3
+    },
+    {
+      "uname": "tdkhoat",
+      "name": "Trần Đình Khoát",
+      "password": "123456",
+      "email": null,
+      "id": 4
+    },
+    {
+      "uname": "tdkhoat",
+      "name": "Trần Đình Khoát",
+      "password": "12346",
+      "email": null,
+      "id": 5
+    },
+    {
+      "uname": null,
+      "name": null,
+      "password": null,
+      "email": null,
+      "id": 6
+    },
+    {
+      "uname": "zzf7ktx",
+      "name": "Trần Đình Khoát",
+      "password": "a",
+      "email": null,
+      "id": 7
+    },
+    {
+      "uname": "tdkhoat",
+      "name": "Trần Đình Khoát",
+      "password": "a",
+      "email": null,
+      "id": 8
+    },
+    {
+      "uname": "tdkhoatd",
+      "name": "Trần Đình Khoát",
+      "password": "a",
+      "email": null,
+      "id": 9
     }
   ],
   "categories": [
@@ -76,6 +142,7 @@
       "author": "Author 2",
       "description": "Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.",
       "price": 19,
+      "promote": 5,
       "rating": 3,
       "num_rating": 100,
       "num_enrolled": 100,

@@ -35,7 +35,7 @@ export const useStyles = makeStyles((theme) => ({
         '&:hover': {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
-        //marginRight: theme.spacing(2),
+        //marginRight: 'auto',
         marginLeft: 0,
         width: '100%',
         [theme.breakpoints.up('sm')]: {
@@ -97,16 +97,9 @@ export const useStyles = makeStyles((theme) => ({
             display: 'flex',
         },
     },
-    popoverRegisterAndLogin: {
-        width: '100vw',
-        backgroundColor: 'rgba(81,81,81,0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     expand: {
         transform: 'rotate(0deg)',
-        marginRight: 'auto',
+        marginLeft: 'auto',
         transition: theme.transitions.create('transform', {
             duration: theme.transitions.duration.shortest,
         }),
@@ -114,4 +107,7 @@ export const useStyles = makeStyles((theme) => ({
     expandOpen: {
         transform: 'rotate(180deg)',
     },
+    textExpandOpen: {
+        color: theme.palette.primary.main,
+    }
 }));

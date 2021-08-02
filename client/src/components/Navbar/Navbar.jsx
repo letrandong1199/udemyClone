@@ -1,52 +1,58 @@
-import React from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
+import { ReactComponent as ReactLogo } from '../../svgs/logo.svg'
+import clsx from 'clsx';
 
-import { Fragment } from 'react'
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchIcon from '@material-ui/icons/Search';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import { ReactComponent as ReactLogo } from '../../logo.svg'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Paper from '@material-ui/core/Paper';
-import MenuList from '@material-ui/core/MenuList';
-import Popper from '@material-ui/core/Popper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import RegisterAndLogin from '../RegisterAndLogin/RegisterAndLogin.jsx';
-import Popover from '@material-ui/core/Popover';
-import Slide from '@material-ui/core/Slide';
-import PropTypes from 'prop-types';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
-import Hidden from '@material-ui/core/Hidden';
-import { ListItem, Divider, ListItemIcon, ListItemText, List } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import Drawer from '@material-ui/core/Drawer';
-import { Link } from 'react-router-dom';
+import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
+import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
+import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
-import { useLocation } from 'react-router-dom';
-import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
-import { useStyles } from './styles';
-import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
-import NestedMenuItem from "material-ui-nested-menu-item";
-import Menu from '@material-ui/core/Menu';
-import KeyboardArrowLeftRoundedIcon from '@material-ui/icons/KeyboardArrowLeftRounded';
-import clsx from 'clsx';
-import config from '../../config/config';
-import useFetch from '../../utils/useFetch'
 
-const ProfileButton = (props) => {
+import Popper from '@material-ui/core/Popper';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import Skeleton from '@material-ui/lab/Skeleton';
+
+import {
+    ListItem,
+    Divider,
+    ListItemIcon,
+    ListItemText,
+    List,
+    AppBar,
+    Toolbar,
+    Button,
+    InputBase,
+    IconButton,
+    MenuItem,
+    ButtonBase,
+    Paper,
+    MenuList,
+    CssBaseline,
+    Grid,
+    Hidden,
+    Drawer,
+} from '@material-ui/core';
+
+import { Link, useLocation, useHistory } from 'react-router-dom';
+
+import { useStyles } from './styles';
+import authService from '../../services/auth.service';
+import categoryService from '../../services/category.service';
+import usePrepareLink from '../../utils/usePrepareLink';
+import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
+import listToTree from '../../utils/listToTree';
+
+// Component profile button
+const ProfileButton = ({ handleSignOut }) => {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
-    const anchorRef = React.useRef(null);
+    const [open, setOpen] = useState(false);
+    const anchorRef = useRef(null);
 
     const handleOpen = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -67,14 +73,15 @@ const ProfileButton = (props) => {
         }
     }
 
-    const prevOpen = React.useRef(open);
-    React.useEffect(() => {
+    const prevOpen = useRef(open);
+    useEffect(() => {
         if (prevOpen.current === true && open === false) {
             anchorRef.current.focus();
         }
 
         prevOpen.current = open;
     }, [open]);
+
 
     return (
         <Fragment>
@@ -86,7 +93,7 @@ const ProfileButton = (props) => {
                 className={classes.profileButton}
                 title="Profile"
             >
-                <AccountCircle color="inherit" />
+                <AccountCircle color='inherit' />
             </IconButton>
             <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition style={{ zIndex: 1500, marginTop: 10 }}>
                 {({ TransitionProps, placement }) => (
@@ -96,16 +103,16 @@ const ProfileButton = (props) => {
                     >
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                <MenuList autoFocusItem={open} id='menu-list-grow' onKeyDown={handleListKeyDown}>
                                     <Link to="/profile">
                                         <MenuItem onClick={handleClose}>
                                             <ListItemIcon><FaceRoundedIcon /></ListItemIcon>
-                                            <ListItemText primary="Profile" />
+                                            <ListItemText primary='Profile' />
                                         </MenuItem>
                                     </Link>
-                                    <MenuItem onClick={props.handleLogout}>
+                                    <MenuItem onClick={handleSignOut}>
                                         <ListItemIcon><ExitToAppRoundedIcon /></ListItemIcon>
-                                        <ListItemText primary="Sign-out" />
+                                        <ListItemText primary='Sign-out' />
                                     </MenuItem>
                                 </MenuList>
                             </ClickAwayListener>
@@ -118,46 +125,27 @@ const ProfileButton = (props) => {
 
 }
 
-const RegisterButton = (props) => {
+// Component register button
+const RegisterButton = () => {
+    const signUpLink = usePrepareLink({
+        query: {
+            [GET_PARAMS.popup]: GET_ENUMS.popup.signUp
+        }
+    });
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const openRegister = Boolean(anchorEl);
-    const id = openRegister ? 'simple-popover' : undefined;
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
 
     return (
-        <Fragment>
-            <Button color="primary" variant="contained" className={classes.registerButton} onClick={handleClick}>
-                Register
-            </Button>
-            <Popover
-                id={id}
-                open={openRegister}
-                anchorReference="none"
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                className={classes.popoverRegisterAndLogin}
-            >
-                <RegisterAndLogin handleLogin={props.handleLogin} />
-            </Popover>
-        </Fragment>
+        <Button color='primary'
+            variant='contained'
+            className={classes.registerButton}
+            component={Link}
+            to={signUpLink}>
+            Register
+        </Button>
     )
 }
 
+// Component search bar
 const SearchBar = () => {
     const classes = useStyles();
     return (
@@ -166,33 +154,49 @@ const SearchBar = () => {
                 <SearchIcon />
             </div>
             <InputBase
-                placeholder="What do you want to search?"
+                placeholder='What do you want to learn?'
                 classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
                 }}
                 inputProps={{ 'aria-label': 'search' }}
             />
+            {/*<Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                disableClearable
+                options={.map((option) => option.title)}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Search input"
+                        margin="normal"
+                        variant="outlined"
+                        InputProps={{ ...params.InputProps, type: 'search' }}
+                    />
+                )}
+                />*/}
         </div>
     )
 }
 
+// Component for nested menu
 const NestedMenu = (props) => {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const anchorRef = props.anchorRef;
-    const [expanded, setExpanded] = React.useState(false);
+    const [expanded, setExpanded] = useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
 
     const handleOpen = () => {
-        setOpen(!open);
+        setOpen(true);
     };
 
     const handleClose = (event) => {
-        setOpen(false);
+        setOpen(false)
     };
 
     function handleListKeyDown(event) {
@@ -204,33 +208,54 @@ const NestedMenu = (props) => {
 
     return (
         <Fragment>
-            <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
-                aria-haspopup="true"
-                onClick={handleOpen}
-                title="catg"
-                id="sub"
+            {props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup='true'
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                component={Link}
+                to={`${ROUTES.course}?category=${props.category.Id}`}
+                title='catg'
+                id='sub'
             >
+                <ListItemText primary={props.category.Name} className={clsx({ [classes.textExpandOpen]: open })} />
                 <ListItemIcon>
-                    <KeyboardArrowLeftRoundedIcon className={clsx(classes.expand, {
+                    <KeyboardArrowRightRoundedIcon className={clsx(classes.expand, {
                         [classes.expandOpen]: open,
                     })}
-                        onClick={handleExpandClick}
+                        onMouseOver={handleExpandClick}
                         aria-expanded={expanded}
-                        aria-label="show more" />
+                        aria-label='show more' />
                 </ListItemIcon>
-                <ListItemText primary={props.text} />
+            </MenuItem>}
+            {!props.hasChildren && <MenuItem
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup='true'
+                title='catg'
+                id='sub'
+                component={Link}
+                to={`${ROUTES.course}?category=${props.category.Id}`}
+            >
+                <ListItemText primary={props.category.Name} />
+            </MenuItem>}
 
-            </MenuItem>
-
-            <Popper open={open} placement="left-start" anchorEl={anchorRef} role={undefined} transition style={{ zIndex: 1500, marginRight: 3 }}>
+            <Popper
+                open={open}
+                placement='right-start'
+                anchorEl={anchorRef}
+                keepMounted
+                onMouseEnter={handleOpen}
+                onMouseLeave={handleClose}
+                role={undefined}
+                transition
+                style={{ zIndex: 1500, marginLeft: 3, }}>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
-                        style={{ transformOrigin: placement === 'left-start' ? 'left start' : 'center bottom' }}
+                        style={{ transformOrigin: placement === 'right-start' ? 'right start' : 'center bottom' }}
                     >
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                <MenuList id='menu-list-grow' onKeyDown={handleListKeyDown}>
                                     {props.children}
                                 </MenuList>
                             </ClickAwayListener>
@@ -242,29 +267,81 @@ const NestedMenu = (props) => {
     )
 }
 
-const listToTree = (list) => {
-    var map = {}, node, roots = [], i;
+/*
+const NestedMenu2 = (props) => {
+    const classes = useStyles();
+    const [anchorEl, setAnchorEl] = useState(null);
+    //const anchorRef = props.anchorRef;
+    const open = Boolean(anchorEl);
+    const id = open ? 'categories-menu' : undefined;
+    const [expanded, setExpanded] = useState(false);
+    const handleClick = async (event) => {
 
-    for (i = 0; i < list.length; i += 1) {
-        map[list[i].id] = i; // initialize the map
-        list[i].children = []; // initialize the children
     }
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
+    const handleOpen = (event) => {
+        console.log('Sub', props.anchorRef);
+        setAnchorEl(props.anchorRef)
+    };
+    return (
+        <Fragment>
+            {props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup='true'
+                onClick={handleOpen}
+                title='catg'
+                id='sub'
+            >
+                <ListItemText primary={props.text} className={clsx({ [classes.textExpandOpen]: open })} />
+                <ListItemIcon>
+                    <KeyboardArrowRightRoundedIcon className={clsx(classes.expand, {
+                        [classes.expandOpen]: open,
+                    })}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label='show more' />
+                </ListItemIcon>
+            </MenuItem>}
+            {!props.hasChildren && <MenuItem
+                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-haspopup='true'
+                title='catg'
+                id='sub'
+            >
+                <ListItemText primary={props.text} />
+            </MenuItem>}
 
-    for (i = 0; i < list.length; i += 1) {
-        node = list[i];
-        if (node.parent !== null) {
-            // if you have dangling branches check that map[node.parentId] exists
-            list[map[node.parent]].children.push(node);
-        } else {
-            roots.push(node);
-        }
-    }
-    return roots;
-}
+            <Popover
+                style={{ marginTop: 16 }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+            >
+
+                <MenuList autoFocusItem={open} id='menu-list-grow'>
+                    {props.children}
+                </MenuList>
+
+            </Popover>
+        </Fragment >
+    )
+}*/
 
 const CategoryNestedMap = (props) => {
     return (
-        <NestedMenu anchorRef={props.anchorRef} text={props.data.name}>
+        <NestedMenu anchorRef={props.anchorRef} category={props.data} hasChildren={props.data.children.length !== 0}>
             {props.data.children.map((child,
                 index) => <CategoryNestedMap key={index} anchorRef={props.anchorRef} data={child} />)}
         </NestedMenu>
@@ -273,26 +350,9 @@ const CategoryNestedMap = (props) => {
 
 const CategoryMenu = (props) => {
     const classes = useStyles();
-
-    const { data, isPending, error } = useFetch(`${config.HOST}:${config.PORT}/categories`);
-    const [categoriesTree, setCategoriesTree] = React.useState([]);
-    React.useEffect(() => {
-        if (data) {
-            setCategoriesTree(listToTree(data));
-        }
-
-    }, [data])
-
-    const [open, setOpen] = React.useState(false);
-    const anchorRef = React.useRef(null);
-    const anchorRef2 = React.useRef(null);
-
-
-
-    const handleOpen = () => {
-        setOpen((prevOpen) => !prevOpen);
-    };
-
+    const anchorRef2 = useRef(null);
+    const [open, setOpen] = useState(false);
+    const anchorRef = useRef(null);
 
     const handleClose = (event) => {
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -301,43 +361,75 @@ const CategoryMenu = (props) => {
         setOpen(false);
     };
 
-    function handleListKeyDown(event) {
-        if (event.key === 'Tab') {
-            event.preventDefault();
-            setOpen(false);
-        }
-    }
+    const id = open ? 'categories-menu' : undefined;
 
-    const prevOpen = React.useRef(open);
-    React.useEffect(() => {
-        if (prevOpen.current === true && open === false) {
-            anchorRef.current.focus();
+    const [isPending, setIsPending] = useState(false);
+    const [error, setError] = useState(null);
+    const [categoriesTree, setCategoriesTree] = useState([]);
+    const handleClick = async (event) => {
+        setOpen(!open)
+
+        if (!open) {
+            setIsPending(true);
+            await categoryService.getAll().then(response => {
+                const categoriesArray = response.data.message.listAllResponse;
+                const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: 'Parent_Id' });
+                setCategoriesTree(tree);
+                if (tree.length === 0) {
+                    throw Error("Not found");
+                }
+                setIsPending(false);
+                setError(false);
+
+            }).catch(err => {
+                setError(err.message);
+                setIsPending(false);
+                console.log('err', err);
+            })
         }
-        prevOpen.current = open;
-    }, [open]);
+    };
+
 
     return (
         <Fragment>
             <Button className={classes.categoriesButton}
                 ref={anchorRef}
-                aria-controls={open ? 'menu-list-grow' : undefined}
-                aria-haspopup="true"
-                onClick={handleOpen}
-                title="catg"
+                aria-controls={open ? 'button' : undefined}
+                aria-haspopup='true'
+                onClick={handleClick}
+                title='catg'
             >
                 Categories <ExpandMoreIcon />
             </Button>
-            <Popper ref={anchorRef2} open={open} anchorEl={anchorRef.current} role={undefined} transition style={{ zIndex: 1500, marginTop: 16 }}>
+
+            <Popper
+                id={id}
+                ref={anchorRef2}
+                open={open}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                placement={'bottom-start'}
+                style={{ zIndex: 1500, marginTop: 16 }}>
                 {({ TransitionProps, placement }) => (
                     <Grow
                         {...TransitionProps}
-                        style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                        style={{ transformOrigin: placement === 'bottom-start' ? 'left top' : 'left bottom' }}
                     >
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                    {categoriesTree.map((category,
-                                        index) => <CategoryNestedMap key={index} anchorRef={anchorRef2.current} data={category} key={index} />)}
+                                <MenuList
+                                    autoFocusItem={open}
+                                    id='menu-list-grow'
+                                >
+                                    {error && <MenuItem>{error}</MenuItem>}
+                                    {isPending ? <Skeleton width={200} height={80}></Skeleton>
+                                        : categoriesTree.map((category,
+                                            index) => <CategoryNestedMap
+                                                key={index}
+                                                anchorRef={anchorRef2.current}
+                                                data={category} />)
+                                    }
                                 </MenuList>
                             </ClickAwayListener>
                         </Paper>
@@ -345,72 +437,50 @@ const CategoryMenu = (props) => {
                 )}
             </Popper>
 
-        </Fragment>
+        </Fragment >
     )
 }
 
-const HideOnScroll = (props) => {
-    const { children } = props;
-    const trigger = useScrollTrigger({
-        disableHysteresis: true,
-        threshold: 4,
-    });
 
-    return (
-        <Slide appear={false} direction="down" in={!trigger}>
-            {children}
-        </Slide>
-    );
-}
-
-HideOnScroll.propTypes = {
-    children: PropTypes.element.isRequired,
-};
-
-
+// Main component
 function Navbar(props) {
     const classes = useStyles();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
-    const [selectedIndex, setSelectedIndex] = React.useState(-1);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
 
     const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
     };
     let location = useLocation();
-    React.useEffect(() => {
+    let history = useHistory();
+    useEffect(() => {
         switch (location.pathname) {
-            case '/profile':
+            case ROUTES.profile:
                 setSelectedIndex(0);
                 break;
-            case '/my-learning':
+            case ROUTES.myLearning:
                 setSelectedIndex(1);
                 break;
             default: setSelectedIndex(-1);
         }
-    }, [location])
+    }, [location.pathname])
 
-    const [isLogin, setIsLogin] = React.useState(window.sessionStorage.getItem('isLogin'))
-    const handleAuth = (type) => (event) => {
-        if (type === 'logout') {
-            setIsLogin(false)
-            window.sessionStorage.removeItem('isLogin');
-            window.sessionStorage.removeItem('user_id');
-        }
-        else if (type === 'login') {
-            setIsLogin(true)
-        }
+    const [isLogin, setIsLogin] = useState(authService.isUser())
+    const auth = authService.isUser();
+    useEffect(() => {
+        setIsLogin(authService.isUser())
+    }, [auth])
+    const handleSignOut = () => {
+        authService.logout();
+        setIsLogin(false);
+        history.push(ROUTES.home);
+    };
 
-    }
 
-    /* React.useEffect(() => {
-                setIsLogin(window.sessionStorage.getItem('isLogin'))
-         console.log(window.sessionStorage.getItem('isLogin'))
-     }, [window.sessionStorage.getItem('isLogin')])
-            */
     const drawer = (
         <div>
             <List>
@@ -439,7 +509,7 @@ function Navbar(props) {
             {isLogin &&
                 <List>
                     {['Wishlist'].map((text, index) => (
-                        <ListItem key={index} button key={text}>
+                        <ListItem key={index} button>
                             <ListItemIcon>{<FavoriteRoundedIcon />}</ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>
@@ -450,7 +520,7 @@ function Navbar(props) {
                     <FlareRoundedIcon />
                 </IconButton>
                 {isLogin &&
-                    <IconButton onClick={handleAuth('logout')}>
+                    <IconButton onClick={handleSignOut}>
                         <ExitToAppRoundedIcon />
                     </IconButton>
                 }
@@ -462,56 +532,54 @@ function Navbar(props) {
     return (
         <div className={classes.root}>
             <CssBaseline />
-            <HideOnScroll>
-                <AppBar color="default" className={classes.appBar} elevation={1}>
-                    <Toolbar>
-                        <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
-                            <Hidden smUp>
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="open drawer"
-                                    edge="start"
-                                    onClick={handleDrawerToggle}
-                                    size="small"
-                                >
-                                    <MenuIcon />
-                                </IconButton>
-                                <Drawer
-                                    variant="temporary"
-                                    anchor='left'
-                                    open={mobileOpen}
-                                    onClose={handleDrawerToggle}
-                                    classes={{
-                                        paper: classes.drawerPaper,
-                                    }}
-                                    ModalProps={{
-                                        keepMounted: true, // Better open performance on mobile.
-                                    }}
-                                >
-                                    {drawer}
-                                </Drawer>
-                            </Hidden>
-                            <Hidden xsDown>
-                                <ButtonBase id="logo-button" className={classes.logoButton}>
-                                    <Link to="/"><ReactLogo className={classes.logo} /></Link>
-                                </ButtonBase>
-                            </Hidden>
 
-                            <SearchBar />
-                            <Hidden xsDown>
-                                <CategoryMenu />
-                                {isLogin && <ProfileButton handleLogout={handleAuth('logout')} />}
-                            </Hidden>
-                            {!isLogin && <RegisterButton handleLogin={handleAuth('login')} />}
-                            <Hidden xsDown>
-                                <IconButton onClick={props.handleToggle}>
-                                    <FlareRoundedIcon />
-                                </IconButton>
-                            </Hidden>
-                        </Grid>
-                    </Toolbar>
-                </AppBar>
-            </HideOnScroll>
+            <AppBar color="default" className={classes.appBar} elevation={1}>
+                <Toolbar>
+                    <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
+                        <Hidden smUp>
+                            <IconButton
+                                color='inherit'
+                                aria-label='open drawer'
+                                edge='start'
+                                onClick={handleDrawerToggle}
+                                size='small'
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Drawer
+                                variant='temporary'
+                                anchor='left'
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                classes={{
+                                    paper: classes.drawerPaper,
+                                }}
+                                ModalProps={{
+                                    keepMounted: true, // Better open performance on mobile.
+                                }}
+                            >
+                                {drawer}
+                            </Drawer>
+                        </Hidden>
+                        <Hidden xsDown>
+                            <ButtonBase id='logo-button' className={classes.logoButton}>
+                                <Link to="/"><ReactLogo className={classes.logo} /></Link>
+                            </ButtonBase>
+                            <CategoryMenu />
+                        </Hidden>
+
+                        <SearchBar />
+                        {!isLogin && <RegisterButton />}
+                        <Hidden xsDown>
+                            {isLogin && <ProfileButton handleSignOut={handleSignOut} />}
+                            <IconButton onClick={props.handleToggle}>
+                                <FlareRoundedIcon />
+                            </IconButton>
+                        </Hidden>
+                    </Grid>
+                </Toolbar>
+            </AppBar>
+
         </div >
     );
 }

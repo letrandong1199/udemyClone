@@ -14,9 +14,13 @@ import Grid from '@material-ui/core/Grid';
 import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom';
-
+import Divider from '@material-ui/core/Divider';
+import { ROUTES } from '../../config/config';
+import Button from '@material-ui/core/Button';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 function ProductCardV(props) {
     const classes = useStyles();
+
 
     const [expanded, setExpanded] = React.useState(false);
 
@@ -26,41 +30,63 @@ function ProductCardV(props) {
 
     return (
         <Card className={classes.root} elevation={3}>
-            <Link to={`/detail/${props.course.id}`}>
+            <Link to={`${ROUTES.courseDetail}/${props.course.Id}`}>
                 <CardMedia
                     className={classes.media}
-                    image={props.course.thumb}
-                    title={props.course.title}
-                    children={<Typography className={classes.price}>{props.course.price}$</Typography>}
-                />
+                    image={props.course.Thumbnail_Medium}
+                    title={props.course.Title}
+                >
+                    {<Typography className={classes.price}>
+                        {props.course.Promote_Rate !== 0 && <span style={{ textDecoration: 'line-through', color: 'darkred', marginRight: 5 }}>${props.course.Price}</span>}
+                        {props.course.Promote_Rate !== 0
+                            ? (props.course.promote * props.course.Price)?.toFixed(2)
+                            : props.course.Price !== 0
+                                ? props.course.Price
+                                : 'Free'}
+                    </Typography>}
+                    {props.course.tag && <Typography className={classes.tag}>
+                        {props.course.tag}
+                    </Typography>}
+                </CardMedia>
             </Link>
             <CardContent className={classes.content}>
+                <Typography
+                    variant="body2"
+                    style={{ fontSize: 10, textTransform: 'uppercase' }}
+                >
+                    {props.course.Category.Name}
+                </Typography>
                 <Grid container className={classes.header}>
-                    <Typography variant="subtitle1" className={classes.headerText}>{props.course.title}</Typography>
+                    <Typography variant="subtitle1" className={classes.headerText}>{props.course.Title}</Typography>
                 </Grid>
-                <Typography variant="body2">{props.course.author}</Typography>
-                <Grid container direction="row" alignItems="center">
-                    <Typography variant="subtitle1">{props.course.rating.toFixed(1)}</Typography>
+                <Typography variant="body2" color="textSecondary">{`by ${props.course.Author.Name}`}</Typography>
+                <Grid container direction="row">
                     <Rating
-                        name={`hover-feedback-${props.name}-${props.id}`}
-                        disabled={true}
+                        name={`hover-feedback-${props.course.Id}`}
                         readOnly={true}
                         className={classes.rating}
-                        value={props.course.rating}
+                        value={props.course.Rating}
                         size="small"
                     />
-                    <Typography variant="body2">({props.course.num_rating})</Typography>
+                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{props.course?.num_rating}</Typography>
                 </Grid>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {props.course.description}
+                        {props.course.Sub_Description}
                     </Typography>
                 </Collapse>
                 <Hidden smUp>
-                    <CardActions disableSpacing>
-                        <IconButton size="small" aria-label="add to favorites">
-                            <FavoriteBorderRoundedIcon />
-                        </IconButton>
+                    <CardActions disableSpacing className={classes.action}>
+                        {props.isEnrolled
+                            ? props.isWishlist
+                                ? <IconButton aria-label="remove to favorites" onClick={props.handleRemove}>
+                                    <HighlightOffRoundedIcon />
+                                </IconButton>
+                                : <Button onClick={props.handleLearn}>Learn</Button>
+                            : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
+                                <FavoriteBorderRoundedIcon />
+                            </IconButton>
+                        }
                         <IconButton
                             className={clsx(classes.expand, {
                                 [classes.expandOpen]: expanded,
@@ -77,10 +103,20 @@ function ProductCardV(props) {
 
             </CardContent >
             <Hidden xsDown>
-                <CardActions disableSpacing>
-                    <IconButton aria-label="add to favorites">
-                        <FavoriteBorderRoundedIcon />
-                    </IconButton>
+
+                <Divider />
+                <CardActions disableSpacing className={classes.action}>
+
+                    {props.isWishlist && props.isWishlist !== undefined
+                        ? <IconButton aria-label="remove to favorites" onClick={props.handleRemove}>
+                            <HighlightOffRoundedIcon />
+                        </IconButton>
+                        : props.isEnrolled && props.isEnrolled !== undefined
+                            ? < Button onClick={props.handleLearn}>Learn</Button>
+                            : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
+                                <FavoriteBorderRoundedIcon />
+                            </IconButton>
+                    }
                     <IconButton
                         className={clsx(classes.expand, {
                             [classes.expandOpen]: expanded,

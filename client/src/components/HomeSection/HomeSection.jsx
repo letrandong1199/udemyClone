@@ -11,28 +11,28 @@ import CategoryCard from '../CategoryCard/CategoryCard.jsx'
 function HomeSection(props) {
     const classes = useStyles(props);
     let list_ = undefined;
+
     if (props.courses) {
         list_ = props.courses.map((course, index) => {
             return <Grid item key={index} >
-                <ProductCardV course={course} />
-
+                <ProductCardV course={course} isEnrolled={props.isEnrolled} isWishlist={props.isWishlist} />
             </Grid>
         })
     }
-    else {
+    else if (props.categories) {
         list_ = props.categories.map((catg, index) => {
-            return <CategoryCard catg={catg} />
+            return <CategoryCard key={index} catg={catg} />
 
         })
     }
 
     return (
         <Fragment>
-            <Grid className={classes.bigTitle}>
+            {!props.disableTitle && <Grid className={classes.bigTitle}>
                 <Typography variant="h5" style={{ fontWeight: 'bold' }}>
                     {props.title}
                 </Typography>
-            </Grid>
+            </Grid>}
             <Grid>
                 <Grid container
                     className={classes.homeSection}

@@ -5,6 +5,7 @@ import { useStyles } from './styles';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../config/config';
 
 
 //{/*style={{ background: `url('${item.image}') no-repeat center center` }}*/}
@@ -26,14 +27,14 @@ function Carousel(props) {
 
                             <Grid container direction="column" className={classes.inner}>
                                 <Grid item className={classes.limitLine}>
-                                    <Typography style={{ textAlign: 'left' }} variant="h4">{item.title}</Typography>
+                                    <Typography style={{ textAlign: 'left' }} variant="h4">{item.Title}</Typography>
                                 </Grid>
 
-                                <Typography style={{ textAlign: 'left' }} variant="body1">{item.description}</Typography>
-                                <Link to={`/detail/${item.id}`} style={{ textDecoration: 'none' }}><Button variant="outlined" color="primary">{buttonText()}</Button></Link>
+                                <Typography style={{ textAlign: 'left' }} variant="body1">{item.Sub_Description}</Typography>
+                                <Link to={`${ROUTES.courseDetail}/${item.Id}`} style={{ textDecoration: 'none' }}><Button variant="outlined" color="primary">{buttonText()}</Button></Link>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={7} className={classes.cardImage} style={{ background: `url('${item.thumb}') no-repeat center center`, backgroundSize: 'cover' }}>
+                        <Grid item xs={12} sm={7} className={classes.cardImage} style={{ background: `url('${item.Thumbnail_Large}') no-repeat center center`, backgroundSize: 'cover' }}>
                             <Card>
 
                             </Card>

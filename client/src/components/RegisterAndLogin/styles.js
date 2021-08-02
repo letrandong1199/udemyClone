@@ -52,10 +52,15 @@ export const useStyles = makeStyles((theme) => ({
         //width: '25ch',
     },
     button: {
-
-        //width: '100%',
-        height: '50px',
-        margin: 10,
+        height: 50,
+        maxWidth: 580,
+        width: '100%',
+        margin: 'auto'
+    },
+    forgetButton: {
+        maxWidth: 580,
+        left: 60,
+        padding: 0
     },
     Tab: {
         '& .MuiTabs-indicator': {
@@ -65,5 +70,9 @@ export const useStyles = makeStyles((theme) => ({
             margin: 10,
             //position: 'relative'
         }
-    }
+    },
+    backdrop: {
+        zIndex: theme.zIndex.snackbar + 1,
+        color: '#fff',
+    },
 }));

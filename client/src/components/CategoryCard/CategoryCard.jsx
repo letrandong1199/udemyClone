@@ -12,8 +12,8 @@ function CategoryCard(props) {
             <CardMedia
                 className={classes.media}
                 image={props.catg.thumbnail_small}
-                title={props.catg.name}
-                children={<Typography className={classes.price}>{props.catg.name}</Typography>}
+                title={props.catg.Name}
+                children={<Typography className={classes.price}>{props.catg.Name}</Typography>}
             />
 
 
