@@ -1,4 +1,3 @@
-
 exports.seed = function (knex) {
   // Deletes ALL existing entries
   console.log("seed promotes");
@@ -9,8 +8,15 @@ function createPromotes(knex) {
   return knex("Promotes")
     .del()
     .then(function () {
-      return knex("Promotes").returning("Id").insert([
-        { Id: 1, Promote: 0 },
-      ]);
-    })
-};
+      return (
+        knex("Promotes")
+          // .returning("Id")
+          .insert([
+            {
+              //Id: 1,
+              Promote: 0,
+            },
+          ])
+      );
+    });
+}

@@ -572,5 +572,115 @@ const courseService = {
       console.log(e);
     }
   },
+  async getCourseOfInstructor(request) {
+    try {
+      const listCourse = await courseRepository.getCourseByAuthorId(request.id);
+      if (listCourse.length == 0) {
+        return { Code: getAllCourseResponseEnum.AUTHOR_IS_NOT_COURSE };
+      }
+      const listAllCourseResponse = listCourse.map(async (course) => {
+        return {
+          Id: course.Id,
+          Title: course.Title,
+          Thumbnail_Small: course.Thumbnail_Small,
+          Thumbnail_Medium: course.Thumbnail_Medium,
+          Thumbnail_Large: course.Thumbnail_Large,
+          Is_Completed: course.Is_Completed,
+        };
+      });
+      return {
+        Code: getAllCourseResponseEnum.SUCCESS,
+        listAllResponse: listAllCourseResponse,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCourseResponseEnum.SERVER_ERROR };
+    }
+  },
+  async getOneCourseInstructor(request) {
+    try {
+      const resultValidator = getOneCourseValidator.validate(request.params.id);
+      if (!resultValidator.IsSuccess) {
+        return { Code: resultValidator.Code };
+      }
+      const course = await _entityRepository("Courses").getEntity(
+        request.params.id
+      );
+      if (course.length == 0) {
+        return { Code: getOneCourseResponseEnum.ID_IS_INVALID };
+      }
+      if (course[0].Author_Id != request.id) {
+        return { Code: getOneCourseResponseEnum.IS_NOT_AUTHOR };
+      }
+      const promote = await _entityRepository("Promotes").getEntity(
+        course[0].Promote_Id
+      );
+      const author = await _entityRepository("Users").getEntity(
+        course[0].Author_Id
+      );
+      const language = await _entityRepository("Languages").getEntity(
+        course[0].Language_Id
+      );
+      const category = await _entityRepository("Categories").getEntity(
+        course[0].Category_Id
+      );
+      const listSections = await sectionRepository.getSectionByCourseId(
+        course[0].Id
+      );
+      //get content of course
+      const content = await Promise.all(
+        listSections.map(async (section) => {
+          let listLectures = await lectureRepository.getLectureBySectionId(
+            section.Id
+          );
+          let listLectureResponse = await Promise.all(
+            listLectures.map(async (lecture) => {
+              let listMedia = await mediaRepository.getMediaByLectureId(
+                lecture.Id
+              );
+              let listMediaResponse = listMedia.map((media) => {
+                if (media.Is_Preview === true)
+                  return {
+                    Id: media.Id,
+                    Video_URL: media.Video_URL,
+                  };
+              });
+              return {
+                Id: lecture.Id,
+                Media: listMediaResponse,
+                Title: lecture.Title,
+              };
+            })
+          );
+          return {
+            Id: section.Id,
+            Section: section.Name,
+            Lectures: listLectureResponse,
+          };
+        })
+      );
+      const courseResponse = {
+        Id: course[0].Id,
+        Title: course[0].Title,
+        Thumbnail_Large: course[0].Thumbnail_Large,
+        Thumbnail_Medium: course[0].Thumbnail_Medium,
+        Thumbnail_Small: course[0].Thumbnail_Small,
+        Sub_Description: course[0].Sub_Description,
+        Description: course[0].Description,
+        Category: category[0],
+        Language: language[0],
+        Price: course[0].Price,
+        Promote: promote[0].Promote,
+        Content: content,
+        Is_Completed: course[0].Is_Completed,
+      };
+      return {
+        Code: getOneCourseResponseEnum.SUCCESS,
+        resultResponse: courseResponse,
+      };
+    } catch (e) {
+      console.log(e);
+    }
+  },
 };
 module.exports = courseService;

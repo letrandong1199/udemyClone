@@ -20,6 +20,14 @@ router.get("/my-learning/:id", authUser, async (req, res) => {
   const message = await courseService.getMyLearning(req);
   res.json({ message });
 });
+router.get("/my-instructor", authTeacher, async (req, res) => {
+  const message = await courseService.getCourseOfInstructor(req);
+  res.json({ message });
+});
+router.get("/my-instructor/:id", authTeacher, async (req, res) => {
+  const message = await courseService.getOneCourseInstructor(req);
+  res.json({ message });
+});
 router.put("/courses/:id", authTeacher, async (req, res) => {
   const message = await courseService.updateOneCourse(req);
   res.json({ message });

@@ -44,7 +44,7 @@ const mediaService = {
           folder: "udemy",
           chunk_size: 100000000,
         });
-        console.log('back', videoUpload);
+        console.log("back", videoUpload);
         var newVideo = videoUpload.url;
         var videoDuration = videoUpload.duration;
       } catch (e) {
@@ -183,6 +183,15 @@ const mediaService = {
       );
       if (lecture.length == 0) {
         return { Code: getMediaByLectureResponseEnum.LECTURE_ID_IS_INVALID };
+      }
+      const section = await _entityRepository("Sections").getEntity(
+        lecture[0].Section_Id
+      );
+      const course = await _entityRepository("Courses").getEntity(
+        section[0].Section_Id
+      );
+      if (course[0].Author_Id != request.id) {
+        return { Code: getMediaByLectureResponseEnum.IS_NOT_AUTHOR };
       }
       const listMediaResponse = await mediaRepository.getMediaByLectureId(
         request.params.id

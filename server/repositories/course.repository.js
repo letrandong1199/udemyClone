@@ -61,5 +61,10 @@ const courseRepository = {
       .where("Category_Id", category_id)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
+  getCourseByAuthorId(author_id) {
+    return db("Courses")
+      .where("Author_Id", author_id)
+      .catch(() => operatorType.FAIL.READ);
+  },
 };
 module.exports = courseRepository;

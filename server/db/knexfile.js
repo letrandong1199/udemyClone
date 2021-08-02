@@ -2,12 +2,12 @@
 require("dotenv").config();
 module.exports = {
   development: {
-    client: "mysql2",
+    client: "pg",
     connection: {
       host: "localhost",
-      database: "udemy_local",
-      user: "root",
-      password: "11143",
+      database: "knex_tutorial",
+      user: "postgres",
+      password: "admin",
     },
     migrations: {
       directory: "./migrations",
