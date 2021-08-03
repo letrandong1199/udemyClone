@@ -660,11 +660,11 @@ const courseService = {
                 lecture.Id
               );
               let listMediaResponse = listMedia.map((media) => {
-                if (media.Is_Preview === true)
-                  return {
-                    Id: media.Id,
-                    Video_URL: media.Video_URL,
-                  };
+                return {
+                  Id: media.Id,
+                  Is_Preview: media.Is_Preview,
+                  Video_URL: media.Video_URL,
+                }
               });
               return {
                 Id: lecture.Id,

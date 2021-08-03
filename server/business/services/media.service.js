@@ -30,7 +30,7 @@ const mediaService = {
         lecture[0].Section_Id
       );
       const course = await _entityRepository("Courses").getEntity(
-        section[0].Section_Id
+        section[0].Course_Id
       );
       if (course[0].Author_Id != request.id) {
         return { Code: createOneMediaResponseEnum.IS_NOT_AUTHOR };
@@ -62,15 +62,17 @@ const mediaService = {
         Is_Preview: newIsPreview,
       };
       const ret = await _entityRepository("Media").addEntity(newMedia);
+      newMedia['Id'] = ret[0];
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneMediaResponseEnum.SERVER_ERROR };
       }
-      return { Code: createOneMediaResponseEnum.SUCCESS };
+      return { Code: createOneMediaResponseEnum.SUCCESS, newMedia };
     } catch (e) {
       console.log(e);
     }
   },
   async updateOneMedia(request) {
+
     try {
       const resultValidator = updateOneMediaValidator.validate(
         request.body.Lecture_Id
@@ -94,11 +96,14 @@ const mediaService = {
         lecture[0].Section_Id
       );
       const course = await _entityRepository("Courses").getEntity(
-        section[0].Section_Id
+        section[0].Course_Id
       );
+      console.log(course);
       if (course[0].Author_Id != request.id) {
         return { Code: updateOneMediaResponseEnum.IS_NOT_AUTHOR };
       }
+
+      /*
       var newVideo = media[0].Video_URL;
       var newVideoDuration = media[0].Duration;
       if (request.body.Video_URL) {
@@ -116,7 +121,7 @@ const mediaService = {
         }
       }
       media[0].Video_URL = newVideo;
-      media[0].Duration = newVideoDuration;
+      media[0].Duration = newVideoDuration;*/
       let newIsPreview = false;
       if (request.body.Is_Preview) {
         newIsPreview = request.body.Is_Preview;
@@ -138,14 +143,19 @@ const mediaService = {
   async deleteOneMedia(request) {
     try {
       const resultValidator = deleteOneMediaValidator.validate(
-        request.body.Lecture_Id,
         request.params.id
       );
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
+      const media = await _entityRepository("Media").getEntity(
+        request.params.id
+      );
+      if (media.length == 0) {
+        return { Code: deleteOneMediaResponseEnum.MEDIA_ID_IS_NOT_EXIST }
+      }
       const lecture = await _entityRepository("Lectures").getEntity(
-        request.body.Lecture_Id
+        media[0].Lecture_Id
       );
       if (lecture.length == 0) {
         return { Code: deleteOneMediaResponseEnum.LECTURE_ID_IS_INVALID };
@@ -154,7 +164,7 @@ const mediaService = {
         lecture[0].Section_Id
       );
       const course = await _entityRepository("Courses").getEntity(
-        section[0].Section_Id
+        section[0].Course_Id
       );
       if (course[0].Author_Id != request.id) {
         return { Code: updateOneMediaResponseEnum.IS_NOT_AUTHOR };
