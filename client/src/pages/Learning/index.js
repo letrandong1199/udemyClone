@@ -26,6 +26,7 @@ const Dashboard = () => {
     useEffect(() => {
         courseService.getContentByCourseId(id).then((content) => {
             setContent(content.resultResponse.Content);
+            console.log(content);
         }).catch(error => {
             console.log(error);
         })

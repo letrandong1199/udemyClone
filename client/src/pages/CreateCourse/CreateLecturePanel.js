@@ -9,13 +9,18 @@ import {
     CircularProgress,
     Backdrop,
     TextField,
-    Snackbar
+    Snackbar,
+    ListItem,
+    FormGroup,
+    Switch,
+    FormControlLabel,
+    List,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-
+import VideoLibraryIcon from '@material-ui/icons/VideoLibrary';
 import { useStyles } from './styles';
 
 import sectionService from '../../services/section.service';
@@ -32,34 +37,39 @@ const LectureCard = ({
     handleChange,
     handleDelete,
     editable,
-    editLecture }) => {
+    editLecture,
+    course,
+    setCourse }) => {
     const [selectedFile, setSelectedFile] = useState(undefined);
-    const handleUpload = (event) => {
-        if (!event.target.files || event.target.files.length === 0) {
-            setSelectedFile(undefined);
-            return;
-        }
-
-        setSelectedFile(event.target.files[0]);
-
-    }
 
     const [progress, setProgress] = useState(0);
     const [isPending, setIsPending] = useState([]);
 
-    const handleSetIsPending = (index) => () => {
-        let array = [...isPending];
-        array.push(index);
-        setIsPending(array);
-    }
+    const [openSnack, setOpenSnack] = useState(false);
+    const [snackContent, setSnackContent] = useState(null);
+    const [snackType, setSnackType] = useState('success');
 
-    const handleClosePending = (index) => () => {
-        let array = [...isPending];
-        let ix = isPending.indexOf(index)
-        if (ix !== -1) {
-            array.splice(ix);
-            setIsPending(array);
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
         }
+        setOpenSnack(false);
+    };
+
+
+    const handleSetIsPending = (index, loaded) => () => {
+        let array = [...isPending];
+        // 
+        //console.log('pend', array);
+        if (loaded) {
+            let ix = isPending.indexOf(index)
+            if (ix !== -1) {
+                array.splice(ix, 1);
+            }
+        } else {
+            array.push(index);
+        }
+        setIsPending(array);
     }
 
 
@@ -68,15 +78,18 @@ const LectureCard = ({
         reader.readAsDataURL(selectedFile)
 
         reader.onloadend = () => {
-            console.log("done");
-            handleSetIsPending(index);
+            handleSetIsPending(index, false)();
             mediaService.postOne({ Lecture_Id: lecture.Id, Video_URL: reader.result },
                 (event) => setProgress(Math.round((100 * event.loaded) / event.total)))
                 .then((response => {
-                    console.log('Index', isPending);
-                    console.log(response);
-                    console.log("Done ok");
-                    handleClosePending(index);
+                    let dic = { ...course };
+                    dic.Content[indexSection].Lectures[index].Media.push(response.newMedia);
+                    setCourse(dic);
+                    setSnackContent('Video is uploaded successfully.');
+                    setSnackType('success');
+                    setOpenSnack(true);
+                    setAddVideo(false);
+                    handleSetIsPending(index, true)();
                 })).catch(error => {
                     console.log(error);
                 })
@@ -89,14 +102,56 @@ const LectureCard = ({
         }
 
         setSelectedFile(event.target.files[0]);
-        console.log(event.target.files[0]);
     }
 
-    useEffect(() => {
-        console.log('Selected file', selectedFile);
-    }, [selectedFile, setSelectedFile])
+    const [addVideo, setAddVideo] = useState(false);
 
+    const handleChangePreview = (indexMedia) => (event) => {
+        handleSetIsPending(`media-${index}-${indexMedia}`, false)();
+
+        const changed = event.target.checked;
+        mediaService.updateOne(lecture.Media[index].Id, {
+            Is_Preview: changed,
+            Lecture_Id: lecture.Id,
+        }).then(response => {
+            let dic = { ...course };
+            dic.Content[indexSection].Lectures[index].Media[indexMedia].Is_Preview = changed;
+            setCourse(dic);
+            setSnackContent('Has changed to preview');
+            setSnackType('success');
+            setOpenSnack(true);
+            handleSetIsPending(`media-${index}-${indexMedia}`, true)();
+            console.log(response);
+        }).catch(error => {
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            handleSetIsPending(`media-${index}-${indexMedia}`, true)();
+            console.log(error);
+        })
+    }
+
+    const handleRemoveMedia = (indexMedia) => (event) => {
+        handleSetIsPending(`media-${index}-${indexMedia}`, false)();
+        mediaService.deleteOne(lecture.Media[indexMedia].Id).then(response => {
+            let dic = { ...course };
+            dic.Content[indexSection].Lectures[index].Media.splice(indexMedia, 1);
+            setCourse(dic);
+            setSnackContent('Deleted');
+            setSnackType('success');
+            setOpenSnack(true);
+            handleSetIsPending(`media-${index}-${indexMedia}`, true)();
+            console.log(response);
+        }).catch(error => {
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            handleSetIsPending(`media-${index}-${indexMedia}`, true)();
+            console.log(error);
+        })
+    }
     console.log('In Lecture', editable);
+    console.log(lecture);
     return (
         <Card
             style={{
@@ -106,7 +161,6 @@ const LectureCard = ({
                 minWidth: 500,
                 position: 'relative'
             }}
-
         >
             <TextField
                 id={`lecture-name-${indexSection}-${index}`}
@@ -154,65 +208,151 @@ const LectureCard = ({
                 }
             </Grid>
             <Grid container style={{ margin: 10 }}>
-                <form>
-                    <input
-                        accept="video/*"
-                        id={`upload-video-${index}`}
-                        type="file"
-                        style={{ display: 'none' }}
-                        onChange={handleSelectFile}
-                    >
-                    </input>
-                    <TextField
-                        color='primary'
-                        variant='outlined'
-                        accept="video/*"
-                        id={`upload-video-${index}`}
-                        inputProps={{ readOnly: true }}
-                        value={isPending.includes(index) ? '' : selectedFile ? selectedFile.name : ''}
+                {lecture.Media && lecture.Media.length > 0
+                    ? lecture.Media.map((media, indexMedia) => {
+                        return <ListItem>
+                            <VideoLibraryIcon size='large' />
+                            {!isPending.includes(`media-${index}-${indexMedia}`) &&
+                                <Fragment>
+                                    <Button href={media?.Video_URL}>View</Button>
+                                    <FormGroup row>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={Boolean(media?.Is_Preview)}
+                                                    onChange={handleChangePreview(indexMedia)}
+                                                    name="checkedB"
+                                                    color="primary"
+                                                    disabled={isPending.includes(`media-${index}-${indexMedia}`)}
+                                                />
+                                            }
+                                            label={media?.Is_Preview ? `Preview` : `No Preview`}
+                                        />
+                                    </FormGroup>
+                                    <Button onClick={handleRemoveMedia(indexMedia)}>Delete</Button>
+                                </Fragment>
+                            }
+                            {isPending.includes(`media-${index}-${indexMedia}`) &&
+                                <CircularProgress color="primary" size='15px' />}
+                        </ListItem>
+                    })
 
-                        InputProps={{
-                            style: {
-                                background: `linear-gradient(90deg, #2E86DE ${progress}%, rgba(255, 255, 255, 0) ${progress}%)`,
-                            },
-
-                            endAdornment: selectedFile && selectedFile !== undefined
-                                ? !isPending.includes(index) && <IconButton
-                                    component='span'
-                                    variant='contained'
-                                    color='secondary'
-                                    onClick={() => { console.log('Hello hello'); setSelectedFile('') }}
+                    : !addVideo
+                        ? <Button
+                            color='primary'
+                            variant='outlined'
+                            startIcon={<AddRoundedIcon />}
+                            onClick={() => { setAddVideo(true) }}
+                        >
+                            Add media
+                        </Button>
+                        : progress < 100
+                            ? <form style={{ display: 'flex', alignItems: 'center' }}>
+                                <input
+                                    accept="video/*"
+                                    id={`upload-video-${index}`}
+                                    type="file"
+                                    style={{ display: 'none' }}
+                                    onChange={handleSelectFile}
+                                    onClick={(event) => {
+                                        event.target.value = null;
+                                    }}
                                 >
-                                    <HighlightOffIcon />
-                                </IconButton>
-                                : !isPending.includes(index) && <label htmlFor={`upload-video-${index}`}>
-                                    <IconButton
-                                        component='span'
-                                        variant='contained'
-                                        color='primary'
-                                    >
-                                        <AddRoundedIcon />
-                                    </IconButton>
-                                </label>
-                        }}
-                    >
+                                </input>
+                                <TextField
+                                    color='primary'
+                                    size='small'
+                                    variant='outlined'
+                                    accept="video/*"
+                                    id={`upload-video-${index}`}
+                                    inputProps={{ readOnly: true }}
+                                    value={isPending.includes(index)
+                                        ? `${progress}%`
+                                        : selectedFile
+                                            ? selectedFile.name
+                                            : ''
+                                    }
+                                    InputProps={{
+                                        style: {
+                                            background: `linear-gradient(90deg, #2E86DE ${progress}%, rgba(255, 255, 255, 0) ${progress}%)`,
+                                        },
 
-                    </TextField>
+                                        endAdornment: selectedFile && selectedFile !== undefined
+                                            ? !isPending.includes(index) &&
+                                            <label htmlFor={`upload-video-${index}`}>
+                                                <IconButton
+                                                    component='span'
+                                                    variant='contained'
+                                                    color='secondary'
+                                                    onClick={(event) => {
+                                                        event.target.value = null;
+                                                        setSelectedFile('')
+                                                    }}
+                                                >
+                                                    <HighlightOffIcon />
+                                                </IconButton>
+                                            </label>
 
-                    <Button
-                        onClick={handleUploadVideo(index)}
-                        component='span'
-                        variant='contained'
-                        color='primary'
-                        size='small'
-                        style={{ marginLeft: 10 }}
-                    >
-                        Upload
-                    </Button>
+                                            : !isPending.includes(index) && <label htmlFor={`upload-video-${index}`}>
+                                                <IconButton
+                                                    component='span'
+                                                    variant='contained'
+                                                    color='primary'
+                                                >
+                                                    <AddRoundedIcon />
+                                                </IconButton>
+                                            </label>
+                                    }}
+                                >
 
-                </form>
+                                </TextField>
+                                {progress === 0 &&
+                                    <Fragment>
+                                        <Button
+                                            onClick={handleUploadVideo(index)}
+                                            component='span'
+                                            variant='contained'
+                                            color='primary'
+                                            size='medium'
+                                            disabled={selectedFile === undefined || selectedFile === ''}
+                                            style={{ marginLeft: 10 }}
+                                        >
+                                            Upload
+                                        </Button>
+                                        <Button
+                                            onClick={() => { setAddVideo(false) }}
+                                            component='span'
+                                            variant='contained'
+                                            color='secondary'
+                                            size='medium'
+                                            style={{ marginLeft: 10 }}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </Fragment>}
+                            </form>
+                            : <Typography style={{ margin: 10 }}>
+                                <b>File name:&nbsp;</b>
+                                {selectedFile.name}
+                                <br />
+                                <b>Status:&nbsp;</b>
+                                {isPending.includes(index) ? <em>Processing</em> : 'Done'}
+                            </Typography>
+
+                }
 
             </Grid>
+
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={4000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnack} severity={snackType}>
+                    {snackContent}
+                </Alert>
+            </Snackbar>
         </Card >
     )
 }
@@ -391,7 +531,8 @@ const SectionCard = ({
                 handleCancel={handleCancelLecture}
                 handleSave={handleSaveLecture}
                 handleDelete={handleDeleteLecture}
-
+                course={course}
+                setCourse={setCourse}
             />
         })}
         {newLecture &&
@@ -489,7 +630,7 @@ const SectionCard = ({
         </Grid>
 
         <Backdrop open={isPending} className={classes.backdrop}>
-            <CircularProgress color="inherit" />
+            <CircularProgress color="primary" />
         </Backdrop>
         <Snackbar
             open={openSnack}

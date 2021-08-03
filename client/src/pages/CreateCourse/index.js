@@ -317,7 +317,6 @@ const EditCourse = () => {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState();
     const [course, setCourse] = useState({});
-    const [refresh, setRefresh] = useState(false);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -343,8 +342,9 @@ const EditCourse = () => {
                     variant="fullWidth"
                     onChange={handleChange}
                     className={classes.tabs}
-
-                    aria-label="simple tabs example">
+                    indicatorColor="primary"
+                    textColor="primary"
+                    aria-label="edit-course">
                     <Tab label="Course info" value='0' />
                     <Tab label="Lectures" value='1' />
                     <Tab label="Description" value='2' />

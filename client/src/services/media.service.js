@@ -72,6 +72,7 @@ class MediaService {
             })
     }
     deleteOne(id) {
+        console.log('req', id);
         return axios
             .delete(API_URL + '/medias/' + id, { headers: authHeader() })
             .then(response => {
