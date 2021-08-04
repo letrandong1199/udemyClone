@@ -602,6 +602,7 @@ const courseService = {
           Category: category[0],
           Number_Of_Rating: numberRating,
           Number_Of_Enrolled: numberRegister,
+          Sub_Description: course.Sub_Description,
           Thumbnail_Small: course.Thumbnail_Small,
           Thumbnail_Medium: course.Thumbnail_Medium,
           Thumbnail_Large: course.Thumbnail_Large,
@@ -670,6 +671,7 @@ const courseService = {
                 Id: lecture.Id,
                 Media: listMediaResponse,
                 Title: lecture.Title,
+                Description: lecture.Description,
               };
             })
           );
@@ -691,7 +693,7 @@ const courseService = {
         Category: category[0],
         Language: language[0],
         Price: course[0].Price,
-        Promote: promote[0] ? promote[0].Promote : null,
+        Promote: promote[0] ? promote[0] : null,
         Content: content,
         Is_Completed: course[0].Is_Completed,
       };
