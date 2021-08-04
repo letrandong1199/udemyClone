@@ -1,4 +1,5 @@
 const db = require("../db/db");
+const moment = require("moment");
 const operatorType = require("../utils/enums/operatorType");
 const enrolledcourseRepository = {
   getEnrolledCourseByUserIdAndCourseId(query) {
@@ -27,6 +28,19 @@ const enrolledcourseRepository = {
       .where("User_Id", user_id)
       .join("Courses", `Enrolled_Courses.Course_Id`, `Courses.Id`)
       .catch(() => operatorType.FAIL.READ);
+  },
+  getCourseMostRegister() {
+    let filtered = db("Enrolled_Courses");
+    let now = moment().format("YYYY-MM-DD");
+    console.log(now);
+    filtered = filtered.whereRaw(`?-"Enrolled_Date" <= ? `, [now, 7]);
+    filtered
+      .select("Course_Id")
+      .count("User_Id")
+      .groupBy("Course_Id")
+      .orderBy("count", "desc")
+      .limit(10);
+    return filtered;
   },
 };
 module.exports = enrolledcourseRepository;

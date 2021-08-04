@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const moment = require("moment");
 
 const operatorType = require("../../utils/enums/operatorType");
 const createOneUserValidator = require("../../api/validators/userValidators/createOneUserValidator");
@@ -99,9 +100,8 @@ const userService = {
       if (user.length == 0) {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
       }
-      console.log(new Date());
       user[0].Name = request.body.Name;
-      user[0].updated_at = new Date();
+      user[0].Updated_At = moment().format("YYYY-MM-DD");
       if (
         (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
         operatorType.FAIL.UPDATE
@@ -133,7 +133,7 @@ const userService = {
       }
       console.log(new Date());
       user[0].Name = request.body.Name;
-      user[0].updated_at = new Date();
+      user[0].Updated_At = moment().format("YYYY-MM-DD");
       if (
         (await _entityRepository("Users").updateEntity(
           request.params.id,
@@ -263,7 +263,7 @@ const userService = {
           pass: "Udemyclone1234", // generated ethereal password
         },
       });
-      const url = `http://localhost:3000/api/user-controller/confirm-email/${token}`;
+      const url = `https://udemy-apis.herokuapp.com/api/user-controller/confirm-email/${token}`;
       const mail = {
         from: "udemyclone2021@gmail.com",
         to: `${request.Name} <${request.Email}>`,
