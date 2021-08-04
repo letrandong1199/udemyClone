@@ -66,5 +66,21 @@ const courseRepository = {
       .where("Author_Id", author_id)
       .catch(() => operatorType.FAIL.READ);
   },
+  getCourseMostView() {
+    let filtered = db("Courses");
+    filtered.orderBy("View", "desc");
+    return filtered.limit(10);
+  },
+  getCourseMostRecent() {
+    let filtered = db("Courses");
+    filtered.orderBy("Update_At", "desc");
+    return filtered.limit(10);
+  },
+  getCourseMostRegister() {
+    let filtered = db("Courses");
+    filtered.select("Course_Id").count("User_Id");
+    console.log(filtered);
+    return filtered;
+  },
 };
 module.exports = courseRepository;

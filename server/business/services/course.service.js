@@ -333,7 +333,7 @@ const courseService = {
       course[0].Price = newPrice;
       course[0].Category_Id = category[0].Id;
       course[0].Language_Id = language[0].Id;
-      course[0].Update_At = new Date();
+      course[0].Update_At = moment().format("YYYY-MM-DD");
       if (
         (await _entityRepository("Courses").updateEntity(
           request.params.id,
@@ -348,6 +348,7 @@ const courseService = {
     }
   },
   async getOneCourse(request) {
+    console.log("hahahahaahahah", request.view);
     try {
       const resultValidator = getOneCourseValidator.validate(request.params.id);
       if (!resultValidator.IsSuccess) {
@@ -359,6 +360,12 @@ const courseService = {
       if (course.length == 0) {
         return { Code: getOneCourseResponseEnum.ID_IS_INVALID };
       }
+      //Inc view
+      course[0].View = course[0].View + request.view;
+      await _entityRepository("Courses").updateEntity(
+        request.params.id,
+        course[0]
+      );
       const promote = await _entityRepository("Promotes").getEntity(
         course[0].Promote_Id
       );
@@ -476,6 +483,7 @@ const courseService = {
         }
         numberRating = count;
       }
+
       const courseResponse = {
         Id: course[0].Id,
         Title: course[0].Title,
@@ -580,34 +588,36 @@ const courseService = {
       if (listCourse.length == 0) {
         return { Code: getAllCourseResponseEnum.AUTHOR_IS_NOT_COURSE };
       }
-      const listAllCourseResponse = await Promise.all(listCourse.map(async (course) => {
-        const category = await _entityRepository("Categories").getEntity(
-          course.Category_Id
-        );
-        let numberRating = 0;
-        const numberRegister =
-          await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
-        if (numberRegister) {
-          let count = 0;
-          for (item of numberRegister) {
-            if (item.Rating !== 0) {
-              count = count + 1;
+      const listAllCourseResponse = await Promise.all(
+        listCourse.map(async (course) => {
+          const category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let numberRating = 0;
+          const numberRegister =
+            await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+          if (numberRegister) {
+            let count = 0;
+            for (item of numberRegister) {
+              if (item.Rating !== 0) {
+                count = count + 1;
+              }
             }
+            numberRating = count;
           }
-          numberRating = count;
-        }
-        return {
-          Id: course.Id,
-          Title: course.Title,
-          Category: category[0],
-          Number_Of_Rating: numberRating,
-          Number_Of_Enrolled: numberRegister,
-          Thumbnail_Small: course.Thumbnail_Small,
-          Thumbnail_Medium: course.Thumbnail_Medium,
-          Thumbnail_Large: course.Thumbnail_Large,
-          Is_Completed: course.Is_Completed,
-        };
-      }))
+          return {
+            Id: course.Id,
+            Title: course.Title,
+            Category: category[0],
+            Number_Of_Rating: numberRating,
+            Number_Of_Enrolled: numberRegister,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Is_Completed: course.Is_Completed,
+          };
+        })
+      );
 
       return {
         Code: getAllCourseResponseEnum.SUCCESS,
@@ -664,7 +674,7 @@ const courseService = {
                   Id: media.Id,
                   Is_Preview: media.Is_Preview,
                   Video_URL: media.Video_URL,
-                }
+                };
               });
               return {
                 Id: lecture.Id,
@@ -701,6 +711,182 @@ const courseService = {
       };
     } catch (e) {
       console.log(e);
+    }
+  },
+  async getMostView(request) {
+    try {
+      const listCourse = await courseRepository.getCourseMostView();
+      const listAllCourseResponse = await Promise.all(
+        listCourse.map(async (course) => {
+          let category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          let numberRegister =
+            await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+          let numberRating = 0;
+          if (numberRegister) {
+            let count = 0;
+            for (item of numberRegister) {
+              if (item.Rating !== 0) {
+                console.log(item);
+                count = count + 1;
+              }
+            }
+            numberRating = count;
+          }
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Rating: course.Rating,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0].Promote,
+            Language_Id: course.Language_Id,
+            Number_Of_Rating: numberRating,
+          };
+        })
+      );
+      return {
+        Code: getAllCourseResponseEnum.SUCCESS,
+        listAllResponse: listAllCourseResponse,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCourseResponseEnum.SERVER_ERROR };
+    }
+  },
+  async getMostRecent(request) {
+    try {
+      const listCourse = await courseRepository.getCourseMostRecent();
+      const listAllCourseResponse = await Promise.all(
+        listCourse.map(async (course) => {
+          let category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          let numberRegister =
+            await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+          let numberRating = 0;
+          if (numberRegister) {
+            let count = 0;
+            for (item of numberRegister) {
+              if (item.Rating !== 0) {
+                console.log(item);
+                count = count + 1;
+              }
+            }
+            numberRating = count;
+          }
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Rating: course.Rating,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0].Promote,
+            Language_Id: course.Language_Id,
+            Number_Of_Rating: numberRating,
+          };
+        })
+      );
+      return {
+        Code: getAllCourseResponseEnum.SUCCESS,
+        listAllResponse: listAllCourseResponse,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCourseResponseEnum.SERVER_ERROR };
+    }
+  },
+  async getMostRegister(request) {
+    try {
+      const listMostRegister =
+        await enrolledcourseRepository.getCourseMostRegister();
+      console.log(listMostRegister);
+      const listCourse = await Promise.all(
+        listMostRegister.map(async (item) => {
+          let course = await _entityRepository("Courses").getEntity(
+            item.Course_Id
+          );
+          return course[0];
+        })
+      );
+      console.log(listCourse);
+      const listAllCourseResponse = await Promise.all(
+        listCourse.map(async (course) => {
+          let category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          let numberRegister =
+            await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+          let numberRating = 0;
+          if (numberRegister) {
+            let count = 0;
+            for (item of numberRegister) {
+              if (item.Rating !== 0) {
+                console.log(item);
+                count = count + 1;
+              }
+            }
+            numberRating = count;
+          }
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Description: course.Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Rating: course.Rating,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0].Promote,
+            Language_Id: course.Language_Id,
+            Number_Of_Rating: numberRating,
+          };
+        })
+      );
+      return {
+        Code: getAllCourseResponseEnum.SUCCESS,
+        listAllResponse: listAllCourseResponse,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCourseResponseEnum.SERVER_ERROR };
     }
   },
 };

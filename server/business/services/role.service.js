@@ -17,7 +17,7 @@ const roleService = {
     try {
       const resultValidator = updateOneRoleValidator.validate(
         request.params.id,
-        request.body.name
+        request.body.Name
       );
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
@@ -27,13 +27,14 @@ const roleService = {
       if (role.length == 0) {
         return { Code: updateOneRoleResponseEnum.ID_IS_INVALID };
       }
-      console.log(request.body.name);
-      const ret = await roleRepository.getRoleByName(request.body.name);
+      console.log(request.body.Name);
+      const ret = await roleRepository.getRoleByName(request.body.Name);
       console.log("Ret:", ret);
       if (ret.length != 0) {
         return { Code: updateOneRoleResponseEnum.ROLE_NAME_IS_EXIST };
       }
-      role[0].Name = request.body.name;
+      role[0].Name = request.body.Name;
+
       if (
         (await _entityRepository("Role").updateEntity(
           request.params.id,
@@ -96,16 +97,16 @@ const roleService = {
   //Create one Role
   async createOneRole(request) {
     try {
-      const resultValidator = createOneRoleValidator.validate(request.name);
+      const resultValidator = createOneRoleValidator.validate(request.Name);
       if (!resultValidator.IsSuccess) {
         return { Code: resultValidator.Code };
       }
-      const role = await roleRepository.getRoleByName(request.name);
+      const role = await roleRepository.getRoleByName(request.Name);
       if (role.length != 0) {
         return { Code: createOneRoleResponseEnum.ROLE_IS_EXIST };
       }
       const newRole = {
-        Name: request.name,
+        Name: request.Name,
       };
       ret = await _entityRepository("Role").addEntity(newRole);
       if (ret === operatorType.FAIL.CREATE) {

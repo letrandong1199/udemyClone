@@ -10,8 +10,8 @@ exports.up = function (knex) {
       table.string("Name").notNullable();
       table.string("Password").notNullable();
       table.integer("Role_Id").unsigned().references("Id").inTable("Role");
-      table.timestamp("Created_At").defaultTo(knex.fn.now());
-      table.timestamp("Updated_At").defaultTo(knex.fn.now());
+      table.date("Created_At").defaultTo(knex.fn.now());
+      table.date("Updated_At").defaultTo(knex.fn.now());
     })
     .createTable("Categories", function (table) {
       table.increments("Id").primary();
@@ -29,8 +29,8 @@ exports.up = function (knex) {
     .createTable("Promotes", function (table) {
       table.increments("Id").primary();
       table.float("Promote").notNullable().defaultTo(0.5);
-      table.timestamp("Start_Time").notNullable().defaultTo(knex.fn.now());
-      table.timestamp("End_Time");
+      table.date("Start_Time").notNullable().defaultTo(knex.fn.now());
+      table.date("End_Time");
     })
 
     .createTable("Courses", function (table) {
@@ -44,6 +44,7 @@ exports.up = function (knex) {
       table.string("Thumbnail_Large").defaultTo("");
       table.float("Price").defaultTo(0.0);
       table.float("Rating");
+      table.integer("View").defaultTo(0);
       table
         .integer("Category_Id")
         .unsigned()
@@ -60,8 +61,8 @@ exports.up = function (knex) {
         .unsigned()
         .references("Id")
         .inTable("Languages");
-      table.timestamp("Update_At").defaultTo(knex.fn.now());
-      table.timestamp("Create_At").defaultTo(knex.fn.now());
+      table.date("Update_At").defaultTo(knex.fn.now());
+      table.date("Create_At").defaultTo(knex.fn.now());
     })
 
     .createTable("Sections", function (table) {
@@ -113,6 +114,7 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.float("Rating");
+      table.date("Enrolled_Date").defaultTo(knex.fn.now());
       table.primary(["User_Id", "Course_Id"]);
     })
     .then(function (table) {
@@ -162,17 +164,17 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTable("Feedbacks")
-    .dropTable("Enrolled_Courses")
-    .dropTable("Media_User")
-    .dropTable("Media")
-    .dropTable("Lectures")
-    .dropTable("Sections")
-    .dropTable("Wishlists")
-    .dropTable("Courses")
-    .dropTable("Promotes")
-    .dropTable("Users")
-    .dropTable("Role")
-    .dropTable("Categories")
-    .dropTable("Languages");
+    .dropTableIfExists("Feedbacks")
+    .dropTableIfExists("Enrolled_Courses")
+    .dropTableIfExists("Media_User")
+    .dropTableIfExists("Media")
+    .dropTableIfExists("Lectures")
+    .dropTableIfExists("Sections")
+    .dropTableIfExists("Wishlists")
+    .dropTableIfExists("Courses")
+    .dropTableIfExists("Promotes")
+    .dropTableIfExists("Users")
+    .dropTableIfExists("Role")
+    .dropTableIfExists("Categories")
+    .dropTableIfExists("Languages");
 };
