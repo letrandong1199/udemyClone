@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { ADD_WISHLIST } from '../config/config';
 
 const API_URL = 'http://localhost:8080/api/wishlist-controller';
 
@@ -43,7 +44,10 @@ class WishlistService {
         return axios
             .post(API_URL + '/wishlists', data, { headers: authHeader() })
             .then(response => {
-                return response
+                if (response.data.message.Code !== ADD_WISHLIST.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
             })
     }
     deleteOne(id) {

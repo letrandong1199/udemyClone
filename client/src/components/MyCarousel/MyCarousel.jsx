@@ -1,30 +1,21 @@
 import ProductCardV from '../ProductCardV/ProductCardV.jsx';
-import Grid from '@material-ui/core/Grid';
-import { Fragment, useState, useEffect, useRef } from 'react'
+import {
+    Fragment,
+    useState,
+    useEffect,
+    useRef
+} from 'react'
 import { useStyles } from './styles';
-import IconButton from '@material-ui/core/IconButton';
+import { IconButton, Grid } from '@material-ui/core';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
+import { Skeleton } from '@material-ui/lab';
 
-
-function MyCarousel(props) {
-    const classes = useStyles(props);
-    const [listCourses, setListCourses] = useState(null);
-
-
-    useEffect(() => {
-        if (props.courses) {
-            console.log('Chan');
-            setListCourses(props.courses.map((course, index) => {
-                return <Grid item key={index} style={{ scrollSnapAlign: 'start', }}>
-                    <ProductCardV course={course} />
-                </Grid>
-            }))
-        }
-    }, [props.courses])
+function MyCarousel({ courses, loading }) {
+    const classes = useStyles();
 
     const containerRef = useRef(null);
-    const [state, setState] = useState({
+    const [status, setStatus] = useState({
         scroller: null,
         itemWidth: 0,
         isPrevHidden: true,
@@ -33,28 +24,28 @@ function MyCarousel(props) {
     })
 
     const handleNext = () => {
-        state.scroller.scrollBy({ left: state.itemWidth, top: 0, behavior: 'smooth' });
+        status.scroller.scrollBy({ left: status.itemWidth, top: 0, behavior: 'smooth' });
 
         // Hide if is the last item
-        setState({ ...state, isNextHidden: true, isPrevHidden: false });
+        setStatus({ ...status, isNextHidden: true, isPrevHidden: false });
     }
 
 
     const handlePrev = () => {
-        state.scroller.scrollBy({ left: -state.itemWidth, top: 0, behavior: 'smooth' });
-        setState({ ...state, isNextHidden: false, isPrevHidden: true });
+        status.scroller.scrollBy({ left: -status.itemWidth, top: 0, behavior: 'smooth' });
+        setStatus({ ...status, isNextHidden: false, isPrevHidden: true });
         // Hide if is the last item
         // Show remaining
     }
 
+
+
     useEffect(() => {
-        console.log('Qua');
-        //const items = containerRef.current.childNodes;
         const scroller = containerRef.current;
         const itemWidth = containerRef.current.clientWidth;
-        setState({ ...state, scroller, itemWidth });
-
-    }, [listCourses])
+        setStatus({ ...status, scroller, itemWidth });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loading]);
 
     return (
         <Fragment>
@@ -68,7 +59,14 @@ function MyCarousel(props) {
                     <ArrowForwardIosRoundedIcon />
                 </IconButton>
                 <div className={classes.list} ref={containerRef}>
-                    {listCourses}
+                    {loading
+                        ? <Skeleton><ProductCardV /></Skeleton>
+                        : courses.map((course, index) => {
+                            return <Grid item key={index} style={{ scrollSnapAlign: 'start', }}>
+                                <ProductCardV course={course} />
+                            </Grid>
+                        })
+                    }
                 </div>
             </Grid>
         </Fragment >

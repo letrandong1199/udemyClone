@@ -43,7 +43,6 @@ class CourseService {
             })
     }
     updateOne(id, data) {
-        console.log(data);
         return axios.put(API_URL + '/courses/' + id, data, { headers: authHeader() })
             .then(response => {
                 if (response.data.message.Code !== UPDATE_COURSE.SUCCESS) {

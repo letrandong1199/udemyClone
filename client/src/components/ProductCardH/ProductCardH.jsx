@@ -15,7 +15,7 @@ import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
 import { Link } from 'react-router-dom';
 
-function ProductCardH({ course, loading, linkTo }) {
+function ProductCardH({ course, loading, linkTo, hidePrice }) {
     const classes = useStyles();
 
     const [expanded, setExpanded] = React.useState(false);
@@ -36,7 +36,7 @@ function ProductCardH({ course, loading, linkTo }) {
                 title={course?.Title}
                 component={Link}
                 to={linkTo}
-                children={<Typography
+                children={!hidePrice && <Typography
                     className={classes.price}
                 >
                     {course?.Price}$

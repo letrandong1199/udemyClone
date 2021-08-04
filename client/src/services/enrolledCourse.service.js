@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { ENROLLED } from '../config/config';
 
 const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
 
@@ -26,7 +27,7 @@ class EnrolledCourseService {
                             }
                         })
                         .catch(error => {
-
+                            console.log(error);
                         })
                 }
                 return Promise.reject(error);
@@ -34,7 +35,6 @@ class EnrolledCourseService {
         );
     };
     getAll() {
-        console.log("Cal service");
         return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
     };
     getById(id) {
@@ -44,8 +44,10 @@ class EnrolledCourseService {
         return axios
             .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
-                return response
+                if (response.data.message.Code !== ENROLLED.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
             })
     }
 }

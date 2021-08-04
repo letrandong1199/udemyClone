@@ -31,7 +31,7 @@ class MediaService {
                             }
                         })
                         .catch(error => {
-
+                            console.log(error);
                         })
                 }
                 return Promise.reject(error);
@@ -44,7 +44,6 @@ class MediaService {
         return axios
             .post(API_URL + '/medias', data, { onUploadProgress: onUploadProgress, headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== CREATE_MEDIA.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
@@ -64,7 +63,6 @@ class MediaService {
         return axios
             .put(API_URL + '/medias/' + id, data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== UPDATE_MEDIA.SUCCESS) {
                     throw new Error(response.data.message.Code);
                 }
@@ -76,7 +74,6 @@ class MediaService {
         return axios
             .delete(API_URL + '/medias/' + id, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== DELETE_MEDIA.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }

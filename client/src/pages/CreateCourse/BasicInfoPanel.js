@@ -10,6 +10,7 @@ import {
     InputLabel,
     MenuItem,
     Snackbar,
+    CircularProgress,
 } from '@material-ui/core';
 
 import { Skeleton, Alert } from '@material-ui/lab';
@@ -19,9 +20,23 @@ import categoryService from '../../services/category.service';
 import languageService from '../../services/language.service';
 import courseService from '../../services/course.service';
 
-const BasicInfoPanel = ({ id, course, loading }) => {
+const BasicInfoPanel = ({ id, course, loading, setCourse }) => {
     const classes = useStyles();
     const [info, setInfo] = useState({});
+    const [categoriesTree, setCategoriesTree] = useState([]);
+    const [isPending, setIsPending] = useState([]);
+    const [languagesTree, setLanguagesTree] = useState([]);
+
+    const [openSnack, setOpenSnack] = useState(false);
+    const [snackContent, setSnackContent] = useState(null);
+    const [snackType, setSnackType] = useState('success');
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return event;
+        }
+        setOpenSnack(false);
+    };
 
     useEffect(() => {
         setInfo({
@@ -31,34 +46,54 @@ const BasicInfoPanel = ({ id, course, loading }) => {
             Language: course.Language,
         })
     }, [course])
-    const [categoriesTree, setCategoriesTree] = useState([]);
-    const [isPendingCategory, setIsPendingCategory] = useState(false);
-    const [languagesTree, setLanguagesTree] = useState([]);
-    const [isPendingLang, setIsPendingLang] = useState(false);
 
+    const handleSetIsPending = (index, loaded) => () => {
+        let array = [...isPending];
+
+        if (loaded) {
+            let ix = isPending.indexOf(index)
+            if (ix !== -1) {
+                array.splice(ix, 1);
+            }
+        } else {
+            array.push(index);
+        }
+        setIsPending(array);
+    }
+
+    // Handle load categories
     const handleLoadCategory = () => {
-        setIsPendingCategory(true)
+        handleSetIsPending('category', false)();
         categoryService.getAll().then(response => {
-            const categoriesArray = response.data.message.listAllResponse;
-            if (categoriesArray !== undefined) { setCategoriesTree(categoriesArray); }
-            setIsPendingCategory(false)
+            const categoriesArray = response.listAllResponse;
+            if (categoriesArray !== undefined) {
+                setCategoriesTree(categoriesArray);
+            }
+            handleSetIsPending('category', true)();
         }).catch(error => {
-            setIsPendingCategory(false);
+            handleSetIsPending('category', true)();
+            console.log(error);
         });
     }
-    const handleLoadLang = () => {
-        setIsPendingCategory(true)
-        console.log("Ngu");
-        languageService.getAll().then(response => {
-            const languagesArray = response.data.message.listAllResponse;
 
-            if (languagesArray !== undefined) { setLanguagesTree(languagesArray); }
-            setIsPendingCategory(false)
+    // Handle load languages
+    const handleLoadLang = () => {
+        handleSetIsPending('lang', false)();
+        languageService.getAll().then(response => {
+            const languagesArray = response.listAllResponse;
+            if (languagesArray !== undefined) {
+                setLanguagesTree(languagesArray);
+            }
+            handleSetIsPending('lang', true)();
         }).catch(error => {
-            setIsPendingCategory(false);
+            console.log(error);
+            handleSetIsPending('lang', true)();
         });
     }
+
+    // Handle save info
     const handleSave = async () => {
+        handleSetIsPending('save', false)();
         courseService.updateOne(id, {
             Title: info.Title,
             Sub_Description: info.Sub_Description,
@@ -66,9 +101,19 @@ const BasicInfoPanel = ({ id, course, loading }) => {
             Language_Id: info.Language.Id,
             Is_Completed: course.Is_Completed,
         }).then(response => {
-            console.log('Create', response);
+            let dic = { ...course, ...info };
+            setCourse(dic);
+            setSnackContent('Updated');
+            setSnackType('success');
+            setOpenSnack(true);
+            handleSetIsPending('save', true)();
+            return response;
         }).catch(error => {
             console.log(error);
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            handleSetIsPending('save', true)();
         })
     }
 
@@ -106,7 +151,7 @@ const BasicInfoPanel = ({ id, course, loading }) => {
                             multiline
                             variant="outlined"
                             value={info?.Sub_Description || ''}
-                            onChange={handleChange('Sub-Description')}
+                            onChange={handleChange('Sub_Description')}
                         />
                     }
                     {loading
@@ -124,7 +169,8 @@ const BasicInfoPanel = ({ id, course, loading }) => {
                                 <MenuItem key={info?.Category?.Id} value={info?.Category}>
                                     <em>{info?.Category?.Name}</em>
                                 </MenuItem>
-                                {isPendingCategory ? <Skeleton variant='h6'></Skeleton>
+                                {isPending.includes('category') ?
+                                    <Skeleton width='100%' height='50px'><MenuItem key={'ske'} /></Skeleton>
                                     : categoriesTree?.map(category => (
                                         category.Id !== info?.Category?.Id && <MenuItem key={category.Id} value={category}>
                                             {category.Name}
@@ -148,27 +194,45 @@ const BasicInfoPanel = ({ id, course, loading }) => {
                                 <MenuItem key={info?.Language?.Id} value={info?.Language}>
                                     <em>{info?.Language?.Name}</em>
                                 </MenuItem>
-                                {languagesTree?.map(lang => (
-                                    lang.Id !== info?.Language?.Id && <MenuItem key={lang.Id} value={lang}>
-                                        {lang.Name}
-                                    </MenuItem>
-                                ))}
+                                {isPending.includes('lang')
+                                    ? <Skeleton width='100%' height='50px'><MenuItem key={'ske'} /></Skeleton>
+                                    : languagesTree?.map(lang => (
+                                        lang.Id !== info?.Language?.Id && <MenuItem key={lang.Id} value={lang}>
+                                            {lang.Name}
+                                        </MenuItem>
+                                    ))}
                             </Select>
                         </FormControl>
                     }
                 </Grid>
             </Container>
 
-            <Container className={classes.marginContainer}>
+            <Container
+                className={classes.marginContainer}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center'
+                }}>
                 <Button
                     variant='outlined'
                     color='primary'
                     onClick={handleSave}
+                    disabled={isPending.includes('save')}
                 >
                     Save
                 </Button>
+                {isPending.includes('save') && <CircularProgress color='primary' size='20px' style={{ marginLeft: 10 }} />}
             </Container>
-
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={4000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnack} severity={snackType}>
+                    {snackContent}
+                </Alert>
+            </Snackbar>
         </div >
     )
 }

@@ -19,7 +19,7 @@ export const useStyles = makeStyles((theme) => ({
     },
     /* rgb(245, 247, 248)*/
     outerBanner: (props) => {
-        if (props.isPending) {
+        if (props.isPending || props.error) {
             return {
                 minHeight: 660,
                 paddingTop: 250,
@@ -35,7 +35,7 @@ export const useStyles = makeStyles((theme) => ({
         }
     },
     banner: (props) => {
-        if (props.isPending || props.loading) {
+        if (props.isPending || props.loading || props.error) {
             return { padding: 30 }
         }
         const color = theme.palette.type === 'dark' ? props.data?.darkMuted : props.data?.lightMuted;

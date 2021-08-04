@@ -1,56 +1,60 @@
-import { useState, useEffect, Fragment } from 'react'
-import Typography from '@material-ui/core/Typography';
+import {
+    useState,
+    useEffect,
+    Fragment
+} from 'react'
+
+import {
+    ListItem,
+    Divider,
+    Typography,
+    TextField,
+    Button,
+    Grid,
+    Container,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    List,
+    Tab,
+    Step,
+    StepLabel,
+    StepConnector,
+    Stepper,
+    Backdrop,
+    Snackbar,
+    CircularProgress,
+} from '@material-ui/core';
+
+import {
+    Skeleton,
+    TabPanel,
+    TabList,
+    TabContext,
+    Alert,
+} from '@material-ui/lab';
+import {
+    Link,
+    Switch,
+    Route,
+    useRouteMatch,
+    useHistory,
+    useParams,
+} from 'react-router-dom';
+
 import { useStyles } from './styles';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import { Editor } from 'react-draft-wysiwyg';
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertToRaw } from 'draft-js';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import IconButton from '@material-ui/core/IconButton';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import categoryService from '../../services/category.service';
-import listToTree from '../../utils/listToTree';
-import languageService from '../../services/language.service';
-import authService from '../../services/auth.service';
+
+
 import courseService from '../../services/course.service';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Link, Switch, Route, useRouteMatch } from 'react-router-dom';
-import lectureService from '../../services/lecture.service';
-import sectionService from '../../services/section.service';
-import EditRoundedIcon from '@material-ui/icons/EditRounded';
-import mediaService from '../../services/media.service';
-import { withStyles } from '@material-ui/core/styles';
-import ListItem from '@material-ui/core/ListItem';
+import categoryService from '../../services/category.service';
+import languageService from '../../services/language.service';
 import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
-import Divider from '@material-ui/core/Divider';
-import Pagination from '@material-ui/lab/Pagination';
-import Chip from '@material-ui/core/Chip';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { useLocation, useHistory, useParams } from 'react-router-dom';
-import { Card } from '@material-ui/core';
-import useGetParameter from '../../utils/useGetParameter';
+
 
 import { ROUTES } from '../../config/config';
-import Tab from '@material-ui/core/Tab';
-import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
-import TabPanel from '@material-ui/lab/TabPanel';
-import Tabs from '@material-ui/core/Tabs';
-import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { Fab, Stepper, Step, StepLabel, StepConnector } from '@material-ui/core';
+
+import { } from '@material-ui/core';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
 
 import ImagePanel from './ImagePanel';
@@ -58,22 +62,6 @@ import DescriptionPanel from './DescriptionPanel';
 import CreateLecturePanel from './CreateLecturePanel';
 import BasicInfoPanel from './BasicInfoPanel';
 import PricingAndPublicPanel from './PricingAndPublicPanel';
-const BorderLinearProgress = withStyles((theme) => ({
-    root: {
-        height: 40,
-        width: '100%',
-        borderRadius: 5,
-    },
-    colorPrimary: {
-        backgroundColor: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
-    },
-    bar: {
-        borderRadius: 5,
-        backgroundColor: '#1a90ff',
-    },
-}))(LinearProgress);
-
-
 
 const CreateCourse = () => {
     const history = useHistory();
@@ -85,7 +73,32 @@ const CreateCourse = () => {
     });
     const [categoriesTree, setCategoriesTree] = useState([]);
     const [languagesTree, setLanguagesTree] = useState([]);
-    const [isPending, setIsPending] = useState(false);
+    const [isPending, setIsPending] = useState([]);
+
+    const [openSnack, setOpenSnack] = useState(false);
+    const [snackContent, setSnackContent] = useState(null);
+    const [snackType, setSnackType] = useState('success');
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return event;
+        }
+        setOpenSnack(false);
+    };
+
+    const handleSetIsPending = (index, loaded) => () => {
+        let array = [...isPending];
+
+        if (loaded) {
+            let ix = isPending.indexOf(index)
+            if (ix !== -1) {
+                array.splice(ix, 1);
+            }
+        } else {
+            array.push(index);
+        }
+        setIsPending(array);
+    }
 
     const handleChange = (key) => (event) => {
         let dic = { ...info };
@@ -94,23 +107,31 @@ const CreateCourse = () => {
     }
 
     const handleLoadCategory = () => {
-        setIsPending(true)
+        handleSetIsPending('category', false)();
         categoryService.getAll().then(response => {
-            const categoriesArray = response.data.message.listAllResponse;
-            if (categoriesArray !== undefined) { setCategoriesTree(categoriesArray); }
-            setIsPending(false)
+            const categoriesArray = response.listAllResponse;
+            if (categoriesArray !== undefined) {
+                setCategoriesTree(categoriesArray);
+            }
+            handleSetIsPending('category', true)();
         }).catch(error => {
-            setIsPending(false);
+            handleSetIsPending('category', true)();
+            console.log(error);
         });
     }
+
+    // Handle load languages
     const handleLoadLang = () => {
-        setIsPending(true)
+        handleSetIsPending('lang', false)();
         languageService.getAll().then(response => {
-            const languagesArray = response.data.message.listAllResponse;
-            if (languagesArray !== undefined) { setLanguagesTree(languagesArray); }
-            setIsPending(false)
+            const languagesArray = response.listAllResponse;
+            if (languagesArray !== undefined) {
+                setLanguagesTree(languagesArray);
+            }
+            handleSetIsPending('lang', true)();
         }).catch(error => {
-            setIsPending(false);
+            console.log(error);
+            handleSetIsPending('lang', true)();
         });
     }
 
@@ -193,7 +214,8 @@ const CreateCourse = () => {
                         onOpen={handleLoadCategory}
                     >
 
-                        {isPending ? <Skeleton variant='h6'></Skeleton>
+                        {isPending.includes('category')
+                            ? <Skeleton width='100%' height='50px'><MenuItem key={'ske'} /></Skeleton>
                             : categoriesTree?.map(category => (
                                 <MenuItem key={category.Id} value={category.Id}>
                                     {category.Name}
@@ -216,11 +238,13 @@ const CreateCourse = () => {
                         label="Language"
                         onOpen={handleLoadLang}
                     >
-                        {languagesTree?.map(lang => (
-                            <MenuItem key={lang.Id} value={lang.Id}>
-                                {lang.Name}
-                            </MenuItem>
-                        ))}
+                        {isPending.includes('lang')
+                            ? <Skeleton width='100%' height='50px'><MenuItem key={'ske'} /></Skeleton>
+                            : languagesTree?.map(lang => (
+                                <MenuItem key={lang.Id} value={lang.Id}>
+                                    {lang.Name}
+                                </MenuItem>
+                            ))}
                     </Select>
                 </FormControl>
             default:
@@ -244,16 +268,24 @@ const CreateCourse = () => {
         setActiveStep(0);
     };
     const handleSave = () => {
+        handleSetIsPending('save', false)();
         courseService.postOne({
             Title: info.Title,
             Sub_Description: info.Sub_Description,
             Category_Id: info.Category_Id,
             Language_Id: info.Language_Id,
         }).then(response => {
-            console.log('Create', response);
-            return history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`)
+            setSnackContent('Added');
+            setSnackType('success');
+            setOpenSnack(true);
+            handleSetIsPending('save', true)();
+            return setTimeout(history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`), 1000)
         }).catch(error => {
             console.log(error);
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            handleSetIsPending('save', true)();
         })
     }
     return (
@@ -307,6 +339,19 @@ const CreateCourse = () => {
                     </Fragment>
                 )}
             </Grid>
+            <Snackbar
+                open={openSnack}
+                autoHideDuration={4000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnack} severity={snackType}>
+                    {snackContent}
+                </Alert>
+            </Snackbar>
+            <Backdrop open={isPending.includes('save')} className={classes.backdrop} >
+                <CircularProgress color='primary' />
+            </Backdrop>
         </div >
     )
 }
@@ -336,46 +381,48 @@ const EditCourse = () => {
     const classes = useStyles();
     return (
         <Container className={classes.tabsRoot}>
-            <TabContext value={value} >
-                <TabList
-                    orientation="vertical"
-                    variant="fullWidth"
-                    onChange={handleChange}
-                    className={classes.tabs}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    aria-label="edit-course">
-                    <Tab label="Course info" value='0' />
-                    <Tab label="Lectures" value='1' />
-                    <Tab label="Description" value='2' />
-                    <Tab label="Image" value='3' />
-                    <Tab label="Pricing and Public" value='4' />
-                </TabList>
-                <TabPanel value='0'><BasicInfoPanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
-                <TabPanel value='1'><CreateLecturePanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
-                <TabPanel value='2'><DescriptionPanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
-                <TabPanel value='3'><ImagePanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
-                <TabPanel value='4'><PricingAndPublicPanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
-            </TabContext>
+            {error ? <Typography variant='h5'>error</Typography>
+                : <TabContext value={value} >
+                    <TabList
+                        orientation="vertical"
+                        variant="fullWidth"
+                        onChange={handleChange}
+                        className={classes.tabs}
+                        indicatorColor="primary"
+                        textColor="primary"
+                        aria-label="edit-course">
+                        <Tab label="Course info" value='0' />
+                        <Tab label="Lectures" value='1' />
+                        <Tab label="Description" value='2' />
+                        <Tab label="Image" value='3' />
+                        <Tab label="Pricing and Public" value='4' />
+                    </TabList>
+                    <TabPanel value='0'><BasicInfoPanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
+                    <TabPanel value='1'><CreateLecturePanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
+                    <TabPanel value='2'><DescriptionPanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
+                    <TabPanel value='3'><ImagePanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
+                    <TabPanel value='4'><PricingAndPublicPanel id={id} course={course} loading={isPending} setCourse={setCourse} /></TabPanel>
+                </TabContext>
+            }
         </Container >
     )
 }
 
-const Dashboard = ({ url }) => {
+const Dashboard = ({ url, path }) => {
     const classes = useStyles();
 
     const [courses, setCourses] = useState([]);
-    const [isPending, setIsPending] = useState(true);
+    const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState(null);
+
+
 
 
     useEffect(() => {
         setIsPending(true);
-        setTimeout(() => { console.log('test'); }, 3000);
 
         courseService.getCoursesOfInstructor()
             .then(response => {
-                console.log(response);
                 const listCourses = response.listAllResponse;
                 if (listCourses?.length === 0) {
                     throw Error('No courses');
@@ -395,7 +442,11 @@ const Dashboard = ({ url }) => {
         <div>
             <Typography variant="h3" className={classes.bigTitle}>Instructor dashboard</Typography>
             <Container className={classes.section}>
-                <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
+                <Grid
+                    container
+                    alignItems="center"
+                    zeroMinWidth
+                    style={{ justifyContent: 'space-between', padding: '0 30px 0 30px' }}>
                     <Typography
                         variant="h4"
                         className={classes.title}
@@ -407,7 +458,7 @@ const Dashboard = ({ url }) => {
                         variant="contained"
                         startIcon={<AddRoundedIcon />}
                         component={Link}
-                        to={`${url}${ROUTES.createCourse}`}
+                        to={`${path}${ROUTES.createCourse}`}
                     >
                         New course
                     </Button>
@@ -423,17 +474,22 @@ const Dashboard = ({ url }) => {
                 <List style={{ padding: 20 }}>
                     {isPending
                         ? <Skeleton height='100px' width='auto'><ListItem /></Skeleton>
-                        : courses?.map((course, index) =>
-                            <Fragment key={index}>
-                                <ListItem key={index}>
-                                    <ProductCardH course={course} linkTo={`${url}${ROUTES.editCourse}/${course.Id}`} />
-                                    <Typography variant="h6">
-                                        {course.Is_Completed
-                                            ? 'COMPLETE' : "DRAFT"}
-                                    </Typography>
-                                </ListItem>
-                                <Divider variant="middle" />
-                            </Fragment>)
+                        : error
+                            ? <Typography variant='h5'>error</Typography>
+                            : courses?.map((course, index) =>
+                                <Fragment key={index}>
+                                    <ListItem key={index}>
+                                        <ProductCardH
+                                            hidePrice
+                                            course={course}
+                                            linkTo={`${path}${ROUTES.editCourse}/${course.Id}`} />
+                                        <Typography variant="h6">
+                                            {course.Is_Completed
+                                                ? 'COMPLETE' : "DRAFT"}
+                                        </Typography>
+                                    </ListItem>
+                                    <Divider variant="middle" />
+                                </Fragment>)
                     }
                 </List>
             </Container >
@@ -448,13 +504,13 @@ function Instructor() {
         <div>
             <Switch>
                 <Route path={`${path}`} exact>
-                    <Dashboard url={url} />
+                    <Dashboard url={url} path={path} />
                 </Route>
                 <Route path={`${path}${ROUTES.createCourse}`}>
-                    <CreateCourse url={url} />
+                    <CreateCourse url={url} path={path} />
                 </Route>
                 <Route path={`${path}${ROUTES.editCourse}/:id`}>
-                    <EditCourse url={url} />
+                    <EditCourse url={url} path={path} />
                 </Route>
             </Switch>
         </div>

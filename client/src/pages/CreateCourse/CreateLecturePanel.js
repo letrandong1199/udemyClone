@@ -14,7 +14,6 @@ import {
     FormGroup,
     Switch,
     FormControlLabel,
-    List,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
@@ -51,7 +50,7 @@ const LectureCard = ({
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
-            return;
+            return event;
         }
         setOpenSnack(false);
     };
@@ -110,7 +109,7 @@ const LectureCard = ({
         handleSetIsPending(`media-${index}-${indexMedia}`, false)();
 
         const changed = event.target.checked;
-        mediaService.updateOne(lecture.Media[index].Id, {
+        mediaService.updateOne(lecture.Media[indexMedia].Id, {
             Is_Preview: changed,
             Lecture_Id: lecture.Id,
         }).then(response => {
@@ -121,7 +120,6 @@ const LectureCard = ({
             setSnackType('success');
             setOpenSnack(true);
             handleSetIsPending(`media-${index}-${indexMedia}`, true)();
-            console.log(response);
         }).catch(error => {
             setSnackContent(error.message);
             setSnackType('error');
@@ -141,7 +139,6 @@ const LectureCard = ({
             setSnackType('success');
             setOpenSnack(true);
             handleSetIsPending(`media-${index}-${indexMedia}`, true)();
-            console.log(response);
         }).catch(error => {
             setSnackContent(error.message);
             setSnackType('error');
@@ -150,8 +147,7 @@ const LectureCard = ({
             console.log(error);
         })
     }
-    console.log('In Lecture', editable);
-    console.log(lecture);
+
     return (
         <Card
             style={{
@@ -208,9 +204,10 @@ const LectureCard = ({
                 }
             </Grid>
             <Grid container style={{ margin: 10 }}>
+
                 {lecture.Media && lecture.Media.length > 0
                     ? lecture.Media.map((media, indexMedia) => {
-                        return <ListItem>
+                        return <ListItem key={indexMedia}>
                             <VideoLibraryIcon size='large' />
                             {!isPending.includes(`media-${index}-${indexMedia}`) &&
                                 <Fragment>
@@ -264,7 +261,7 @@ const LectureCard = ({
                                     size='small'
                                     variant='outlined'
                                     accept="video/*"
-                                    id={`upload-video-${index}`}
+                                    id={`upload-video-${index}-name`}
                                     inputProps={{ readOnly: true }}
                                     value={isPending.includes(index)
                                         ? `${progress}%`
@@ -381,7 +378,7 @@ const SectionCard = ({
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
-            return;
+            return event;
         }
         setOpenSnack(false);
     };
@@ -427,6 +424,7 @@ const SectionCard = ({
                 setSnackType('success');
                 setOpenSnack(true);
                 setIsPending(false);
+                return response;
             }).catch(error => {
                 console.log('err', error);
                 setSnackContent(error.message);
@@ -443,10 +441,9 @@ const SectionCard = ({
 
     const handleSaveLecture = (index) => () => {
         setIsPending(true)
-        console.log('save lecture', index);
+
         if (newLecture) {
             lectureService.postOne({ Title: newLecture.Title, Section_Id: section.Id }).then((response) => {
-                console.log('Res', response);
                 setIsPending(false);
                 let array = [...lectures, response.New_Lecture];
                 setLectures(array);
@@ -468,7 +465,7 @@ const SectionCard = ({
 
         } else if (editLecture) {
             lectureService.updateOne(editLecture.Id, { Title: editLecture.Title, Section_Id: section.Id }).then((response) => {
-                console.log('Res', response);
+
                 setIsPending(false);
                 let array = [...lectures];
                 array[index] = editLecture;
@@ -555,7 +552,6 @@ const SectionCard = ({
                     inputProps={
                         { readOnly: !editableLecture.includes(`lecture-name-edit`) }
                     }
-                    InputProps={{ disableUnderline: !editableLecture.includes(`section-name-edit`) }}
                     onChange={handleChangeLecture('edit')}
                     style={{ margin: 10 }}
                 />
@@ -630,7 +626,7 @@ const SectionCard = ({
         </Grid>
 
         <Backdrop open={isPending} className={classes.backdrop}>
-            <CircularProgress color="primary" />
+            <CircularProgress color='primary' />
         </Backdrop>
         <Snackbar
             open={openSnack}
@@ -724,9 +720,7 @@ const CreateLecturePanel = ({ id, course, loading, setCourse }) => {
     }
     const handleSave = (index) => () => {
         setIsPending(true)
-        console.log('save');
         if (newSection) {
-            setTimeout(() => { console.log('test') }, 5000);
             sectionService.postOne({ Name: newSection.Name, Course_Id: course.Id }).then((response) => {
                 console.log('Res', response);
 
@@ -750,10 +744,9 @@ const CreateLecturePanel = ({ id, course, loading, setCourse }) => {
             })
 
         } else if (editSection) {
-            setTimeout(() => { console.log('test') }, 5000);
 
             sectionService.updateOne(editSection.Id, { Name: editSection.Name, Course_Id: course.Id }).then((response) => {
-                console.log('Res', response);
+
                 let array = [...sections];
                 array[index] = editSection;
                 setSections(array);
@@ -821,10 +814,9 @@ const CreateLecturePanel = ({ id, course, loading, setCourse }) => {
                         inputProps={
                             {
                                 readOnly: !editable.includes(`section-name-edit`),
-                                disableUnderline: true
                             }
                         }
-                        InputProps={{ disableUnderline: !editable.includes(`section-name-edit`) }}
+
                         onChange={handleChange('edit')}
                         style={{ margin: 10 }}
                     />
@@ -863,7 +855,7 @@ const CreateLecturePanel = ({ id, course, loading, setCourse }) => {
             }
             <Button onClick={handleAddSection} startIcon={<AddRoundedIcon />}>Add section</Button>
             <Backdrop open={isPending} className={classes.backdrop}>
-                <CircularProgress color="inherit" />
+                <CircularProgress color='primary' />
             </Backdrop>
             <Snackbar
                 open={openSnack}

@@ -31,7 +31,7 @@ class SectionService {
                             }
                         })
                         .catch(error => {
-
+                            console.log(error);
                         })
                 }
                 return Promise.reject(error);
@@ -39,7 +39,6 @@ class SectionService {
         );
     };
     getAll(id) {
-        console.log("Cal service");
         return axios.get(API_URL + '/sections', { headers: authHeader() })
     };
     getById(courseId) {
@@ -52,11 +51,9 @@ class SectionService {
             })
     };
     postOne(data) {
-        console.log(data);
         return axios
             .post(API_URL + '/sections', data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== CREATE_SECTION.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
@@ -67,7 +64,6 @@ class SectionService {
         return axios
             .put(API_URL + '/sections/' + id, data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== UPDATE_SECTION.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
@@ -78,7 +74,6 @@ class SectionService {
         return axios
             .delete(API_URL + '/sections/' + id, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== DELETE_SECTION.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }

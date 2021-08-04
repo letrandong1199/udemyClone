@@ -32,7 +32,7 @@ class LectureService {
                             }
                         })
                         .catch(error => {
-
+                            console.log(error);
                         })
                 }
                 return Promise.reject(error);
@@ -40,7 +40,6 @@ class LectureService {
         );
     };
     getAll() {
-        console.log("Cal service");
         return axios.get(API_URL + '/lectures', { headers: authHeader() })
     };
     getById(id) {
@@ -56,7 +55,6 @@ class LectureService {
         return axios
             .post(API_URL + '/lectures', data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== CREATE_LECTURE.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
@@ -67,7 +65,6 @@ class LectureService {
         return axios
             .put(API_URL + '/lectures/' + id, data, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== UPDATE_LECTURE.SUCCESS) {
                     throw new Error(response.data.message.Code);
                 }
@@ -78,7 +75,6 @@ class LectureService {
         return axios
             .delete(API_URL + '/lectures/' + id, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 if (response.data.message.Code !== DELETE_LECTURE.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }

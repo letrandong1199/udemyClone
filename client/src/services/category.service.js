@@ -1,5 +1,6 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
+import { GET_ALL_CATEGORIES } from '../config/config';
 
 const API_URL = 'http://localhost:8080/api/category-controller';
 const API_URL_USER = 'http://localhost:8080/api/user-controller';
@@ -7,7 +8,6 @@ class CategoryService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
-                console.log('Hello');
                 return response;
             },
             function (error) {
@@ -33,7 +33,12 @@ class CategoryService {
         );
     };
     getAll() {
-        return axios.get(API_URL + '/categories')
+        return axios.get(API_URL + '/categories').then(response => {
+            if (response.data.message.Code !== GET_ALL_CATEGORIES.SUCCESS) {
+                throw Error(response.data.message);
+            }
+            return response.data.message;
+        })
     }
     getOne(id) {
         return axios.get(API_URL + '/categories/' + id)

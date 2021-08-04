@@ -79,6 +79,17 @@ export const CREATE_CATEGORY = {
     PARENT_IS_NOT_EXIST: "parent_is_not_exist",
 };
 
+export const GET_ALL_CATEGORIES = {
+    SUCCESS: "get_all_category_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ALL_LANGUAGES = {
+    SUCCESS: "get_all_language_success",
+    SERVER_ERROR: "server_error",
+};
+
+
 export const UPDATE_USER = {
     SUCCESS: "update_user_succsess",
     SERVER_ERROR: "server_error",
@@ -303,6 +314,11 @@ export const CREATE_COURSE = {
     AUTHOR_IS_NOT_EXIST: "author_is_not_exist",
     LANGUAGE_IS_NOT_EXIST: "language_is_not_exist",
     CATEGORY_IS_NOT_EXIST: "category_is_not_exist",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ALL_PROMOTES = {
+    SUCCESS: "get_all_promote_success",
     SERVER_ERROR: "server_error",
 };
 
