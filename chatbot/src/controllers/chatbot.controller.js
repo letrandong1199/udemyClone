@@ -14,6 +14,7 @@ async function handleMessage(sender_psid, received_message) {
 
     // Check if the message contains text
     if (searchMode.includes(sender_psid)) {
+        searchMode.splice(searchMode.indexOf(sender_psid), 1);
         const keyword = received_message.text
         await chatbotService.handleSearch(sender_psid, keyword);
     }
