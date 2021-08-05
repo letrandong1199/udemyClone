@@ -99,6 +99,7 @@ const courseService = {
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneCourseResponseEnum.SERVER_ERROR };
       }
+      console.log('Id ne: ', ret[0])
       newCourse.Id = ret[0];
       return { Code: createOneCourseResponseEnum.SUCCESS, newCourse };
     } catch (e) {
