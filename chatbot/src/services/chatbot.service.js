@@ -260,11 +260,19 @@ function returnTemplateMedia(course) {
                 "attachment": {
                     "type": "template",
                     "payload": {
-                        "template_type": "media",
+                        "template_type": "generic",
                         "elements": [
                             {
-                                "media_type": "image",
-                                "url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/106293_mqhwic.jpg",
+                                "title": "Welcome!",
+                                "image_url": course.Thumbnail_Small,
+                                "buttons": [
+                                    {
+                                        "type": "web_url",
+                                        "title": course.Price === 0 ? "Enroll for Free" : `Enroll for ${course.Price}$`,
+                                        "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
+
+                                    }
+                                ]
                             }
                         ]
                     }
