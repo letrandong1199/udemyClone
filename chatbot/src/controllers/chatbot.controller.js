@@ -10,6 +10,7 @@ const searchMode = [];
 // Handles messages events
 async function handleMessage(sender_psid, received_message) {
     let response;
+    console.log(searchMode);
 
     // Check if the message contains text
     if (searchMode.includes(sender_psid)) {
@@ -52,8 +53,14 @@ async function handlePostback(sender_psid, received_postback) {
     } else if (payload === 'GET_STARTED' || payload === 'RESTART') {
         await chatbotService.handleGetStarted(sender_psid);
     } else if (payload === 'SEARCH') {
-        await chatbotService.handleSearch(sender_psid);
         searchMode.push(sender_psid);
+        response = {
+            "text": 'What do you want to do learn?'
+        }
+        // Sends the response message
+        callSendAPI(sender_psid, response);
+    } else {
+
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);

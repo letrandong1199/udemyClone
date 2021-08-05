@@ -150,7 +150,7 @@ function returnTemplate() {
                 "elements": [
                     {
                         "title": "Welcome!",
-                        "image_url": "https://www.studytienganh.vn/upload/2021/06/106293.jpg",
+                        "image_url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/106293_mqhwic.jpg",
                         "subtitle": "What's next?",
                         "buttons": [
                             {
@@ -215,6 +215,8 @@ function returnTemplateCourse(categoryId) {
                         }
                     }))
                     dataTemplate.push({
+                        "title": "What else?",
+                        "image_url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/what-career-logo-v2_vfxwjo.jpg",
                         "buttons": [
                             {
                                 "type": "web_url",
@@ -288,6 +290,8 @@ function returnTemplateCourseSearch(keyword) {
                         }
                     }))
                     dataTemplate.push({
+                        "title": "What else?",
+                        "image_url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/what-career-logo-v2_vfxwjo.jpg",
                         "buttons": [
                             {
                                 "type": "web_url",
