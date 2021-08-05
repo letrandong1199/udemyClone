@@ -263,7 +263,7 @@ const userService = {
           pass: "Udemyclone1234", // generated ethereal password
         },
       });
-      const url = `http://localhost:8080/api/user-controller/confirm-email/${token}`;
+      const url = `https://udemy-apis.herokuapp.com/api/user-controller/confirm-email/${token}`;
       const mail = {
         from: "udemyclone2021@gmail.com",
         to: `${request.Name} <${request.Email}>`,
