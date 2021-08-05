@@ -82,8 +82,7 @@ async function callSendAPI(sender_psid, response) {
         },
         "message": response
     }
-    await handleMarkSeen(sender_psid);
-    await handleTypingOn(sender_psid);
+
     // Send the HTTP request to the Messenger Platform
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
@@ -104,7 +103,6 @@ function returnCategories() {
         try {
             axios.get('https://udemy-apis.herokuapp.com/api/category-controller/categories')
                 .then(async apiResponse => {
-                    console.log(apiResponse);
                     let data = apiResponse.data.message.listAllResponse;
                     let listCategories = await Promise.all(data.map(category => {
                         return {
@@ -113,7 +111,6 @@ function returnCategories() {
                             "payload": `CATEGORIES-${category.Id}`,
                         }
                     }))
-                    console.log(listCategories);
                     let response = {
                         "text": "Pick a category:",
                         "quick_replies": listCategories
@@ -129,8 +126,9 @@ function returnCategories() {
 function handleListCategories(sender_psid) {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = returnCategories();
-
+            let response = await returnCategories();
+            await handleMarkSeen(sender_psid);
+            await handleTypingOn(sender_psid);
             await callSendAPI(sender_psid, response);
 
             resolve('OK');
