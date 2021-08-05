@@ -263,7 +263,7 @@ const userService = {
           pass: "Udemyclone1234", // generated ethereal password
         },
       });
-      const url = `https://udemy-apis.herokuapp.com/api/user-controller/confirm-email/${token}`;
+      const url = `http://localhost:8080/api/user-controller/confirm-email/${token}`;
       const mail = {
         from: "udemyclone2021@gmail.com",
         to: `${request.Name} <${request.Email}>`,
@@ -300,7 +300,7 @@ const userService = {
         const newUser = {
           Email: decode.user.Email,
           Name: decode.user.Name,
-          Password: bcrypt.hashSync(decode.user.Password, 8),
+          Password: decode.user.Password,
           Role_Id: decode.user.Role_Id,
         };
         ret = await _entityRepository("Users").addEntity(newUser);

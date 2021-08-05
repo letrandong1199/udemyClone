@@ -12,6 +12,7 @@ const updateOneCategoryValidator = require("../../api/validators/categoryValidat
 const categoryRepository = require("../../repositories/category.repository");
 const _entityRepository = require("../../repositories/entity.repository");
 const courseRepository = require("../../repositories/course.repository");
+const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 const categoryService = {
   // Update one category
   async updateOneCategory(request) {
@@ -161,6 +162,30 @@ const categoryService = {
       return { Code: createOneCategoryResponseEnum.SUCCESS };
     } catch (e) {
       console.log(e);
+    }
+  },
+
+  async getMostRegister(request) {
+    try {
+      const listMostRegister =
+        await enrolledcourseRepository.getCategoriesMostRegister();
+      console.log(listMostRegister);
+      const listCategories = await Promise.all(
+        listMostRegister.map(async (item) => {
+          let course = await _entityRepository("Categories").getEntity(
+            item.Category_Id
+          );
+          return course[0];
+        })
+      );
+
+      return {
+        Code: getAllCategoryResponseEnum.SUCCESS,
+        listAllResponse: listCategories,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCategoryResponseEnum.SERVER_ERROR };
     }
   },
 };

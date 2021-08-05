@@ -10,8 +10,8 @@ router.post("/sign-up", async (req, res) => {
   res.json({ message }).end();
 });
 router.post("/confirm-email/:token", async (req, res) => {
-  const message = await userService.confirmEmail(req);
-  res.json({ message }).end();
+  await userService.confirmEmail(req);
+  res.redirect("http://localhost:3000/?auth=sign-in")
 });
 router.put("/change-password", authUser, async (req, res) => {
   const message = await userService.changePassword(req);

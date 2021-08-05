@@ -10,8 +10,8 @@ exports.up = function (knex) {
       table.string("Name").notNullable();
       table.string("Password").notNullable();
       table.integer("Role_Id").unsigned().references("Id").inTable("Role");
-      table.date("Created_At").defaultTo(knex.fn.now());
-      table.date("Updated_At").defaultTo(knex.fn.now());
+      table.timestamp("Created_At").defaultTo(knex.fn.now());
+      table.timestamp("Updated_At").defaultTo(knex.fn.now());
     })
     .createTable("Categories", function (table) {
       table.increments("Id").primary();
@@ -29,8 +29,8 @@ exports.up = function (knex) {
     .createTable("Promotes", function (table) {
       table.increments("Id").primary();
       table.float("Promote").notNullable().defaultTo(0.5);
-      table.date("Start_Time").notNullable().defaultTo(knex.fn.now());
-      table.date("End_Time");
+      table.timestamp("Start_Time").notNullable().defaultTo(knex.fn.now());
+      table.timestamp("End_Time");
     })
 
     .createTable("Courses", function (table) {
@@ -61,8 +61,8 @@ exports.up = function (knex) {
         .unsigned()
         .references("Id")
         .inTable("Languages");
-      table.date("Update_At").defaultTo(knex.fn.now());
-      table.date("Create_At").defaultTo(knex.fn.now());
+      table.timestamp("Update_At").defaultTo(knex.fn.now());
+      table.timestamp("Create_At").defaultTo(knex.fn.now());
     })
 
     .createTable("Sections", function (table) {
@@ -114,7 +114,7 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.float("Rating");
-      table.date("Enrolled_Date").defaultTo(knex.fn.now());
+      table.timestamp("Enrolled_Date").defaultTo(knex.fn.now());
       table.primary(["User_Id", "Course_Id"]);
     })
     .then(function (table) {
@@ -129,12 +129,6 @@ exports.up = function (knex) {
                           END; 
                           $BODY$ language plpgsql; `;
 
-        const triggerMysql = `CREATE TRIGGER calAvgRating AFTER INSERT ON enrolled_courses
-                              FOR EACH ROW
-                              UPDATE courses
-                              SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
-                              WHERE Course_Id = NEW.Course_Id)  
-                              WHERE Id = NEW.Course_Id; `;
 
         knex.raw(trigFunc).then(function (response) {
           var trigger = `CREATE TRIGGER calAvgRating  
@@ -156,7 +150,16 @@ exports.up = function (knex) {
                               WHERE Course_Id = NEW.Course_Id)  
                               WHERE Id = NEW.Course_Id; `;
         knex.raw(triggerMysql).then(function (response) {
-          console.log("defined rating trigger");
+          const triggerMysql_1 = `CREATE TRIGGER calAvgRating_1 AFTER UPDATE ON enrolled_courses
+                              FOR EACH ROW
+                              UPDATE courses
+                              SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
+                              WHERE Course_Id = NEW.Course_Id)  
+                              WHERE Id = NEW.Course_Id; `;
+          knex.raw(triggerMysql_1).then(function (response) {
+            console.log("defined rating trigger");
+          })
+
         });
       }
     });
