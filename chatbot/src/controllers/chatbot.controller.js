@@ -13,7 +13,7 @@ async function handleMessage(sender_psid, received_message) {
     if (received_message.text) {
         console.log(received_message)
         if (received_message.quick_reply && received_message.quick_reply.payload) {
-            const prefix = message.quick_reply.payload.split("-");
+            const prefix = received_message.quick_reply.payload.split("-");
             if (message.quick_reply.prefix[0] === "CATEGORY") {
                 await chatbotService.handleGetCoursesByCategory(prefix[1]);
             }
