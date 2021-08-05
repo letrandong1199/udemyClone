@@ -106,6 +106,7 @@ const courseService = {
   },
   async getAllCourse(request) {
     const query = request.query;
+    console.log("Query", query);
     const keyToColName = {
       language: "Language_Id",
       category: "Category_Id",
@@ -145,6 +146,7 @@ const courseService = {
           sort["ColName"] = "Update_At";
           sort["Orderby"] = "desc";
         } else if (keyToColName[value] === "most-register") {
+          console.log("huhuhuhuhuhuhhu");
           sort["ColName"] = "NumberOfEnrolled";
           sort["Orderby"] = "desc";
         } else {
@@ -438,10 +440,13 @@ const courseService = {
           let user = await _entityRepository("Users").getEntity(
             feedback.User_Id
           );
-          let rating = await enrolledcourseRepository.getEnrolledCourseByUserIdAndCourseId({
-            User_Id: user[0].Id,
-            Course_Id: course[0].Id
-          });
+          let rating =
+            await enrolledcourseRepository.getEnrolledCourseByUserIdAndCourseId(
+              {
+                User_Id: user[0].Id,
+                Course_Id: course[0].Id,
+              }
+            );
           return {
             Id: feedback.Id,
             User_Name: user[0].Name,
@@ -463,7 +468,6 @@ const courseService = {
                 lecture.Id
               );
               let listMediaResponse = listMedia.map((media) => {
-
                 if (Boolean(media.Is_Preview) === true) {
                   return {
                     Id: media.Id,
@@ -488,12 +492,12 @@ const courseService = {
         })
       );
       let numberRating = 0;
-      const numberRegister = await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
+      const numberRegister =
+        await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
       if (numberRegister) {
         let count = 0;
         for (item of numberRegister) {
           if (item.Rating !== null) {
-
             count = count + 1;
           }
         }

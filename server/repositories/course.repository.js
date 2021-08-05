@@ -4,7 +4,7 @@ const categoryRepository = require("./category.repository");
 const courseRepository = {
   getCourseByQuery(query, paging, search, sort) {
     let filtered = db("Courses");
-    filtered
+    filtered = filtered
       .from("Courses")
       .leftJoin("Enrolled_Courses", "Courses.Id", "Enrolled_Courses.Course_Id")
       .select(
@@ -41,8 +41,8 @@ const courseRepository = {
         .orWhereIn("Category_Id", search.category);
     }
 
-    if (sort && sort.ColName && sort.OrderBy) {
-      filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
+    if (sort && sort.ColName && sort.Orderby) {
+      filtered = filtered.orderBy(sort.ColName, sort.Orderby);
     }
     if (paging && paging.limit != null && paging.offset != null) {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
