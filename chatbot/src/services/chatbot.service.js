@@ -2,6 +2,7 @@ const request = require('request')
 const axios = require('axios');
 require('dotenv').config();
 
+
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
@@ -102,7 +103,7 @@ async function callSendAPI(sender_psid, response) {
 function returnCategories() {
     return new Promise(function (resolve, reject) {
         try {
-            axios.get('https://udemy-apis.herokuapp.com/api/category-controller/categories')
+            axios.get(`${process.env.API_HOST}/category-controller/categories`)
                 .then(async apiResponse => {
                     let data = apiResponse.data.message.listAllResponse;
                     let listCategories = await Promise.all(data.map(category => {
@@ -214,7 +215,6 @@ function returnTemplateCourse(categoryId) {
                         }
                     }))
                     dataTemplate.push({
-                        "title": "What else?",
                         "buttons": [
                             {
                                 "type": "web_url",
@@ -262,25 +262,71 @@ async function handleGetCoursesByCategory(sender_psid, categoryId) {
     })
 };
 
-function returnMessageAskingKeyword() {
-    let response = {
-        "text": "What do you want to search?",
-        "quick_replies": [
-            {
-                "content_type": "user_email",
-            }
-        ]
-    };
-    return response;
-};
+function returnTemplateCourseSearch(keyword) {
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(`${process.env.API_HOST}/course-controller/courses?search=${keyword}&page=1&limit=9`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.listAllResponse;
+                    let dataTemplate = await Promise.all(data.map(course => {
+                        return {
+                            "title": course.Title,
+                            "image_url": course.Thumbnail_Small,
+                            "subtitle": `${course.Price}$`,
+                            "default_action": {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                "webview_height_ratio": "tall",
+                            },
+                            "buttons": [
+                                {
+                                    "type": "web_url",
+                                    "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                    "title": "View on Website"
+                                }
+                            ]
+                        }
+                    }))
+                    dataTemplate.push({
+                        "buttons": [
+                            {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course?category=${categoryId}`,
+                                "title": "Show more"
+                            },
+                            {
+                                "type": "postback",
+                                "payload": "RESTART",
+                                "title": "Go back"
+                            }
+                        ]
+                    })
+                    console.log(data);
+                    let response = {
+                        "attachment": {
+                            "type": "template",
+                            "payload": {
+                                "template_type": "generic",
+                                "elements": dataTemplate
+                            }
+                        }
+                    };
+                    resolve(response);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 
-function handleSearch(sender_psid) {
+
+function handleSearch(sender_psid, keyword) {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = returnMessageAskingKeyword();
-
+            let response = { "text": `List courses.` };
+            let response2 = await returnTemplateCourseSearch(keyword);
             await callSendAPI(sender_psid, response);
-
+            await callSendAPI(sender_psid, response2);
             resolve('OK');
         } catch (error) {
             console.log(error);

@@ -5,13 +5,18 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const chatbotService = require('../services/chatbot.service');
 
+const searchMode = [];
+
 // Handles messages events
 async function handleMessage(sender_psid, received_message) {
     let response;
 
     // Check if the message contains text
-    if (received_message.text) {
-        console.log(received_message)
+    if (searchMode.includes(sender_psid)) {
+        const keyword = received_message.text
+        await chatbotService.handleSearch(sender_psid, keyword);
+    }
+    else if (received_message.text) {
         if (received_message.quick_reply && received_message.quick_reply.payload) {
             const prefix = received_message.quick_reply.payload.split("-");
             if (prefix[0] === "CATEGORY") {
@@ -21,7 +26,7 @@ async function handleMessage(sender_psid, received_message) {
         // Create the payload for a basic text message
         else {
             response = {
-                "text": `You sent the message: "${received_message.text}". Now send me an image!`
+                "text": `:(:(:(. Sorry, I currently can perform your "${received_message.text}" message.`
             }
             // Sends the response message
             callSendAPI(sender_psid, response);
@@ -48,6 +53,7 @@ async function handlePostback(sender_psid, received_postback) {
         await chatbotService.handleGetStarted(sender_psid);
     } else if (payload === 'SEARCH') {
         await chatbotService.handleSearch(sender_psid);
+        searchMode.push(sender_psid);
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
