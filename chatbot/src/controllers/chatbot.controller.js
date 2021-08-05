@@ -34,6 +34,7 @@ async function handlePostback(sender_psid, received_postback) {
     // Get the payload for the postback
     let payload = received_postback.payload;
     let prefix = payload.split('-')
+    console.log('pay', payload);
     // Set the response based on the postback payload
     if (payload === 'LIST_CATEGORIES') {
         await chatbotService.handleListCategories(sender_psid);
