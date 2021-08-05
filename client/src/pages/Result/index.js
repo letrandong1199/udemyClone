@@ -22,6 +22,7 @@ import Skeleton from '@material-ui/lab/Skeleton';
 import languageService from '../../services/language.service';
 import useGetParameter from '../../utils/useGetParameter'
 import { useLocation, useHistory } from 'react-router-dom';
+import { ROUTES } from '../../config/config';
 
 
 const TabPanel = forwardRef(function TabPanel(props, ref) {
@@ -80,9 +81,59 @@ const StyledTabs = withStyles({
     },
 })((props) => <Tabs {...props} />);
 
-const HighlightSection = ({ courses, isPending }) => {
+const HighlightSection = ({ setTitle, setLoading, }) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
+    const category = useGetParameter('category');
+    const [courses, setCourses] = useState([]);
+    const [courses2, setCourses2] = useState([]);
+    const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setIsPending(true);
+        setLoading(true)
+        const queryString = `category=${category}&sort=most-register&page=1&limit=10`;
+
+        courseService.getByQuery(queryString)
+            .then(response => {
+                const listCourses = response.listAllResponse;
+                if (listCourses?.length === 0) {
+                    throw Error('No courses');
+                }
+                for (let course of listCourses) {
+                    course.Tag = 'Best seller'
+                }
+                setTitle(listCourses[0].Category.Name);
+                setLoading(false);
+                setCourses(listCourses);
+                setIsPending(false);
+            }).catch(error => {
+                console.log(error);
+                setError(error.message);
+                setIsPending(false);
+            })
+
+        const queryString2 = `category=${category}&sort=most-recent&page=1&limit=10`;
+
+        courseService.getByQuery(queryString2)
+            .then(response => {
+                const listCourses = response.listAllResponse;
+                if (listCourses?.length === 0) {
+                    throw Error('No courses');
+                }
+                for (let course of listCourses) {
+                    course.Tag = 'New'
+                }
+                setCourses2(listCourses);
+                setIsPending(false);
+            }).catch(error => {
+                console.log(error);
+                setError(error.message);
+                setIsPending(false);
+            })
+
+    }, [category])
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -97,7 +148,7 @@ const HighlightSection = ({ courses, isPending }) => {
                 centered
                 textColor="primary"
             >
-                <StyledTab label="Most viewed" {...a11yProps(0)} />
+                <StyledTab label="Most popular" {...a11yProps(0)} />
                 <StyledTab label="Most recent" {...a11yProps(1)} />
 
             </StyledTabs>
@@ -107,7 +158,7 @@ const HighlightSection = ({ courses, isPending }) => {
             </TabPanel>
             <TabPanel value={value} index={1}>
                 {isPending ? <Skeleton width='100%' height='100px'></Skeleton>
-                    : <MyCarousel courses={courses} />}
+                    : <MyCarousel courses={courses2} />}
             </TabPanel>
 
         </Container>
@@ -151,7 +202,7 @@ const AllCoursesSection = ({ id }) => {
     useEffect(() => {
         setIsPending(true);
         languageService.getAll().then(response => {
-            const languagesRes = response.data.message.listAllResponse;
+            const languagesRes = response.listAllResponse;
             const langDic = []
             for (let i = 0; i < languagesRes.length; i += 1)
                 langDic.push({ label: languagesRes[i].Name, value: languagesRes[i].Id })
@@ -177,11 +228,11 @@ const AllCoursesSection = ({ id }) => {
             //const queryWithPaging = [...queryArray, { label: 'page', value: page }, { label: 'limit', value: limit }];
             courseService.getByQuery(queryString)
                 .then(response => {
-                    const listCourses = response.data.message.listAllResponse;
+                    const listCourses = response.listAllResponse;
                     if (listCourses?.length === 0) {
                         throw Error('No courses');
                     }
-                    setCount(response.data.message.Count)
+                    setCount(response.Count)
                     setCourses(listCourses);
                     setIsPending(false);
                 }).catch(error => {
@@ -260,7 +311,10 @@ const AllCoursesSection = ({ id }) => {
                     : courses?.map((course, index) =>
                         <Fragment key={index}>
                             <ListItem key={index}>
-                                <ProductCardH course={course} />
+                                <ProductCardH
+                                    course={course}
+                                    loading={isPending}
+                                    linkTo={`${ROUTES.courseDetail}/${course.Id}`} />
                             </ListItem>
                             <Divider variant="middle" />
                         </Fragment>)
@@ -285,48 +339,32 @@ const AllCoursesSection = ({ id }) => {
 
 function Result() {
     const classes = useStyles();
-
-    // Get id by url params
-    const { id } = useParams();
+    const category = useGetParameter('category');
+    const keyword = useGetParameter('search');
 
     const [courses, setCourses] = useState([]);
-    const [isPending, setIsPending] = useState(true);
+    const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState(null);
+    const [title, setTitle] = useState('Not found');
 
-    /*useEffect(() => {
-         setIsPending(true);
-         setTimeout(() => { console.log('test'); }, 5000);
-         courseService.getByQuery([{ label: 'category', value: id }])
-             .then(response => {
-                 console.log('Get', response.data.message.listAllResponse);
-                 const listCourses = response.data.message.listAllResponse;
-                 if (listCourses?.length === 0) {
-                     //throw Error('No courses');
-                 }
-                 setCourses(listCourses);
-                 setIsPending(false);
-             }).catch(error => {
-                 console.log(error);
-                 setError(error);
-                 setIsPending(false);
- 
-             })
-     }, [id])*/
 
     return (
         <div>
-            {isPending && courses
-                ? <Skeleton variant="h3" />
-                : <Typography
-                    variant="h3"
-                    className={classes.bigTitle}> {courses.length !== 0 ? courses[0]?.Category?.Name : 'Not found'}
-                </Typography>
+            <Typography
+                variant="h3"
+                className={classes.bigTitle}
+            >
+                {isPending ? <Skeleton /> : category
+                    ? title
+                    : `Search result for: ${keyword}`
+                }
+            </Typography>
+
+            {error ? <Typography>{error}</Typography>
+                : category && <HighlightSection courses={courses} setLoading={setIsPending} setTitle={setTitle} />
             }
             {error ? <Typography>{error}</Typography>
-                : <HighlightSection courses={courses} isPending={isPending} />
-            }
-            {error ? <Typography>{error}</Typography>
-                : <AllCoursesSection id={id} />
+                : <AllCoursesSection />
             }
         </div>
     )

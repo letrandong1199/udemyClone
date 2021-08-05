@@ -4,9 +4,10 @@ import {
     CREATE_SECTION,
     UPDATE_SECTION,
     GET_SECTION_BY_COURSE_ID,
-    DELETE_SECTION
+    DELETE_SECTION,
+    config,
 } from '../config/config';
-const API_URL = 'http://localhost:8080/api/section-controller';
+const API_URL = `${config.HOST}/${config.SECTION_CONTROLLER}`;
 
 class SectionService {
     constructor() {

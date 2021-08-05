@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import SearchIcon from '@material-ui/icons/Search';
+import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
@@ -145,15 +145,57 @@ const RegisterButton = () => {
     )
 }
 
+const InstructorButton = () => {
+
+    const classes = useStyles();
+
+    return (
+        <Button
+            className={classes.categoriesButton}
+            component={Link}
+            to={`${ROUTES.instructor}`}>
+            Instructor
+        </Button>
+    )
+}
+
+const AdminButton = () => {
+
+    const classes = useStyles();
+
+    return (
+        <Button
+            className={classes.categoriesButton}
+            component={Link}
+            to={`${ROUTES.admin}`}>
+            Admin
+        </Button>
+    )
+}
+
 // Component search bar
 const SearchBar = () => {
+    const history = useHistory();
     const classes = useStyles();
+    const [keyword, setKeyword] = useState();
+
+    const handleClick = () => {
+        history.push(`${ROUTES.course}?search=${keyword}`)
+
+    };
+    const handleEnter = (event) => {
+        if (event.keyCode === 13) {
+            return handleClick();
+        }
+    }
+
     return (
         <div className={classes.searchBar}>
-            <div className={classes.searchIcon}>
-                <SearchIcon />
-            </div>
             <InputBase
+                onKeyDown={handleEnter}
+                autoComplete
+                value={keyword}
+                onChange={(event) => { setKeyword(event.target.value) }}
                 placeholder='What do you want to learn?'
                 classes={{
                     root: classes.inputRoot,
@@ -161,6 +203,12 @@ const SearchBar = () => {
                 }}
                 inputProps={{ 'aria-label': 'search' }}
             />
+            <IconButton
+                onClick={handleClick}
+                className={classes.searchIcon}
+            >
+                <SearchRoundedIcon />
+            </IconButton>
             {/*<Autocomplete
                 freeSolo
                 id="free-solo-2-demo"
@@ -267,78 +315,6 @@ const NestedMenu = (props) => {
     )
 }
 
-/*
-const NestedMenu2 = (props) => {
-    const classes = useStyles();
-    const [anchorEl, setAnchorEl] = useState(null);
-    //const anchorRef = props.anchorRef;
-    const open = Boolean(anchorEl);
-    const id = open ? 'categories-menu' : undefined;
-    const [expanded, setExpanded] = useState(false);
-    const handleClick = async (event) => {
-
-    }
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
-    const handleOpen = (event) => {
-        console.log('Sub', props.anchorRef);
-        setAnchorEl(props.anchorRef)
-    };
-    return (
-        <Fragment>
-            {props.hasChildren && <MenuItem aria-controls={open ? 'menu-list-grow' : undefined}
-                aria-haspopup='true'
-                onClick={handleOpen}
-                title='catg'
-                id='sub'
-            >
-                <ListItemText primary={props.text} className={clsx({ [classes.textExpandOpen]: open })} />
-                <ListItemIcon>
-                    <KeyboardArrowRightRoundedIcon className={clsx(classes.expand, {
-                        [classes.expandOpen]: open,
-                    })}
-                        onClick={handleExpandClick}
-                        aria-expanded={expanded}
-                        aria-label='show more' />
-                </ListItemIcon>
-            </MenuItem>}
-            {!props.hasChildren && <MenuItem
-                aria-controls={open ? 'menu-list-grow' : undefined}
-                aria-haspopup='true'
-                title='catg'
-                id='sub'
-            >
-                <ListItemText primary={props.text} />
-            </MenuItem>}
-
-            <Popover
-                style={{ marginTop: 16 }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-
-                <MenuList autoFocusItem={open} id='menu-list-grow'>
-                    {props.children}
-                </MenuList>
-
-            </Popover>
-        </Fragment >
-    )
-}*/
-
 const CategoryNestedMap = (props) => {
     return (
         <NestedMenu anchorRef={props.anchorRef} category={props.data} hasChildren={props.data.children.length !== 0}>
@@ -372,7 +348,7 @@ const CategoryMenu = (props) => {
         if (!open) {
             setIsPending(true);
             await categoryService.getAll().then(response => {
-                const categoriesArray = response.data.message.listAllResponse;
+                const categoriesArray = response.listAllResponse;
                 const tree = listToTree(categoriesArray, { idCol: 'Id', parentCol: 'Parent_Id' });
                 setCategoriesTree(tree);
                 if (tree.length === 0) {
@@ -571,6 +547,8 @@ function Navbar(props) {
                         <SearchBar />
                         {!isLogin && <RegisterButton />}
                         <Hidden xsDown>
+                            {authService.isInstructor() && <InstructorButton />}
+                            {authService.isAdmin() && <AdminButton />}
                             {isLogin && <ProfileButton handleSignOut={handleSignOut} />}
                             <IconButton onClick={props.handleToggle}>
                                 <FlareRoundedIcon />

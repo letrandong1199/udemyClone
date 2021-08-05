@@ -1,8 +1,8 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { UPDATE_USER, CHANGE_PASSWORD } from '../config/config';
+import { UPDATE_USER, CHANGE_PASSWORD, config } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/user-controller';
+const API_URL = `${config.HOST}/${config.USER_CONTROLLER}`;
 class UserService {
     constructor() {
         axios.interceptors.response.use(

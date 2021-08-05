@@ -58,12 +58,7 @@ const CategoriesBoard = () => {
 
     const handleAdd = () => {
         setIsProcessing(true)
-        setTimeout(() => { console.log('test') }, 3000);
         categoryService.postOne({ Name: name, Parent_Id: parent }).then(response => {
-
-            if (response.data.message.Code !== CREATE_CATEGORY.SUCCESS) {
-                throw Error(response.data.message.Code);
-            }
             setSnackContent('Added');
             setOpenSnack(true);
             setIsProcessing(false)
@@ -84,7 +79,7 @@ const CategoriesBoard = () => {
         setIsPending(true);
         categoryService.getAll().then(response => {
             console.log(response);
-            const list = response.data.message.listAllResponse;
+            const list = response.listAllResponse;
             const resultArray = list.map(elm => {
                 elm['id'] = elm.Id;
                 return elm
@@ -126,14 +121,10 @@ const CategoriesBoard = () => {
     };
     const handleSave = () => {
         setIsProcessing(true)
-        setTimeout(() => { console.log('test') }, 3000);
         categoryService.updateOne(open?.Id, open).then(response => {
             let array = [...categories]; // make a separate copy of the array
             let index = array.indexOf(selected)
-            console.log('Selected', selected);
-            if (response.data.message.Code !== UPDATE_CATEGORY.SUCCESS) {
-                throw Error(response.data.message.Code);
-            }
+
             if (index !== -1) {
                 array.splice(index, 1);
                 array.push(open);
@@ -145,7 +136,6 @@ const CategoriesBoard = () => {
                 setOpen(false);
             }
             setIsProcessing(false)
-            console.log('update', response);
         }).catch(error => {
             console.log(error);
             setError1(error);
@@ -161,9 +151,7 @@ const CategoriesBoard = () => {
         categoryService.deleteOne(open?.Id).then(response => {
             let array = [...categories]; // make a separate copy of the array
             let index = array.indexOf(open)
-            if (response.data.message.Code !== DELETE_CATEGORY.SUCCESS) {
-                throw Error(response.data.message.Code);
-            }
+
             if (index !== -1) {
                 array.splice(index, 1);
                 console.log(array);
@@ -174,7 +162,6 @@ const CategoriesBoard = () => {
                 setOpen(false);
             }
             setIsProcessing(false)
-            console.log('del', response);
         }).catch(error => {
             console.log(error);
             setError1(error);
@@ -197,9 +184,8 @@ const CategoriesBoard = () => {
     const [isPendingCategory, setIsPendingCategory] = React.useState(false);
     const handleLoadCategory = () => {
         setIsPendingCategory(true)
-        console.log("Ngu");
         categoryService.getAll().then(response => {
-            const categoriesArray = response.data.message.listAllResponse;
+            const categoriesArray = response.listAllResponse;
             if (categoriesArray !== undefined) { setCategoriesTree(categoriesArray); }
             setIsPendingCategory(false)
         }).catch(error => {

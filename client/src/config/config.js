@@ -1,10 +1,16 @@
-const config = {
-    "HOST": "http://localhost",
+export const config = {
+    "HOST": "https://udemy-apis.herokuapp.com/api",
     "PORT": "8000",
-    "USER_CONTROLLER": "users",
-    "COURSE_CONTROLLER": "courses",
-    "CATEGORY_CONTROLLER": "categories",
-    "ENROLLED": "enrolled",
+    "USER_CONTROLLER": "user-controller",
+    "COURSE_CONTROLLER": "course-controller",
+    "CATEGORY_CONTROLLER": "category-controller",
+    "ENROLLED_CONTROLLER": "enrolled-course-controller",
+    "LANGUAGE_CONTROLLER": "language-controller",
+    "MEDIA_CONTROLLER": "media-controller",
+    "SECTION_CONTROLLER": "section-controller",
+    "LECTURE_CONTROLLER": "lecture-controller",
+    "PROMOTE_CONTROLLER": "promote-controller",
+    "WISHLIST_CONTROLLER": "wishlist-controller",
 };
 
 export const ROUTES = {
@@ -319,6 +325,11 @@ export const CREATE_COURSE = {
 
 export const GET_ALL_PROMOTES = {
     SUCCESS: "get_all_promote_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ALL_ENROLLED = {
+    SUCCESS: "get_all_course_success",
     SERVER_ERROR: "server_error",
 };
 

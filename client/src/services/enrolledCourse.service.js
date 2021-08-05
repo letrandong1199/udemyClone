@@ -1,9 +1,8 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { ENROLLED } from '../config/config';
+import { ENROLLED, config, GET_ALL_ENROLLED } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
-
+const API_URL = `${config.HOST}/${config.ENROLLED_CONTROLLER}`;
 class EnrolledCourseService {
     constructor() {
         axios.interceptors.response.use(
@@ -45,6 +44,16 @@ class EnrolledCourseService {
             .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
             .then(response => {
                 if (response.data.message.Code !== ENROLLED.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
+    }
+    getEnrolledByUser() {
+        return axios
+            .get(API_URL + '/enrolled-courses', { headers: authHeader() })
+            .then(response => {
+                if (response.data.message.Code !== GET_ALL_ENROLLED.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
                 return response.data.message;

@@ -95,9 +95,11 @@ const PricingAndPublicPanel = ({ id, course, loading, setCourse }) => {
             Category_Id: course.Category.Id,
             Language_Id: course.Language.Id,
             Price: info?.Price,
-            Promote_Id: info?.Promote_Id,
+            Promote: info?.Promote,
             Is_Completed: info?.Is_Completed,
         }).then(response => {
+            let dic = { ...course, ...info };
+            setCourse(dic);
             setSnackContent('Updated');
             setSnackType('success');
             setOpenSnack(true);
@@ -141,7 +143,7 @@ const PricingAndPublicPanel = ({ id, course, loading, setCourse }) => {
                             labelId='pm-select-label'
                             id='pm-select'
                             value={info?.Promote || ''}
-                            onChange={handleChange('Promote_Id')}
+                            onChange={handleChange('Promote')}
                             label='Promote'
                             onOpen={handleLoadPromotes}
                         >

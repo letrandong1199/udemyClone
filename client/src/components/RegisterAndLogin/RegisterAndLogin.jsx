@@ -20,6 +20,7 @@ import authService from "../../services/auth.service";
 import { useHistory } from 'react-router-dom';
 import { CREATE_USER } from '../../config/config';
 import usePrepareLink from '../../utils/usePrepareLink';
+import ConfirmSignup from './ConfirmSignup';
 
 const TabPanel = React.forwardRef(function TabPanel(props, ref) {
     const { children, value, index, ...other } = props;
@@ -52,6 +53,8 @@ function a11yProps(index) {
         'aria-controls': `tabpanel-${index}`,
     };
 }
+//https://udemy-apis.herokuapp.com/
+
 
 const RegisterTab = ({ value, index }) => {
     const [uname, setUname] = React.useState(null);
@@ -89,7 +92,8 @@ const RegisterTab = ({ value, index }) => {
                 //setIsPending(false);
                 //setSnackType('success');
                 //setOpenSnack(true);
-                history.push(signInLink);
+                setOpen(true);
+                //history.push(signInLink);
             })
             .catch(error => {
                 setError(error.message);
@@ -101,6 +105,7 @@ const RegisterTab = ({ value, index }) => {
             }
             );
     }
+    const [open, setOpen] = React.useState(false);
     return (
         <TabPanel value={value} index={0}>
             <Grid container spacing={3} alignItems='center' alignContent='center' direction="row" >
@@ -186,6 +191,7 @@ const RegisterTab = ({ value, index }) => {
                     </Snackbar>
                 </Grid>
             </Grid >
+            <ConfirmSignup open={open} setOpen={setOpen} />
         </TabPanel >
     )
 };

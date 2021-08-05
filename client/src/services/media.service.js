@@ -4,9 +4,10 @@ import {
     CREATE_MEDIA,
     GET_MEDIA_BY_LECTURE_ID,
     UPDATE_MEDIA,
-    DELETE_MEDIA
+    DELETE_MEDIA,
+    config,
 } from '../config/config';
-const API_URL = 'http://localhost:8080/api/media-controller';
+const API_URL = `${config.HOST}/${config.MEDIA_CONTROLLER}`;
 
 class MediaService {
     constructor() {

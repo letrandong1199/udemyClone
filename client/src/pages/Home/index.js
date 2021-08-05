@@ -48,12 +48,12 @@ const WeeklyHotCourses = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        courseService.getAll().then(response => {
-            console.log(response.data.message.listAllResponse);
-            setCourses(response.data.message.listAllResponse);
+        setIsPending(true);
+        courseService.getMostEnrollmentCourses().then(response => {
+            setCourses(response.listAllResponse);
             setIsPending(false);
         }).catch(error => {
-            setError(error);
+            setError(error.message);
             setIsPending(false);
         })
     }, [])
@@ -74,12 +74,12 @@ const MostViewedCourses = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        courseService.getAll().then(response => {
-            console.log(response.data.message.listAllResponse);
-            setCourses(response.data.message.listAllResponse);
+        setIsPending(true);
+        courseService.getMostViewedCourses().then(response => {
+            setCourses(response.listAllResponse);
             setIsPending(false);
         }).catch(error => {
-            setError(error);
+            setError(error.message);
             setIsPending(false);
         })
     }, [])
@@ -89,7 +89,7 @@ const MostViewedCourses = () => {
         <Fragment>
             {isPending && <div><LinearProgress /></div>}
             {error && <div>{error}</div>}
-            {courses && <HomeSection title="Most popular courses" courses={courses} color="vibrant" />}
+            {courses && <HomeSection title="Most viewed courses" courses={courses} color="vibrant" />}
         </Fragment>
     )
 }
@@ -100,12 +100,12 @@ const MostRecentCourses = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        courseService.getAll().then(response => {
-            console.log(response.data.message.listAllResponse);
-            setCourses(response.data.message.listAllResponse);
+        setIsPending(true);
+        courseService.getMostRecentCourses().then(response => {
+            setCourses(response.listAllResponse);
             setIsPending(false);
         }).catch(error => {
-            setError(error);
+            setError(error.message);
             setIsPending(false);
         })
     }, [])
@@ -126,12 +126,11 @@ const HotCategories = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        categoryService.getAll().then(response => {
-            console.log(response.data.message.listAllResponse);
-            setCategories(response.data.message.listAllResponse);
+        categoryService.getMostEnrollmentCategories().then(response => {
+            setCategories(response.listAllResponse);
             setIsPending(false);
         }).catch(error => {
-            setError(error);
+            setError(error.message);
             setIsPending(false);
         })
     }, [])

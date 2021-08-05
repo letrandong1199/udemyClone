@@ -1,15 +1,15 @@
 import axios from "axios";
-import { SIGN_IN } from '../config/config';
+import { SIGN_IN, config } from '../config/config';
 
-const API_URL = "http://localhost:8080/api/user-controller/";
-const USER = 3;
+const API_URL = `${config.HOST}/${config.USER_CONTROLLER}`;
+
 const ADMIN = 1;
-const INSTRUCTOR = 1;
+const INSTRUCTOR = 2;
 
 class AuthService {
     login(username, password) {
         return axios
-            .post(API_URL + "authenticate-user", {
+            .post(API_URL + "/authenticate-user", {
                 Email: username,
                 Password: password,
             })
@@ -31,7 +31,7 @@ class AuthService {
     };
 
     register(username, name, password) {
-        return axios.post(API_URL + "sign-up", {
+        return axios.post(API_URL + "/sign-up", {
             Email: username,
             Name: name,
             Password: password,
@@ -41,7 +41,7 @@ class AuthService {
     refreshToken() {
         let user = localStorage.getItem("user")
         console.log("refreshToken");
-        return axios.post(API_URL + "refresh-token", {
+        return axios.post(API_URL + "/refresh-token", {
             refreshToken: user.refreshToken
         }).then(response => {
             return response.data.message;
@@ -59,23 +59,47 @@ class AuthService {
     }
 
     isUser() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        return Boolean(user && user.token);
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                return Boolean(user && user.token);
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return false;
     };
 
     isInstructor() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
-        return Boolean(user && user.token && role === INSTRUCTOR);
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
+                return Boolean(user && user.token && role === INSTRUCTOR);
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return false;
     };
     isAdmin() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        let role = null;
-        if (user && user.token) {
-            role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
-        }
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                let role = null;
+                if (user && user.token) {
+                    role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
+                }
 
-        return Boolean(user && user.token && role === ADMIN);
+                return Boolean(user && user.token && role === ADMIN);
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return false;
     };
 }
 

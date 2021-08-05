@@ -20,6 +20,8 @@ export const useStyles = makeStyles((theme) => ({
     categoriesButton: {
         textTransform: 'none',
         position: 'relative',
+        fontWeight: 400,
+        fontSize: 15,
         color: 'var(--text-color)',
     },
     registerButton: {
@@ -28,13 +30,14 @@ export const useStyles = makeStyles((theme) => ({
     searchBar: {
         position: 'relative',
 
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: 20,
         border: '1px solid',
         borderColor: 'rgb(141, 141, 141)',
         backgroundColor: fade('rgb(193, 193, 193)', 0.15),
         '&:hover': {
             backgroundColor: fade(theme.palette.common.white, 0.25),
         },
+        maxWidth: 350,
         //marginRight: 'auto',
         marginLeft: 0,
         width: '100%',
@@ -50,25 +53,32 @@ export const useStyles = makeStyles((theme) => ({
     },
     searchIcon: {
         padding: theme.spacing(0, 2),
+        borderRadius: 20,
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
         height: '100%',
+        right: 0,
+        top: 0,
         position: 'absolute',
-        pointerEvents: 'none',
+        //pointerEvents: 'none',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         color: 'var(--text-color)',
+        //backgroundColor: theme.palette.primary.main,
     },
     inputRoot: {
         color: 'inherit',
     },
     inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
+        padding: theme.spacing(1.2, 1, 1.2, 1),
         // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+        paddingLeft: `calc(1em + ${theme.spacing(2)}px)`,
+        paddingRight: `calc(1em + ${theme.spacing(4)}px)`,
         transition: theme.transitions.create('width'),
         //width: '100%',
         [theme.breakpoints.up('md')]: {
-            width: '50ch',
+            width: '25ch',
         },
     },
     logoButton: {

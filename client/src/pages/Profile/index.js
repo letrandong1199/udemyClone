@@ -323,25 +323,25 @@ const MyLearning = () => {
     useEffect(() => {
         console.log('In my learn');
         setIsPending(true);
-        enrolledCourseService.getAll().then(response => {
-            console.log('in service');
-            console.log(response);
-            if (response.data.message.Code !== GET_ENROLLED.SUCCESS) {
-                throw Error(response.data.message.Code);
-            }
-            console.log("en", response);
+        enrolledCourseService.getEnrolledByUser().then(response => {
             setIsPending(false);
-            setOwnCourse(response.data.message.listAllResponse);
+            setOwnCourse(response.listAllResponse);
         }).catch(error => {
             console.log(error);
-            console.log('Hello bug');
         })
     }, [])
 
 
     return (
         <Container style={{ padding: 0, flexGrow: 1 }}>
-            <HomeSection title="Learning" color="vibrant" courses={ownCourse} disableTitle isEnrolled />
+            <HomeSection
+                title="Learning"
+                color="vibrant"
+                courses={ownCourse}
+                disableTitle
+                isEnrolled
+                hidePrice
+            />
         </Container>
     )
 }

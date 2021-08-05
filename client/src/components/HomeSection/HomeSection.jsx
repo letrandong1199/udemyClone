@@ -15,7 +15,12 @@ function HomeSection(props) {
     if (props.courses) {
         list_ = props.courses.map((course, index) => {
             return <Grid item key={index} >
-                <ProductCardV course={course} isEnrolled={props.isEnrolled} isWishlist={props.isWishlist} />
+                <ProductCardV
+                    course={course}
+                    isEnrolled={props.isEnrolled}
+                    isWishlist={props.isWishlist}
+                    hidePrice={props.hidePrice}
+                />
             </Grid>
         })
     }

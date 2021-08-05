@@ -27,7 +27,7 @@ export const PrivateRouteInstructor = ({ component: Component, ...rest }) => (
         authService.isInstructor(props) === true
             ? <Component {...props} />
             : <Redirect to={{
-                pathname: '/login',
+                pathname: '/404',
                 state: { from: props.location }
             }} />
     )} />

@@ -8,7 +8,7 @@ import routes from './pages/routes';
 import Navbar from './components/Navbar/Navbar.jsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import GetParameterPopups from './components/GetParameterPopups/GetParameterPopups';
-import { PrivateRouteUser, PrivateRouteAdmin } from './components/PrivateRoute';
+import { PrivateRouteUser, PrivateRouteAdmin, PrivateRouteInstructor } from './components/PrivateRoute';
 import { Suspense } from 'react';
 import { ROUTES } from './config/config';
 
@@ -33,7 +33,9 @@ function App() {
                 ? <Route key={path} path={path} component={component} {...rest} />
                 : path === ROUTES.admin
                   ? <PrivateRouteAdmin key={path} path={path} component={component} {...rest} />
-                  : <PrivateRouteUser key={path} path={path} component={component} {...rest} />
+                  : path === ROUTES.instructor
+                    ? <PrivateRouteInstructor key={path} path={path} component={component} {...rest} />
+                    : <PrivateRouteUser key={path} path={path} component={component} {...rest} />
             })}
           </Switch>
           <GetParameterPopups />

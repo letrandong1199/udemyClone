@@ -1,9 +1,9 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { GET_ALL_CATEGORIES } from '../config/config';
+import { GET_ALL_CATEGORIES, UPDATE_CATEGORY, DELETE_CATEGORY, config } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/category-controller';
-const API_URL_USER = 'http://localhost:8080/api/user-controller';
+const API_URL = `${config.HOST}/${config.CATEGORY_CONTROLLER}`;
+const API_URL_USER = `${config.HOST}/${config.USER_CONTROLLER}`;
 class CategoryService {
     constructor() {
         axios.interceptors.response.use(
@@ -45,18 +45,37 @@ class CategoryService {
     }
     deleteOne(id) {
         return axios.delete(API_URL + '/categories/' + id, { headers: authHeader() })
+            .then(response => {
+                if (response.data.message.Code !== DELETE_CATEGORY.SUCCESS) {
+                    throw Error(response.data.message.Code);
+                }
+                return response.data.message;
+            })
     }
     updateOne(id, data) {
         return axios.put(API_URL + '/categories/' + id, data, { headers: authHeader() }
-        )
+        ).then(response => {
+            if (response.data.message.Code !== UPDATE_CATEGORY.SUCCESS) {
+                throw Error(response.data.message.Code);
+            }
+            return response.data.message;
+        })
     }
     postOne(category) {
+        console.log('as', category);
         return axios
             .post(API_URL + '/categories', category, { headers: authHeader() })
             .then(response => {
-                console.log(response);
                 return response
             })
+    }
+    getMostEnrollmentCategories() {
+        return axios.get(API_URL + '/categories/most-register').then(response => {
+            if (response.data.message.Code !== GET_ALL_CATEGORIES.SUCCESS) {
+                throw Error(response.data.message.Code);
+            }
+            return response.data.message;
+        })
     }
 }
 

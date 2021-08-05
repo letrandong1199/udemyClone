@@ -52,7 +52,7 @@ const routes = [
     {
         path: ROUTES.instructor,
         exact: false,
-        public: true,
+        public: false,
         component: CreateCoursePage,
     },
     {

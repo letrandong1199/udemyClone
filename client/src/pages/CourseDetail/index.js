@@ -96,10 +96,11 @@ const ReviewSection = ({ course, loading }) => {
             <Grid container item sm={4} xs={12} >
                 <Grid item container direction="row">
                     <Typography
+                        variant='h2'
                         style={{ fontSize: 54, fontWeight: 'bold' }}>
                         {loading
                             ? <Skeleton width='50px' />
-                            : course?.Rating?.toFixed(1)}
+                            : course?.Rating !== null ? course?.Rating?.toFixed(1) : '0.0'}
                     </Typography>
                     <Grid
                         item
@@ -114,6 +115,7 @@ const ReviewSection = ({ course, loading }) => {
                                 precision={0.5}
                                 size="medium"
                                 readOnly={true}
+                                style={{ left: '-2px' }}
                             />
                         }
                         <Typography variant="subtitle2" style={{ lineHeight: 1 }}>
@@ -123,17 +125,20 @@ const ReviewSection = ({ course, loading }) => {
                 </Grid>
                 <Grid item>
                     <List>
-                        {[5, 4, 3, 2, 1].map((item) => {
+                        {[5, 4, 3, 2, 1].map((item, index) => {
                             const res = course?.Feedbacks.filter(({
                                 Rating
-                            }) => Rating >= item - 0.5 && Rating <= item + 0.5);
-                            console.log(item, res);
+                            }) => Rating > item - 0.5 && Rating <= item + 0.5);
+
                             const per = (res?.length / course?.Number_Of_Rating * 100)?.toFixed(0);
-                            console.log('per', per);
-                            return <div style={{
-                                display: 'flex',
-                                alignItems: 'center'
-                            }}>
+
+                            return <div
+                                key={index}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}
+                            >
                                 <Typography
                                     style={{ minWidth: 50 }}
                                     variant='subtitle2'>{item} star{item !== 1 && 's'}
@@ -141,19 +146,24 @@ const ReviewSection = ({ course, loading }) => {
                                 <div style={{
                                     height: 13,
                                     minWidth: 200,
-                                    background: `linear-gradient(Orange ${per}%, #FFF ${per}%)`
-                                }} s></div>
+                                    background: `linear-gradient(90deg,Orange ${per}%, #FFF ${per}%)`
+                                }}
+                                />
                             </div>
                         })}
                     </List>
                 </Grid>
             </Grid >
             <Grid container item sm={8} style={{ marginTop: 16 }}>
-                <Typography variant="subtitle2" style={{ width: '100%' }}>Top feedbacks from enrollments</Typography>
+                <Typography variant="h6" style={{ width: '100%' }}>Top feedbacks from enrollments</Typography>
                 <List style={{ width: '100%' }}>
                     {!loading && course?.Feedbacks.map((feedback, index) => {
-                        return <Feedback feedback={feedback} loading={loading} />
+                        return <li><Feedback feedback={feedback} loading={loading} /></li>
                     })}
+                    {!loading && course?.Feedbacks?.length === 0 &&
+                        <Typography>This course has no feedbacks yet.</Typography>
+                    }
+                    {loading && <CircularProgress />}
                 </List>
             </Grid>
         </Grid >
@@ -226,14 +236,14 @@ function DetailCourse() {
             }
 
 
-            <Container className={`${classes.padding}`} style={{ height: 500 }}>
+            <Container className={`${classes.padding}`}>
                 <Typography variant="h5" className={classes.title}>
                     {/*<span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>Course content</span>*/}
                     Review
                 </Typography>
                 <ReviewSection course={course} loading={isPending} />
             </Container>
-            <Footer />
+            <Footer style={{ marginTop: 20 }} />
         </div >
     )
 }

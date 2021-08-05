@@ -279,7 +279,8 @@ const CreateCourse = () => {
             setSnackType('success');
             setOpenSnack(true);
             handleSetIsPending('save', true)();
-            return setTimeout(history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`), 1000)
+            console.log(response);
+            return history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`)
         }).catch(error => {
             console.log(error);
             setSnackContent(error.message);
@@ -416,8 +417,6 @@ const Dashboard = ({ url, path }) => {
     const [error, setError] = useState(null);
 
 
-
-
     useEffect(() => {
         setIsPending(true);
 
@@ -475,7 +474,7 @@ const Dashboard = ({ url, path }) => {
                     {isPending
                         ? <Skeleton height='100px' width='auto'><ListItem /></Skeleton>
                         : error
-                            ? <Typography variant='h5'>error</Typography>
+                            ? <Typography variant='h5'>{error}</Typography>
                             : courses?.map((course, index) =>
                                 <Fragment key={index}>
                                     <ListItem key={index}>

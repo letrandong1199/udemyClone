@@ -1,8 +1,8 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { ADD_WISHLIST } from '../config/config';
+import { ADD_WISHLIST, config } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/wishlist-controller';
+const API_URL = `${config.HOST}/${config.WISHLIST_CONTROLLER}`;
 
 class WishlistService {
     constructor() {

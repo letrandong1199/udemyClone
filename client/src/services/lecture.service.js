@@ -5,9 +5,10 @@ import {
     CREATE_LECTURE,
     UPDATE_LECTURE,
     DELETE_LECTURE,
+    config,
 } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/lecture-controller';
+const API_URL = `${config.HOST}/${config.LECTURE_CONTROLLER}`;
 
 class LectureService {
     constructor() {

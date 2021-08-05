@@ -13,20 +13,23 @@ import clsx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 import { useStyles } from './styles';
 import Hidden from '@material-ui/core/Hidden';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
 import { ROUTES } from '../../config/config';
 import Button from '@material-ui/core/Button';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 function ProductCardV(props) {
     const classes = useStyles();
-
+    const history = useHistory();
 
     const [expanded, setExpanded] = React.useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
+    const handleLearn = (id) => () => {
+        history.push(`${ROUTES.course}${ROUTES.learn}/${id}`)
+    }
 
     return (
         <Card className={classes.root} elevation={3}>
@@ -36,7 +39,7 @@ function ProductCardV(props) {
                     image={props.course.Thumbnail_Medium}
                     title={props.course.Title}
                 >
-                    {<Typography className={classes.price}>
+                    {props.hidePrice && <Typography className={classes.price}>
                         {props.course.Promote_Rate !== 0 && <span style={{ textDecoration: 'line-through', color: 'darkred', marginRight: 5 }}>${props.course.Price}</span>}
                         {props.course.Promote_Rate !== 0
                             ? (props.course.promote * props.course.Price)?.toFixed(2)
@@ -44,8 +47,8 @@ function ProductCardV(props) {
                                 ? props.course.Price
                                 : 'Free'}
                     </Typography>}
-                    {props.course.tag && <Typography className={classes.tag}>
-                        {props.course.tag}
+                    {props.course.Tag && <Typography className={classes.tag}>
+                        {props.course.Tag}
                     </Typography>}
                 </CardMedia>
             </Link>
@@ -112,7 +115,7 @@ function ProductCardV(props) {
                             <HighlightOffRoundedIcon />
                         </IconButton>
                         : props.isEnrolled && props.isEnrolled !== undefined
-                            ? < Button onClick={props.handleLearn}>Learn</Button>
+                            ? < Button onClick={handleLearn(props.course.Id)}>Learn</Button>
                             : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
                                 <FavoriteBorderRoundedIcon />
                             </IconButton>
