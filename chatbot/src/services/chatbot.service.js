@@ -1,4 +1,5 @@
 const request = require('request')
+const axios = require('axios');
 require('dotenv').config();
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
@@ -99,21 +100,30 @@ async function callSendAPI(sender_psid, response) {
 }
 
 function returnCategories() {
-    let response = {
-        "text": "Pick a category:",
-        "quick_replies": [
-            {
-                "content_type": "text",
-                "title": "Web development",
-                "payload": "CATEGORIES",
-            }, {
-                "content_type": "text",
-                "title": "Mobile development",
-                "payload": "CATEGORIES",
-            }
-        ]
-    };
-    return response;
+    return new Promise(function (resolve, reject) {
+        try {
+            axios.get('https://udemy-apis.herokuapp.com/api/category-controller/categories')
+                .then(async apiResponse => {
+                    console.log(apiResponse);
+                    let data = apiResponse.data.message.listAllResponse;
+                    let listCategories = await Promise.all(data.map(category => {
+                        return {
+                            "content_type": "text",
+                            "title": category.Name,
+                            "payload": `CATEGORIES-${category.Id}`,
+                        }
+                    }))
+                    console.log(listCategories);
+                    let response = {
+                        "text": "Pick a category:",
+                        "quick_replies": listCategories
+                    };
+                    resolve(response);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
 }
 
 function handleListCategories(sender_psid) {
@@ -206,4 +216,4 @@ function handleSearch(sender_psid) {
     })
 }
 
-module.exports = { handleGetStarted, handleListCategories, handleSearch };
+module.exports = { handleGetStarted, handleListCategories, handleSearch, returnCategories };
