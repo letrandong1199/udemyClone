@@ -4,6 +4,29 @@ const categoryRepository = require("./category.repository");
 const courseRepository = {
   getCourseByQuery(query, paging, search, sort) {
     let filtered = db("Courses");
+    filtered
+      .from("Courses")
+      .leftJoin("Enrolled_Courses", "Courses.Id", "Enrolled_Courses.Course_Id")
+      .select(
+        "Id",
+        "Title",
+        "Sub_Description",
+        "Description",
+        "Is_Completed",
+        "Thumbnail_Small",
+        "Thumbnail_Medium",
+        "Thumbnail_Large",
+        "Price",
+        "Courses.Rating",
+        "View",
+        "Category_Id",
+        "Author_Id",
+        "Promote_Id",
+        "Language_Id",
+        "Update_At"
+      )
+      .count("User_Id", { as: "NumberOfEnrolled" })
+      .groupBy("Id");
     for (const [key, value] of Object.entries(query)) {
       filtered = filtered.whereIn(key, value);
     }
@@ -14,7 +37,7 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       filtered = filtered
-        .where("Title", "like", `%${search.search}%`)
+        .where("Title", "ilike", `%${search.search}%`)
         .orWhereIn("Category_Id", search.category);
     }
 
@@ -29,7 +52,8 @@ const courseRepository = {
     return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCountCourses(query, search, sort) {
-    let filtered = db("Courses").where((qb) => {
+    let filtered = db("Courses");
+    filtered.where((qb) => {
       for (const [key, value] of Object.entries(query)) {
         qb.whereIn(key, value);
       }
@@ -40,7 +64,7 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       filtered = filtered
-        .where("Title", "like", `%${search.search}%`)
+        .where("Title", "ilike", `%${search.search}%`)
         .orWhereIn("Category_Id", search.category);
     }
 
@@ -75,12 +99,6 @@ const courseRepository = {
     let filtered = db("Courses");
     filtered.orderBy("Update_At", "desc");
     return filtered.limit(10);
-  },
-  getCourseMostRegister() {
-    let filtered = db("Courses");
-    filtered.select("Course_Id").count("User_Id");
-    console.log(filtered);
-    return filtered;
   },
 };
 module.exports = courseRepository;

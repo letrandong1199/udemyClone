@@ -110,8 +110,10 @@ const courseService = {
       language: "Language_Id",
       category: "Category_Id",
       rating: "Rating",
-      "desc-rating": "Rating",
-      "asc-price": "Price",
+      "desc-rating": "rating",
+      "asc-price": "price",
+      "most-recent": "most-recent",
+      "most-register": "most-register",
     };
     const queryTable = {};
     const paging = {};
@@ -133,12 +135,18 @@ const courseService = {
       } else if (key === "page") {
         paging["offset"] = (parseInt(value) - 1) * parseInt(query.limit);
       } else if (key === "sort") {
-        if (keyToColName[value] === "Rating") {
+        if (keyToColName[value] === "rating") {
           sort["ColName"] = "Rating";
           sort["Orderby"] = "desc";
-        } else if (keyToColName[value] === "Price") {
+        } else if (keyToColName[value] === "price") {
           sort["ColName"] = "Price";
           sort["Orderby"] = "asc";
+        } else if (keyToColName[value] === "most-recent") {
+          sort["ColName"] = "Update_At";
+          sort["Orderby"] = "desc";
+        } else if (keyToColName[value] === "most-register") {
+          sort["ColName"] = "NumberOfEnrolled";
+          sort["Orderby"] = "desc";
         } else {
           sort["ColName"] = "Rating";
           sort["Orderby"] = "desc";

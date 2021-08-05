@@ -268,9 +268,9 @@ const userService = {
         from: "udemyclone2021@gmail.com",
         to: `${request.Name} <${request.Email}>`,
         subject: "Confirmation Email",
-        html: `<h1>Email Confirmation</h1>
+        html: `<h1>Welcome to Udemy Clone</h1>
         <h2>Hello ${request.Name}</h2>
-        <h3>This confirmation email is going to be invalid in 10 minutes</h3>
+        <h3>This confirmation email is going to be invalid in 5 minutes</h3>
         <p>Thank you for registering. Please confirm your email by clicking on the under button</p>
         <form action=${url} method="post">
           <button type="submit">Confirm</button>
