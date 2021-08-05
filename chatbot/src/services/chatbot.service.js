@@ -191,7 +191,7 @@ function handleGetStarted(sender_psid) {
 function returnTemplateCourse(categoryId) {
     return new Promise((resolve, reject) => {
         try {
-            axios.get(`${process.env.API_HOST}/course-controller/courses?category=${categoryId}&page=1&limit=10`)
+            axios.get(`${process.env.API_HOST}/course-controller/courses?category=${categoryId}&page=1&limit=9`)
                 .then(async apiResponse => {
                     let data = apiResponse.data.message.listAllResponse;
                     let dataTemplate = await Promise.all(data.map(course => {
