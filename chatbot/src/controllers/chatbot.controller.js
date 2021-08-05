@@ -33,7 +33,7 @@ async function handlePostback(sender_psid, received_postback) {
 
     // Get the payload for the postback
     let payload = received_postback.payload;
-
+    let prefix = payload.split('-')
     // Set the response based on the postback payload
     if (payload === 'LIST_CATEGORIES') {
         await chatbotService.handleListCategories(sender_psid);
@@ -43,6 +43,8 @@ async function handlePostback(sender_psid, received_postback) {
         await chatbotService.handleGetStarted(sender_psid);
     } else if (payload === 'SEARCH') {
         await chatbotService.handleSearch(sender_psid);
+    } else if (prefix[0] === 'CATEGORY') {
+        await chatbotService.handleGetCoursesByCategory(prefix[1]);
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);

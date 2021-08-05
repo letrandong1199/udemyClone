@@ -108,7 +108,7 @@ function returnCategories() {
                         return {
                             "content_type": "text",
                             "title": category.Name,
-                            "payload": `CATEGORIES-${category.Id}`,
+                            "payload": `CATEGORY-${category.Id}`,
                         }
                     }))
                     let response = {
@@ -187,6 +187,67 @@ function handleGetStarted(sender_psid) {
     })
 };
 
+function returnTemplateCourse(categoryId) {
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(`${process.env.API_HOST}/course-controller/courses?category=${categoryId}&page=1&limit=10`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.listAllResponse;
+                    let dataTemplate = await Promise.all(data.map(course => {
+                        return {
+                            "title": course.Title,
+                            "image_url": course.Thumbnail_Small,
+                            "subtitle": `${course.Price}$`,
+                            "default_action": {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                "webview_height_ratio": "tall",
+                            },
+                            "buttons": [
+                                {
+                                    "type": "web_url",
+                                    "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                    "title": "View on Website"
+                                }
+                            ]
+                        }
+                    }))
+                    console.log(data);
+                    let response = {
+                        "attachment": {
+                            "type": "template",
+                            "payload": {
+                                "template_type": "generic",
+                                "elements": dataTemplate
+                            }
+                        }
+                    };
+                    resolve(response);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+function handleGetCoursesByCategory(sender_psid) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await handleMarkSeen(sender_psid);
+            await handleTypingOn(sender_psid);
+            let response = { "text": `List courses.` };
+            let response2 = await returnTemplateCourse();
+            await callSendAPI(sender_psid, response);
+            await callSendAPI(sender_psid, response2);
+
+            resolve('OK');
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+};
+
 function returnMessageAskingKeyword() {
     let response = {
         "text": "What do you want to search?",
@@ -214,4 +275,4 @@ function handleSearch(sender_psid) {
     })
 }
 
-module.exports = { handleGetStarted, handleListCategories, handleSearch, returnCategories };
+module.exports = { handleGetStarted, handleListCategories, handleSearch, handleGetCoursesByCategory, returnTemplateCourse };
