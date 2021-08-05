@@ -258,7 +258,7 @@ function returnTemplateMedia(course) {
         try {
             const response = {
                 "attachment": {
-                    "type": "media",
+                    "type": "template",
                     "payload": {
                         "template_type": "media",
                         "elements": [
@@ -304,10 +304,10 @@ function handleViewDetail(sender_psid, courseId,) {
         try {
             const course = await getCourseDetail(courseId)
             let response = await returnTemplateMedia(course);
+            console.log(response);
             await callSendAPI(sender_psid, response);
             let response2 = {
-                "text": `This course is created by${course.Author.Name}. 
-            Course is about "${course.Sub_Description}"`
+                "text": `This course is created by ${course.Author.Name}. Course is about "${course.Sub_Description}"`
             };
             await callSendAPI(sender_psid, response2);
             resolve('OK');

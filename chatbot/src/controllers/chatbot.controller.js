@@ -27,7 +27,7 @@ async function handleMessage(sender_psid, received_message) {
         // Create the payload for a basic text message
         else {
             response = {
-                "text": `:(:(:(. Sorry, I currently can perform your "${received_message.text}" message.`
+                "text": `:( :( :(. Sorry, I currently can perform your "${received_message.text}" request.`
             }
             // Sends the response message
             callSendAPI(sender_psid, response);
