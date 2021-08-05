@@ -15,7 +15,7 @@ async function handleMessage(sender_psid, received_message) {
         if (received_message.quick_reply && received_message.quick_reply.payload) {
             const prefix = received_message.quick_reply.payload.split("-");
             if (prefix[0] === "CATEGORY") {
-                await chatbotService.handleGetCoursesByCategory(prefix[1]);
+                await chatbotService.handleGetCoursesByCategory(sender_psid, prefix[1]);
             }
         }
         // Create the payload for a basic text message
@@ -48,8 +48,6 @@ async function handlePostback(sender_psid, received_postback) {
         await chatbotService.handleGetStarted(sender_psid);
     } else if (payload === 'SEARCH') {
         await chatbotService.handleSearch(sender_psid);
-    } else if (prefix[0] === 'CATEGORY') {
-        await chatbotService.handleGetCoursesByCategory(prefix[1]);
     }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);

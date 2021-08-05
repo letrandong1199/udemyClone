@@ -230,13 +230,13 @@ function returnTemplateCourse(categoryId) {
     })
 }
 
-function handleGetCoursesByCategory(sender_psid) {
+function handleGetCoursesByCategory(sender_psid, categoryId) {
     return new Promise(async (resolve, reject) => {
         try {
             await handleMarkSeen(sender_psid);
             await handleTypingOn(sender_psid);
             let response = { "text": `List courses.` };
-            let response2 = await returnTemplateCourse();
+            let response2 = await returnTemplateCourse(categoryId);
             await callSendAPI(sender_psid, response);
             await callSendAPI(sender_psid, response2);
 
