@@ -82,7 +82,8 @@ async function callSendAPI(sender_psid, response) {
         },
         "message": response
     }
-
+    await handleMarkSeen(sender_psid);
+    await handleTypingOn(sender_psid);
     // Send the HTTP request to the Messenger Platform
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
@@ -213,6 +214,7 @@ function returnTemplateCourse(categoryId) {
                         }
                     }))
                     dataTemplate.push({
+                        "title": "What else?"
                         "buttons": [
                             {
                                 "type": "web_url",
@@ -245,8 +247,6 @@ function returnTemplateCourse(categoryId) {
 }
 
 async function handleGetCoursesByCategory(sender_psid, categoryId) {
-    await handleMarkSeen(sender_psid);
-    await handleTypingOn(sender_psid);
     return new Promise(async (resolve, reject) => {
         try {
             let response = { "text": `List courses.` };
