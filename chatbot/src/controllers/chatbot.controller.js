@@ -16,6 +16,10 @@ function handleMessage(sender_psid, received_message) {
             if (message.quick_reply.payload !== " ") {
                 console.log(message.quick_replies.payload);
             }
+            const prefix = message.quick_reply.payload.split("-");
+            if (message.quick_reply.prefix[0] === "CATEGORY") {
+                await chatbotService.handleGetCoursesByCategory(prefix[1]);
+            }
         }
         // Create the payload for a basic text message
         response = {
