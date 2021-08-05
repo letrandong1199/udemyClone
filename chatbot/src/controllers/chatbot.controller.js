@@ -12,9 +12,9 @@ async function handleMessage(sender_psid, received_message) {
     // Check if the message contains text
     if (received_message.text) {
         console.log(received_message)
-        if (received_message.quick_replies && received_message.quick_replies.payload) {
+        if (received_message.quick_reply && received_message.quick_reply.payload) {
             if (message.quick_reply.payload !== " ") {
-                console.log(message.quick_replies.payload);
+                console.log(message.quick_reply.payload);
             }
             const prefix = message.quick_reply.payload.split("-");
             if (message.quick_reply.prefix[0] === "CATEGORY") {
@@ -22,13 +22,16 @@ async function handleMessage(sender_psid, received_message) {
             }
         }
         // Create the payload for a basic text message
-        response = {
-            "text": `You sent the message: "${received_message.text}". Now send me an image!`
+        else {
+            response = {
+                "text": `You sent the message: "${received_message.text}". Now send me an image!`
+            }
+            // Sends the response message
+            callSendAPI(sender_psid, response);
         }
     }
 
-    // Sends the response message
-    callSendAPI(sender_psid, response);
+
 }
 
 // Handles messaging_postbacks events
