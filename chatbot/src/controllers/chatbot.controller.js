@@ -59,11 +59,10 @@ async function handlePostback(sender_psid, received_postback) {
         }
         // Sends the response message
         callSendAPI(sender_psid, response);
-    } else {
+    } else if (prefix[0] === 'DETAIL') {
+        await chatbotService.handleViewDetail(sender_psid, prefix[1]);
 
     }
-    // Send the message to acknowledge the postback
-    callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API

@@ -207,6 +207,11 @@ function returnTemplateCourse(categoryId) {
                             },
                             "buttons": [
                                 {
+                                    "type": "postback",
+                                    "title": "View detail",
+                                    "payload": `DETAIL-${course.Id}`
+                                },
+                                {
                                     "type": "web_url",
                                     "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
                                     "title": "View on Website"
@@ -248,6 +253,71 @@ function returnTemplateCourse(categoryId) {
     })
 }
 
+function returnTemplateMedia(course) {
+    return new Promise((resolve, reject) => {
+        try {
+            const response = {
+                "attachment": {
+                    "type": "media",
+                    "payload": {
+                        "template_type": "media",
+                        "elements": [
+                            {
+                                "media_type": "image",
+                                "url": course.Thumbnail_Small,
+                                "buttons": [
+                                    {
+                                        "type": "web_url",
+                                        "title": course.Price === 0 ? "Enroll for Free" : `Enroll for ${course.Price}$`,
+                                        "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
+
+            resolve(response);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+function getCourseDetail(courseId) {
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(`${process.env.API_HOST}/course-controller/courses/${courseId}`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.resultResponse;
+                    resolve(data);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+function handleViewDetail(sender_psid, courseId,) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const course = await getCourseDetail(courseId)
+            let response = await returnTemplateMedia(course);
+            await callSendAPI(sender_psid, response);
+            let response2 = {
+                "text": `This course is created by${course.Author.Name}. 
+            Course is about "${course.Sub_Description}"`
+            };
+            await callSendAPI(sender_psid, response2);
+            resolve('OK');
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
+
 async function handleGetCoursesByCategory(sender_psid, categoryId) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -281,6 +351,11 @@ function returnTemplateCourseSearch(keyword) {
                                 "webview_height_ratio": "tall",
                             },
                             "buttons": [
+                                {
+                                    "type": "postback",
+                                    "title": "View detail",
+                                    "payload": `DETAIL-${course.Id}`
+                                },
                                 {
                                     "type": "web_url",
                                     "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
@@ -339,4 +414,10 @@ function handleSearch(sender_psid, keyword) {
     })
 }
 
-module.exports = { handleGetStarted, handleListCategories, handleSearch, handleGetCoursesByCategory, returnTemplateCourse };
+module.exports = {
+    handleGetStarted,
+    handleListCategories,
+    handleSearch,
+    handleGetCoursesByCategory,
+    handleViewDetail
+};
