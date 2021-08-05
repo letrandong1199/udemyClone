@@ -214,7 +214,7 @@ function returnTemplateCourse(categoryId) {
                         }
                     }))
                     dataTemplate.push({
-                        "title": "What else?"
+                        "title": "What else?",
                         "buttons": [
                             {
                                 "type": "web_url",
