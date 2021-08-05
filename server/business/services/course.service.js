@@ -438,11 +438,16 @@ const courseService = {
           let user = await _entityRepository("Users").getEntity(
             feedback.User_Id
           );
+          let rating = await enrolledcourseRepository.getEnrolledCourseByUserIdAndCourseId({
+            User_Id: user[0].Id,
+            Course_Id: course[0].Id
+          });
           return {
-            Feedback_Id: feedback.Id,
-            User_Name: user[0].Full_Name,
+            Id: feedback.Id,
+            User_Name: user[0].Name,
             User_Email: user[0].Email,
             Content: feedback.Content,
+            Rating: rating[0].Rating,
           };
         })
       );
@@ -458,38 +463,46 @@ const courseService = {
                 lecture.Id
               );
               let listMediaResponse = listMedia.map((media) => {
-                if (media.Is_Preview === true)
+
+                if (Boolean(media.Is_Preview) === true) {
                   return {
                     Id: media.Id,
                     Video_URL: media.Video_URL,
                   };
+                }
+                return;
               });
               return {
                 Id: lecture.Id,
                 Media: listMediaResponse,
                 Title: lecture.Title,
+                Description: lecture.Description,
               };
             })
           );
           return {
             Id: section.Id,
-            Section_Name: section.Name,
+            Name: section.Name,
             Lectures: listLectureResponse,
           };
         })
       );
       let numberRating = 0;
-      const numberRegister =
-        await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
+      const numberRegister = await enrolledcourseRepository.getEnrolledCourseByCourse(course[0].Id);
       if (numberRegister) {
         let count = 0;
         for (item of numberRegister) {
-          if (item.Rating !== 0) {
-            console.log(item);
+          if (item.Rating !== null) {
+
             count = count + 1;
           }
         }
         numberRating = count;
+      }
+
+      const categories_tree = [category[0]];
+      if (categoryParent.length > 0) {
+        categories_tree.unshift(categoryParent[0]);
       }
 
       const courseResponse = {
@@ -500,7 +513,7 @@ const courseService = {
         Thumbnail_Small: course[0].Thumbnail_Small,
         Sub_Description: course[0].Sub_Description,
         Description: course[0].Description,
-        Categories_Tree: [categoryParent[0], category[0]],
+        Categories_Tree: categories_tree,
         Language_Name: language[0].Name,
         Similar_Courses: listSimilarCourses_,
         Author: author[0],
@@ -508,7 +521,7 @@ const courseService = {
         Promote: promote[0].Promote,
         Rating: course[0].Rating,
         Content: content,
-        Feedback: listFeedbackResponse,
+        Feedbacks: listFeedbackResponse,
         Number_Of_Enrolled: numberRegister.length,
         Number_Of_Rating: numberRating,
       };
