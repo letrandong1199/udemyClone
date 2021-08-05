@@ -212,6 +212,20 @@ function returnTemplateCourse(categoryId) {
                             ]
                         }
                     }))
+                    dataTemplate.push({
+                        "buttons": [
+                            {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course?category=${categoryId}`,
+                                "title": "Show more"
+                            },
+                            {
+                                "type": "postback",
+                                "payload": "RESTART",
+                                "title": "Go back"
+                            }
+                        ]
+                    })
                     console.log(data);
                     let response = {
                         "attachment": {
@@ -230,11 +244,11 @@ function returnTemplateCourse(categoryId) {
     })
 }
 
-function handleGetCoursesByCategory(sender_psid, categoryId) {
+async function handleGetCoursesByCategory(sender_psid, categoryId) {
+    await handleMarkSeen(sender_psid);
+    await handleTypingOn(sender_psid);
     return new Promise(async (resolve, reject) => {
         try {
-            await handleMarkSeen(sender_psid);
-            await handleTypingOn(sender_psid);
             let response = { "text": `List courses.` };
             let response2 = await returnTemplateCourse(categoryId);
             await callSendAPI(sender_psid, response);
