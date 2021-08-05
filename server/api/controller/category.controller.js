@@ -21,4 +21,9 @@ router.put("/categories/:id", authAdmin, async (req, res) => {
   res.json({ message }).end();
 });
 
+router.get("/categories/most-register", async (req, res) => {
+  const message = await categoryService.getMostRegister(req);
+  res.json({ message });
+});
+
 module.exports = router;

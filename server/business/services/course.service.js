@@ -20,6 +20,7 @@ const lectureRepository = require("../../repositories/lecture.repository");
 const mediaRepository = require("../../repositories/media.repository");
 const feedbackRepository = require("../../repositories/feedback.repository");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
+const moment = require("moment");
 
 const courseService = {
   async createOneCourse(request) {
@@ -249,6 +250,7 @@ const courseService = {
         request.body.Language_Id,
         request.body.Is_Completed
       );
+      console.log(request.body);
 
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
@@ -317,7 +319,7 @@ const courseService = {
       }
       if (request.body.Promote) {
         const promote = await promoteRepository.getPromoteByPromote(
-          request.body.Promote
+          request.body.Promote.Promote
         );
         if (promote.length == 0) {
           return { Code: updateOneCourseResponseEnum.PROMOTE_IS_NOT_EXIST };
@@ -334,6 +336,12 @@ const courseService = {
       if (request.body.Price) {
         newPrice = request.body.Price;
       }
+      let isCompleted = course[0].Is_Completed;
+
+      if (request.body.Is_Completed) {
+        isCompleted = request.body.Is_Completed;
+      }
+
       course[0].Title = request.body.Title;
       course[0].Sub_Description = request.body.Sub_Description;
       course[0].Description = newDescription;
@@ -341,6 +349,7 @@ const courseService = {
       course[0].Thumbnail_Medium = newImageMedium;
       course[0].Thumbnail_Large = newImageLarge;
       course[0].Price = newPrice;
+      course[0].Is_Completed = isCompleted;
       course[0].Category_Id = category[0].Id;
       course[0].Language_Id = language[0].Id;
       course[0].Update_At = moment().format("YYYY-MM-DD");
