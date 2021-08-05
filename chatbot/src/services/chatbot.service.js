@@ -225,7 +225,7 @@ function returnTemplateCourse(categoryId) {
                             },
                             {
                                 "type": "postback",
-                                "payload": "RESTART",
+                                "payload": "LIST_CATEGORIES",
                                 "title": "Go back"
                             }
                         ]
@@ -295,12 +295,12 @@ function returnTemplateCourseSearch(keyword) {
                         "buttons": [
                             {
                                 "type": "web_url",
-                                "url": `https://udemy-client.herokuapp.com/course?category=${categoryId}`,
+                                "url": `https://udemy-client.herokuapp.com/course?search=${keyword}`,
                                 "title": "Show more"
                             },
                             {
                                 "type": "postback",
-                                "payload": "RESTART",
+                                "payload": "SEARCH",
                                 "title": "Go back"
                             }
                         ]
