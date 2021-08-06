@@ -3,7 +3,7 @@ import { unstable_createMuiStrictModeTheme } from '@material-ui/core/styles';
 
 const commonTheme = {
     shape: {
-        borderRadius: 5,
+        borderRadius: 6,
     }
 }
 

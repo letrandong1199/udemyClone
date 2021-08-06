@@ -19,7 +19,7 @@ export const useStyles = makeStyles((theme) => ({
     },
     /* rgb(245, 247, 248)*/
     outerBanner: (props) => {
-        if (props.isPending || props.error) {
+        if (props.isPending) {
             return {
                 minHeight: 660,
                 paddingTop: 250,
@@ -48,7 +48,7 @@ export const useStyles = makeStyles((theme) => ({
     },
     bannerTitle: {
         fontWeight: 'bold',
-        color: theme.palette.text.primary, //'rgb(55, 51, 51)',
+        color: theme.palette.text.primary,
     },
     media: {
         height: 0,
@@ -115,6 +115,7 @@ export const useStyles = makeStyles((theme) => ({
     buttonGroup: {
         width: '100%',
         borderRadius: 0,
+        borderBottom: `1px solid ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.default,
         paddingLeft: 10,
         zIndex: theme.zIndex.appBar,
@@ -133,12 +134,8 @@ export const useStyles = makeStyles((theme) => ({
             borderRadius: 0,
             '&:hover': {
                 backgroundColor: 'unset',
-                color: 'rgb(0, 86, 210)',
+                color: theme.palette.primary.main,
             },
-            '& active': {
-                backgroundColor: 'unset',
-                color: 'rgb(0, 86, 210)',
-            }
         },
     },
     listRoot: {
@@ -148,5 +145,9 @@ export const useStyles = makeStyles((theme) => ({
     },
     nested: {
         paddingLeft: theme.spacing(4),
+    },
+    backdrop: {
+        zIndex: theme.zIndex.snackbar + 1,
+        color: '#fff',
     },
 }));

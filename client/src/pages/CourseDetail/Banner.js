@@ -1,52 +1,40 @@
 import {
-    useState,
     Fragment
 } from 'react';
 import {
-    Snackbar,
     Grid,
     Container,
     Typography,
     Breadcrumbs,
-    Backdrop,
     Card,
     Divider,
     Button,
-    CircularProgress,
+
 } from '@material-ui/core';
 
 import {
     Rating,
     Skeleton,
-    Alert
 } from '@material-ui/lab';
 
+import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 
 import { useStyles } from './styles';
 import { usePalette } from 'react-palette'
 import { Link } from 'react-router-dom';
-import enrolledCourseService from '../../services/enrolledCourse.service';
-import wishlistService from '../../services/wishlist.service';
+
 import { ROUTES } from '../../config/config';
 
-const Banner = ({ course, isPending }) => {
-
+const Banner = ({ course, isPending, handleEnroll, handleAddWishlist }) => {
     const { data, loading, error: error2 } = usePalette(course?.Thumbnail_Small);
-    const classes = useStyles({ error: error2, data, thumbnail: course?.Thumbnail_Large, isPending, loading });
+    const classes = useStyles({
+        error: error2,
+        data, thumbnail: course?.Thumbnail_Large,
+        isPending,
+        loading
+    });
 
-    const [isProcessing, setIsProcessing] = useState(false);
-
-    const [openSnack, setOpenSnack] = useState(false);
-    const [snackContent, setSnackContent] = useState(null);
-    const [snackType, setSnackType] = useState('success');
-
-    const handleCloseSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return event;
-        }
-        setOpenSnack(false);
-    };
 
     const categories = (categories_tree) => categories_tree?.map((category, index) => {
         return <Link
@@ -58,40 +46,7 @@ const Banner = ({ course, isPending }) => {
         </Link>
     });
 
-    const handleEnroll = () => {
-        setIsProcessing(true);
-        console.log(course);
-        enrolledCourseService.postOne({ Course_Id: course.Id }).then(response => {
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            setIsProcessing(false)
-            return response;
-        }).catch(error => {
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            setIsProcessing(false)
-            console.log(error);
-        })
-    }
-    const handleAddWishlist = () => {
-        setIsProcessing(true);
-        console.log(course);
-        wishlistService.postOne({ Course_Id: course.Id }).then(response => {
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            setIsProcessing(false);
-            return response;
-        }).catch(error => {
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            setIsProcessing(false);
-            console.log(error);
-        })
-    }
+
 
     return (
         <Container className={classes.outerBanner}>
@@ -103,7 +58,11 @@ const Banner = ({ course, isPending }) => {
                         justifyContent: 'space-around'
                     }}
                     direction="column">
-                    <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
+                    <Breadcrumbs
+                        separator='>'
+                        style={{ fontWeight: 'lighter' }}
+                        aria-label="breadcrumb"
+                    >
                         {course?.Categories_Tree &&
                             categories(course?.Categories_Tree)
                         }
@@ -192,6 +151,7 @@ const Banner = ({ course, isPending }) => {
                                     size="large"
                                     variant="outlined"
                                     style={{ marginRight: 20, textTransform: 'none' }}
+                                    startIcon={<AddCircleOutlineRoundedIcon />}
                                     onClick={handleEnroll}
                                 >
                                     Enroll for {course?.price ? course?.price + '$' : 'free'}
@@ -211,19 +171,6 @@ const Banner = ({ course, isPending }) => {
                     </Grid>
                 </Grid>
             </Card >
-            <Backdrop className={classes.backdrop} open={isProcessing}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
-            <Snackbar
-                open={openSnack}
-                autoHideDuration={4000}
-                onClose={handleCloseSnack}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnack} severity={snackType}>
-                    {snackContent}
-                </Alert>
-            </Snackbar>
         </Container>
 
 

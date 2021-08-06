@@ -9,7 +9,12 @@ class CourseService {
         return axios.get(API_URL + '/courses')
     };
     getById(id) {
-        return axios.get(API_URL + '/courses/' + id);
+        return axios.get(API_URL + '/courses/' + id).then(response => {
+            if (response.data.message.Code !== GET_ONE_COURSE.SUCCESS) {
+                throw Error(response.data.message.Code);
+            }
+            return response.data.message;
+        })
     };
     postOne(course) {
         return axios

@@ -14,9 +14,10 @@ import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRoun
 import { Skeleton } from '@material-ui/lab';
 import { useStyles } from './styles';
 
-const PageNavigation = ({ course, isPending }) => {
+const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist }) => {
     const classes = useStyles();
-    const trigger = useScrollTrigger({ threshold: 640 });
+    const trigger = useScrollTrigger({ threshold: 700 });
+
     return (
         <Fragment>
             <AppBar
@@ -41,9 +42,10 @@ const PageNavigation = ({ course, isPending }) => {
                                     size='large'
                                     variant='outlined'
                                     style={{ marginRight: 20, textTransform: 'none' }}
+                                    onClick={handleEnroll}
                                     startIcon={<AddCircleOutlineRoundedIcon />}
                                 >
-                                    Enroll for {course?.price ? course?.price + '$' : 'free'}
+                                    Enroll for {course?.price ? course?.price + '$' : 'Free'}
                                 </Button>
                             }
                             {isPending
@@ -53,6 +55,7 @@ const PageNavigation = ({ course, isPending }) => {
                                     size="large"
                                     variant="outlined"
                                     startIcon={<FavoriteBorderRoundedIcon />}
+                                    onClick={handleAddWishlist}
                                     style={{ marginRight: 20, textTransform: 'none' }}
                                 >
                                     {'Wishlist'}
@@ -63,14 +66,23 @@ const PageNavigation = ({ course, isPending }) => {
 
                 </Toolbar>
             </AppBar>
-            <ButtonGroup disableFocusRipple disableRipple elevation={1} variant="contained" aria-label="large button group" className={classes.buttonGroup}>
-                <Button disableElevation href="#description-section">About</Button>
-                <Button disableElevation><a alt="instructor" href="#instructor-section" >Instructor</a></Button>
-                <Button disableElevation><a alt="content" href="#content-section" >Content</a></Button>
-                <Button disableElevation>Review</Button>
+            <ButtonGroup
+                disableFocusRipple
+                disableRipple
+                disableElevation
+                elevation={1}
+                variant="contained"
+                aria-label="large button group"
+                className={classes.buttonGroup}>
+                <Button
+                    disableElevation
+                    href="#description-section">About</Button>
+                <Button disableElevation href="#instructor-section">Instructor</Button>
+                <Button disableElevation href="#content-section" >Content</Button>
+                <Button disableElevation href="#review-section">Review</Button>
                 <Button disableElevation>FAQ</Button>
-            </ButtonGroup>
-        </Fragment>
+            </ButtonGroup >
+        </Fragment >
     )
 };
 

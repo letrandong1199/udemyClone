@@ -3,20 +3,17 @@ import { ReactComponent as ReactLogo } from '../../svgs/logo.svg'
 import clsx from 'clsx';
 
 import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import SearchRoundedIcon from '@material-ui/icons/SearchRounded';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FlareRoundedIcon from '@material-ui/icons/FlareRounded';
 import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 import FaceRoundedIcon from '@material-ui/icons/FaceRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
+import AccountCircleOutlinedIcon from '@material-ui/icons/AccountCircleOutlined';
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 
-import Popper from '@material-ui/core/Popper';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Skeleton from '@material-ui/lab/Skeleton';
+import { Skeleton } from '@material-ui/lab';
 
 import {
     ListItem,
@@ -37,6 +34,9 @@ import {
     Grid,
     Hidden,
     Drawer,
+    Popper,
+    ClickAwayListener,
+    Grow,
 } from '@material-ui/core';
 
 import { Link, useLocation, useHistory } from 'react-router-dom';
@@ -87,13 +87,13 @@ const ProfileButton = ({ handleSignOut }) => {
         <Fragment>
             <IconButton
                 ref={anchorRef}
-                aria-controls={open ? 'menu-list-grow' : undefined}
+                aria-controls={open ? 'profile-menu' : undefined}
                 aria-haspopup="true"
                 onClick={handleOpen}
                 className={classes.profileButton}
                 title="Profile"
             >
-                <AccountCircle color='inherit' />
+                <AccountCircleOutlinedIcon color='inherit' />
             </IconButton>
             <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition style={{ zIndex: 1500, marginTop: 10 }}>
                 {({ TransitionProps, placement }) => (
@@ -107,12 +107,12 @@ const ProfileButton = ({ handleSignOut }) => {
                                     <Link to="/profile">
                                         <MenuItem onClick={handleClose}>
                                             <ListItemIcon><FaceRoundedIcon /></ListItemIcon>
-                                            <ListItemText primary='Profile' />
+                                            <ListItemText primary='Dashboard' />
                                         </MenuItem>
                                     </Link>
                                     <MenuItem onClick={handleSignOut}>
                                         <ListItemIcon><ExitToAppRoundedIcon /></ListItemIcon>
-                                        <ListItemText primary='Sign-out' />
+                                        <ListItemText primary='Log-out' />
                                     </MenuItem>
                                 </MenuList>
                             </ClickAwayListener>
@@ -138,9 +138,10 @@ const RegisterButton = () => {
         <Button color='primary'
             variant='contained'
             className={classes.registerButton}
+            disableElevation
             component={Link}
             to={signUpLink}>
-            Register
+            Join now
         </Button>
     )
 }
@@ -168,7 +169,7 @@ const AdminButton = () => {
             className={classes.categoriesButton}
             component={Link}
             to={`${ROUTES.admin}`}>
-            Admin
+            Administrator
         </Button>
     )
 }
@@ -193,7 +194,7 @@ const SearchBar = () => {
         <div className={classes.searchBar}>
             <InputBase
                 onKeyDown={handleEnter}
-                autoComplete
+                autoComplete='true'
                 value={keyword}
                 onChange={(event) => { setKeyword(event.target.value) }}
                 placeholder='What do you want to learn?'
@@ -375,7 +376,7 @@ const CategoryMenu = (props) => {
                 onClick={handleClick}
                 title='catg'
             >
-                Categories <ExpandMoreIcon />
+                Categories <ExpandMoreRoundedIcon fontSize='small' />
             </Button>
 
             <Popper
@@ -421,6 +422,7 @@ const CategoryMenu = (props) => {
 // Main component
 function Navbar(props) {
     const classes = useStyles();
+
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const handleDrawerToggle = () => {
@@ -430,9 +432,11 @@ function Navbar(props) {
 
     const handleListItemClick = (event, index) => {
         setSelectedIndex(index);
+        return event;
     };
     let location = useLocation();
     let history = useHistory();
+
     useEffect(() => {
         switch (location.pathname) {
             case ROUTES.profile:
@@ -446,13 +450,27 @@ function Navbar(props) {
     }, [location.pathname])
 
     const [isLogin, setIsLogin] = useState(authService.isUser())
+    const [isInstructor, setIsInstructor] = useState(authService.isInstructor())
+    const [isAdmin, setIsAdmin] = useState(authService.isAdmin())
+
     const auth = authService.isUser();
+
     useEffect(() => {
-        setIsLogin(authService.isUser())
+        if (authService.isUser()) {
+            setIsLogin(true);
+        }
+        if (authService.isInstructor()) {
+            setIsInstructor(true);
+        }
+        if (authService.isAdmin()) {
+            setIsAdmin(true);
+        }
     }, [auth])
     const handleSignOut = () => {
         authService.logout();
         setIsLogin(false);
+        setIsInstructor(false);
+        setIsAdmin(false);
         history.push(ROUTES.home);
     };
 
@@ -467,30 +485,30 @@ function Navbar(props) {
             <Divider />
             {isLogin &&
                 <List>
-                    {['Profile', 'My learning'].map((text, index) => (
-                        <Link key={index} to={index % 2 === 0 ? '/profile' : '/my-learning'}>
-                            <ListItem
-                                button
-                                key={text}
-                                selected={selectedIndex === index}
-                                onClick={(event) => handleListItemClick(event, index)}
-                            >
-                                <ListItemIcon>{index % 2 === 0 ? <FaceRoundedIcon /> : <MenuBookRoundedIcon />}</ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItem>
-                        </Link>
-                    ))}
-                </List>}
-            <Divider />
-            {isLogin &&
-                <List>
-                    {['Wishlist'].map((text, index) => (
-                        <ListItem key={index} button>
-                            <ListItemIcon>{<FavoriteRoundedIcon />}</ListItemIcon>
+                    {['Profile', 'My learning', 'Wishlist'].map((text, index) => (
+                        <ListItem
+                            component={Link}
+                            to={[ROUTES.profile,
+                            `${ROUTES.profile}${ROUTES.myLearning}`,
+                            `${ROUTES.profile}${ROUTES.wishlist}`][index]
+                            }
+                            button
+                            key={text}
+                            selected={selectedIndex === index}
+                            onClick={(event) => handleListItemClick(event, index)}
+                        >
+                            <ListItemIcon>{
+                                [<FaceRoundedIcon />,
+                                <MenuBookRoundedIcon />,
+                                <FavoriteRoundedIcon />][index]
+                            }
+                            </ListItemIcon>
                             <ListItemText primary={text} />
                         </ListItem>
+
                     ))}
                 </List>}
+
             <List>
                 <IconButton onClick={props.handleToggle}>
                     <FlareRoundedIcon />
@@ -538,8 +556,14 @@ function Navbar(props) {
                             </Drawer>
                         </Hidden>
                         <Hidden xsDown>
-                            <ButtonBase id='logo-button' className={classes.logoButton}>
-                                <Link to="/"><ReactLogo className={classes.logo} /></Link>
+                            <ButtonBase
+                                id='logo-button'
+                                className={classes.logoButton}
+                                component={Link}
+                                to={ROUTES.home}
+                                disableRipple
+                            >
+                                <ReactLogo className={classes.logo} />
                             </ButtonBase>
                             <CategoryMenu />
                         </Hidden>
@@ -547,8 +571,8 @@ function Navbar(props) {
                         <SearchBar />
                         {!isLogin && <RegisterButton />}
                         <Hidden xsDown>
-                            {authService.isInstructor() && <InstructorButton />}
-                            {authService.isAdmin() && <AdminButton />}
+                            {isInstructor && <InstructorButton />}
+                            {isAdmin && <AdminButton />}
                             {isLogin && <ProfileButton handleSignOut={handleSignOut} />}
                             <IconButton onClick={props.handleToggle}>
                                 <FlareRoundedIcon />

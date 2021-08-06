@@ -1,5 +1,5 @@
 export const config = {
-    "HOST": "https://udemy-apis.herokuapp.com/api",
+    "HOST": "http://localhost:8080/api", //"https://udemy-apis.herokuapp.com/api",
     "PORT": "8000",
     "USER_CONTROLLER": "user-controller",
     "COURSE_CONTROLLER": "course-controller",
