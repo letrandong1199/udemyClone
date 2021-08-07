@@ -51,7 +51,6 @@ function DetailCourse() {
 
     const handleEnroll = () => {
         setIsProcessing(true);
-        console.log(course);
         enrolledCourseService.postOne({ Course_Id: course.Id }).then(response => {
             setSnackContent('Added');
             setSnackType('success');

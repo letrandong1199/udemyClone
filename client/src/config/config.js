@@ -11,6 +11,7 @@ export const config = {
     "LECTURE_CONTROLLER": "lecture-controller",
     "PROMOTE_CONTROLLER": "promote-controller",
     "WISHLIST_CONTROLLER": "wishlist-controller",
+    "FEEDBACK_CONTROLLER": "feedback-controller",
 };
 
 export const ROUTES = {
@@ -132,10 +133,16 @@ export const ADD_WISHLIST = {
     SERVER_ERROR: "server_error",
 };
 
-export const GET_ENROLLED = {
-    SUCCESS: "get_all_course_success",
+export const UPDATE_ENROLLED = {
+    SUCCESS: "update_enrolled_course_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
+    EROLLED_COURSE_IS_NOT_EXIST: "enrolled_course_is_not_exist",
+    RATING_IS_INVALID: "rating_is_invalid",
     SERVER_ERROR: "server_error",
 };
+
 
 export const GET_WISHLIST = {
     SUCCESS: "get_all_course_success",
@@ -330,6 +337,27 @@ export const GET_ALL_PROMOTES = {
 
 export const GET_ALL_ENROLLED = {
     SUCCESS: "get_all_course_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const CREATE_FEEDBACK = {
+    SUCCESS: "add_feedback_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
+    CONTENT_IS_EMPTY: "content_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const UPDATE_FEEDBACK = {
+    SUCCESS: "update_feedback_success",
+    COURSE_ID_IS_INVALID: "course_id_is_invalid",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    CONTENT_IS_EMPTY: "content_is_empty",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    USER_IS_NOT_EXIST: "user_is_not_exist",
+    FEEDBACK_IS_NOT_EXIST: "feedback_is_not_exist",
+    ID_IS_INVALID: "id_is_invalid",
     SERVER_ERROR: "server_error",
 };
 

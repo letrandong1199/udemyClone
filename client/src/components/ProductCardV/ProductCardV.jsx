@@ -39,7 +39,7 @@ function ProductCardV(props) {
                     image={props.course.Thumbnail_Medium}
                     title={props.course.Title}
                 >
-                    {props.hidePrice && <Typography className={classes.price}>
+                    {!props.hidePrice && <Typography className={classes.price}>
                         {props.course.Promote_Rate !== 0 && <span style={{ textDecoration: 'line-through', color: 'darkred', marginRight: 5 }}>${props.course.Price}</span>}
                         {props.course.Promote_Rate !== 0
                             ? (props.course.promote * props.course.Price)?.toFixed(2)

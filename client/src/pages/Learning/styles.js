@@ -7,13 +7,6 @@ export const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold',
         backgroundColor: theme.palette.background.vibrant,
     },
-    section: {
-        margin: 10,
-        width: 'auto',
-        '& > *': {
-            margin: theme.spacing(0.5),
-        }
-    },
     thumbnail: {
         padding: 10,
         border: `8px double`,
@@ -23,51 +16,24 @@ export const useStyles = makeStyles((theme) => ({
         minHeight: 300,
         backgroundSize: 'contain !important',
     },
-    title: {
-        padding: 16,
-        fontWeight: 'bold',
+
+    listRoot: {
+        overflow: 'auto',
+        maxHeight: '324px',
+        backgroundColor: theme.palette.background.acrylic,
     },
-    caption: {
-        marginLeft: 20,
-    },
-    toolbarEditor: {
-        backgroundColor: `${theme.palette.background.default} !important`,
-        border: "1px solid #C0C0C0 !important",
-        borderRadius: `${theme.shape.borderRadius}px !important`,
-        '& > *': {
-            backgroundColor: `${theme.palette.background.default} !important`,
-            color: `${theme.palette.text.primary} !important`,
-        }
-    },
-    editorEditor: {
-        border: "1px solid #C0C0C0",
-        borderRadius: theme.shape.borderRadius,
-        minHeight: 300,
-    },
-    wrapperEditor: {
-        //backgroundColor: theme.palette.background.default,
-        margin: 10,
-        '& > *': {
-            margin: theme.spacing(0.5),
-        }
-    },
-    marginContainer: {
-        margin: 40,
-        width: 'auto',
-    },
-    tabsRoot: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.paper,
+    boxTitle: {
         display: 'flex',
-        height: '100%',
+        padding: '0 16px 0 16px',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: theme.palette.divider,
     },
-    tabs: {
-        borderRight: `1px solid ${theme.palette.divider}`,
-        '& > *': {
-            textAlign: 'left',
-            '& span': {
-                alignItems: 'flex-start',
-            }
-        }
+    reviewDialog: {
+        minWidth: 900,
+        padding: 20,
+    },
+    ratingRoot: {
+        display: 'flex',
     },
 }));

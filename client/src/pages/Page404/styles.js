@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 export const useStyles = makeStyles((theme) => ({
     root: {
         justifyContent: 'center',
-        '& button': {
+        '& a': {
             //color: '#FFF',
             borderTopLeftRadius: '60%',
             borderBottomLeftRadius: '60%',

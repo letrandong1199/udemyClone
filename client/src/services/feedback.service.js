@@ -1,9 +1,9 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
-import { ENROLLED, config, GET_ALL_ENROLLED, UPDATE_ENROLLED } from '../config/config';
+import { CREATE_FEEDBACK, config, UPDATE_FEEDBACK } from '../config/config';
 
-const API_URL = `${config.HOST}/${config.ENROLLED_CONTROLLER}`;
-class EnrolledCourseService {
+const API_URL = `${config.HOST}/${config.FEEDBACK_CONTROLLER}`;
+class FeedbackService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
@@ -33,41 +33,28 @@ class EnrolledCourseService {
             }
         );
     };
-    getAll() {
-        return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
-    };
-    getById(id) {
-        return axios.get(API_URL + '/enrolled-courses/' + id);
-    };
+
+
     postOne(data) {
         return axios
-            .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+            .post(API_URL + '/feedbacks', data, { headers: authHeader() })
             .then(response => {
-                if (response.data.message.Code !== ENROLLED.SUCCESS) {
+                if (response.data.message.Code !== CREATE_FEEDBACK.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
                 return response.data.message;
             })
     }
-    updateOne(data) {
-        return axios.put(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+    updateOne(id, data) {
+        return axios.put(API_URL + '/feedbacks/' + id, data, { headers: authHeader() })
             .then(response => {
-                if (response.data.message.Code !== UPDATE_ENROLLED.SUCCESS) {
+                if (response.data.message.Code !== UPDATE_FEEDBACK.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
                 return response.data.message;
             })
     }
-    getEnrolledByUser() {
-        return axios
-            .get(API_URL + '/enrolled-courses', { headers: authHeader() })
-            .then(response => {
-                if (response.data.message.Code !== GET_ALL_ENROLLED.SUCCESS) {
-                    throw Error(response.data.message.Code);
-                }
-                return response.data.message;
-            })
-    }
+
 }
 
-export default new EnrolledCourseService();
+export default new FeedbackService();
