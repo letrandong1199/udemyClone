@@ -571,6 +571,8 @@ const courseService = {
       if (enrolled.length == 0) {
         return { Code: getOneCourseResponseEnum.IS_NOT_ENROLLED_COURSE };
       }
+      const feedback = await feedbackRepository.getFeedbackByUserIdAndCourseId(query)
+
       const listSections = await sectionRepository.getSectionByCourseId(
         course[0].Id
       );
@@ -608,7 +610,12 @@ const courseService = {
       const courseResponse = {
         Id: course[0].Id,
         Content: content,
+        Rating: enrolled[0].Rating,
       };
+      console.log(feedback);
+      if (feedback) {
+        courseResponse.Feedback = feedback[0];
+      }
       return {
         Code: getOneCourseResponseEnum.SUCCESS,
         resultResponse: courseResponse,
