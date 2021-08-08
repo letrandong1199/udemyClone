@@ -3,6 +3,7 @@ import authHeader from './authHeader.service.js';
 import { ENROLLED, config, GET_ALL_ENROLLED, UPDATE_ENROLLED } from '../config/config';
 
 const API_URL = `${config.HOST}/${config.ENROLLED_CONTROLLER}`;
+const API_URL_USER = `${config.HOST}/${config.USER_CONTROLLER}`;
 class EnrolledCourseService {
     constructor() {
         axios.interceptors.response.use(
@@ -15,7 +16,7 @@ class EnrolledCourseService {
                 if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
                     return axios
-                        .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
+                        .post(API_URL_USER + '/refresh-token', { refreshToken: user.refreshToken })
                         .then((res) => {
                             if (res.status === 200) {
                                 user = res.data.message

@@ -12,6 +12,7 @@ export const config = {
     "PROMOTE_CONTROLLER": "promote-controller",
     "WISHLIST_CONTROLLER": "wishlist-controller",
     "FEEDBACK_CONTROLLER": "feedback-controller",
+    "MEDIA_USER_CONTROLLER": 'media-user-controller',
 };
 
 export const ROUTES = {
@@ -360,6 +361,23 @@ export const UPDATE_FEEDBACK = {
     ID_IS_INVALID: "id_is_invalid",
     SERVER_ERROR: "server_error",
 };
+
+export const CREATE_MEDIA_USER = {
+    SUCCESS: "add_media_user_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    MEDIA_ID_IS_EMPTY: "media_id_is_empty",
+    MEDIA_IS_NOT_EXIST: "media_is_not_exist",
+    PLAYED_IS_INVALID: "played_is_invalid",
+    PLAYED_IS_EMPTY: "played_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ONE_MEDIA_USER = {
+    SUCCESS: "get_media_user_success",
+    SERVER_ERROR: "server_error",
+    MEDIA_USER_IS_NOT_EXISTS: "media_user_is_not_exits",
+};
+
 
 
 export default config;

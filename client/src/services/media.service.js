@@ -8,6 +8,7 @@ import {
     config,
 } from '../config/config';
 const API_URL = `${config.HOST}/${config.MEDIA_CONTROLLER}`;
+const API_URL_USER = `${config.HOST}/${config.USER_CONTROLLER}`;
 
 class MediaService {
     constructor() {
@@ -21,7 +22,7 @@ class MediaService {
                 if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
                     return axios
-                        .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
+                        .post(API_URL_USER + '/refresh-token', { refreshToken: user.refreshToken })
                         .then((res) => {
                             if (res.status === 200) {
                                 user = res.data.message

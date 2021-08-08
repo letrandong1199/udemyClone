@@ -10,9 +10,7 @@ export const PrivateRouteUser = ({ component: Component, ...rest }) => {
         }
     });
 
-    console.log("Private", signInLink);
     const auth = authService.isUser();
-    console.log("auth", auth);
     return (
         <Route {...rest} render={(props) => (
             auth === true

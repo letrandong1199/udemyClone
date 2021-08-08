@@ -27,7 +27,16 @@ class AuthService {
     };
 
     logout() {
-        localStorage.removeItem("user");
+        let user = localStorage.getItem("user");
+        if (user) {
+            const refreshToken = JSON.parse(user).refreshToken;
+            return axios.post(API_URL + "/reject-refresh-token", {
+                refreshToken: refreshToken
+            }).then(response => {
+                localStorage.removeItem("user");
+                return response.data.message;
+            });
+        }
     };
 
     register(username, name, password) {
@@ -40,12 +49,16 @@ class AuthService {
 
     refreshToken() {
         let user = localStorage.getItem("user")
-        console.log("refreshToken");
-        return axios.post(API_URL + "/refresh-token", {
-            refreshToken: user.refreshToken
-        }).then(response => {
-            return response.data.message;
-        });
+        if (user) {
+            console.log("refreshToken");
+            const refreshToken = JSON.parse(user).refreshToken;
+            return axios.post(API_URL + "/refresh-token", {
+                refreshToken: refreshToken
+            }).then(response => {
+                return response.data.message;
+            });
+        }
+
     };
 
     getCurrentUser() {

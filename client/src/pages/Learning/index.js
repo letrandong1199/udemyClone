@@ -37,6 +37,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCommentRoundedIcon from '@material-ui/icons/AddCommentRounded';
 import enrolledCourseService from '../../services/enrolledCourse.service';
 import feedbackService from '../../services/feedback.service';
+import mediaUserService from '../../services/mediaUser.service';
 import { useStyles } from './styles';
 
 import courseService from '../../services/course.service';
@@ -65,6 +66,7 @@ const Dashboard = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [snackContent, setSnackContent] = useState(null);
     const [snackType, setSnackType] = useState('success');
+    const [currentPlaying, setCurrentPlaying] = useState(null);
 
     const labels = {
         0.5: 'Useless',
@@ -96,17 +98,32 @@ const Dashboard = () => {
                 setMode(response.resultResponse.Feedback.Id);
                 setReview(response.resultResponse.Feedback.Content)
             }
-            setUrl(`${response.resultResponse.Content[0]?.Lectures[0]?.Media[0]?.Video_URL}`)
+            setCurrentPlaying(response.resultResponse.Content[0]?.Lectures[0]?.Media[0]);
             setIsPending(false);
         }).catch(error => {
             console.log(error);
             setIsPending(false);
             setError(error.message);
         })
+
     }, [id])
 
     const handleCloseDialog = () => {
         setOpenReviewDialog(false)
+    }
+
+    const handleOnProgress = (played, loaded) => {
+
+        if (currentPlaying) {
+            mediaUserService.postOne({
+                Media_Id: currentPlaying?.Id,
+                Played: played.playedSeconds,
+            }).then(response => {
+                return response;
+            }).catch(err => {
+                console.log(error);
+            })
+        }
     }
 
     const handleOpenList = (list) => (event, isExpanded) => {
@@ -123,7 +140,9 @@ const Dashboard = () => {
     };
 
     const handleListItemClick = (event, lecture, indexLecture) => {
-        setUrl(`${lecture?.Media[0]?.Video_URL}`)
+        setUrl(`${lecture?.Media[0]?.Video_URL}`);
+        console.log(lecture);
+        setCurrentPlaying(lecture?.Media[0]);
         setSelectedIndex(indexLecture);
     };
 
@@ -177,8 +196,10 @@ const Dashboard = () => {
                     ? <Skeleton width='66%' height='300px' />
                     : <Grid item sm={8} xs={12}>
                         <ReactPlayer
+                            onProgress={handleOnProgress}
                             controls
-                            url={url}
+                            progressInterval={10000}
+                            url={`${currentPlaying?.Video_URL}#t=${currentPlaying?.Played}`}
                             rel={player}
                             width={'100%'}
                         />

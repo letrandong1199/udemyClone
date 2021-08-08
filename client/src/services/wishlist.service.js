@@ -3,7 +3,7 @@ import authHeader from './authHeader.service.js';
 import { ADD_WISHLIST, config } from '../config/config';
 
 const API_URL = `${config.HOST}/${config.WISHLIST_CONTROLLER}`;
-
+const API_URL_USER = `${config.HOST}/${config.USER_CONTROLLER}`;
 class WishlistService {
     constructor() {
         axios.interceptors.response.use(
@@ -16,7 +16,7 @@ class WishlistService {
                 if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
                     originalRequest._retry = true;
                     return axios
-                        .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
+                        .post(API_URL_USER + '/refresh-token', { refreshToken: user.refreshToken })
                         .then((res) => {
                             if (res.status === 200) {
                                 user = res.data.message

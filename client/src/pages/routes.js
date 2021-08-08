@@ -40,7 +40,7 @@ const routes = [
     {
         path: `${ROUTES.course}${ROUTES.learn}/:id`,
         exact: true,
-        public: true,
+        public: false,
         component: LearningPage,
     },
     {

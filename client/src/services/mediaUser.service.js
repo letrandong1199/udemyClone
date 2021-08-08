@@ -1,16 +1,14 @@
 import axios from 'axios';
 import authHeader from './authHeader.service.js';
 import {
-    GET_LECTURE_BY_SECTION_ID,
-    CREATE_LECTURE,
-    UPDATE_LECTURE,
-    DELETE_LECTURE,
+    GET_ONE_MEDIA_USER,
+    CREATE_MEDIA_USER,
     config,
 } from '../config/config';
-
-const API_URL = `${config.HOST}/${config.LECTURE_CONTROLLER}`;
+const API_URL = `${config.HOST}/${config.MEDIA_USER_CONTROLLER}`;
 const API_URL_USER = `${config.HOST}/${config.USER_CONTROLLER}`;
-class LectureService {
+
+class MediaUserService {
     constructor() {
         axios.interceptors.response.use(
             (response) => {
@@ -40,48 +38,26 @@ class LectureService {
             }
         );
     };
-    getAll() {
-        return axios.get(API_URL + '/lectures', { headers: authHeader() })
-    };
-    getById(id) {
-        return axios.get(API_URL + '/lectures/' + id, { headers: authHeader() })
-            .then(response => {
-                if (response.data.message.Code !== GET_LECTURE_BY_SECTION_ID.SUCCESS) {
-                    throw Error(response.data.message.Code);
-                }
-                return response.data.message;
-            })
-    };
+
     postOne(data) {
         return axios
-            .post(API_URL + '/lectures', data, { headers: authHeader() })
+            .post(API_URL + '/media-user', data, { headers: authHeader() })
             .then(response => {
-                if (response.data.message.Code !== CREATE_LECTURE.SUCCESS) {
+                if (response.data.message.Code !== CREATE_MEDIA_USER.SUCCESS) {
                     throw Error(response.data.message.Code);
                 }
                 return response.data.message;
             })
     }
-    updateOne(id, data) {
-        return axios
-            .put(API_URL + '/lectures/' + id, data, { headers: authHeader() })
+    getOne(id) {
+        return axios.get(API_URL + "/media-user/" + id, { headers: authHeader() })
             .then(response => {
-                if (response.data.message.Code !== UPDATE_LECTURE.SUCCESS) {
-                    throw new Error(response.data.message.Code);
-                }
-                return response.data.message;
-            })
-    }
-    deleteOne(id, data) {
-        return axios
-            .delete(API_URL + '/lectures/' + id, { headers: authHeader() })
-            .then(response => {
-                if (response.data.message.Code !== DELETE_LECTURE.SUCCESS) {
-                    throw Error(response.data.message.Code);
+                if (response.data.message.Code !== GET_ONE_MEDIA_USER.SUCCESS) {
+                    throw Error(response.data.message)
                 }
                 return response.data.message;
             })
     }
 }
 
-export default new LectureService();
+export default new MediaUserService();
