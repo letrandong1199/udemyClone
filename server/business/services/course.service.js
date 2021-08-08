@@ -596,7 +596,7 @@ const courseService = {
                 return {
                   Id: media.Id,
                   Video_URL: media.Video_URL,
-                  Played: listMediaUser[0].Played,
+                  Played: listMediaUser[0]?.Played || 0,
                 };
               })
               )
