@@ -34,6 +34,11 @@ router.post("/refresh-token", async (req, res) => {
   res.json({ message }).end();
 });
 
+router.post("/reject-refresh-token", async (req, res) => {
+  const message = await userService.rejectRefreshToken(req);
+  res.json({ message }).end();
+});
+
 router.get("/users", async (req, res) => {
   const message = await userService.getAllUser();
   res.json({ message }).end();
