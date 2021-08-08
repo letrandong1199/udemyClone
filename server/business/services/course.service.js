@@ -593,10 +593,15 @@ const courseService = {
                   Media_Id: media.Id,
                   User_Id: request.id,
                 });
+                if(listMediaUser.length != 0) {
+                    media.Played = listMediaUser[0].Played;
+                } else {
+                   media.Played = 0;
+                }
                 return {
                   Id: media.Id,
                   Video_URL: media.Video_URL,
-                  Played: listMediaUser[0]?.Played || 0,
+                  Played: media.Played,
                 };
               })
               )
