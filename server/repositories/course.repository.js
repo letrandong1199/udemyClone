@@ -92,11 +92,13 @@ const courseRepository = {
   },
   getCourseMostView() {
     let filtered = db("Courses");
+    filtered = filtered.where("Is_Completed", true);
     filtered.orderBy("View", "desc");
     return filtered.limit(10);
   },
   getCourseMostRecent() {
     let filtered = db("Courses");
+    filtered = filtered.where("Is_Completed", true);
     filtered.orderBy("Update_At", "desc");
     return filtered.limit(10);
   },

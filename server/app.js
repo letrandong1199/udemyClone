@@ -13,6 +13,7 @@ const mediaController = require("./api/controller/media.controller");
 const feedbackController = require("./api/controller/feedback.controller");
 const wishlistController = require("./api/controller/wishlist.controller");
 const enrolledcourseController = require("./api/controller/enrolledcourse.controller");
+const mediaUserController = require("./api/controller/meidauser.controller");
 require("dotenv").config();
 
 const app = express();
@@ -45,6 +46,7 @@ app.use("/api/media-controller", mediaController);
 app.use("/api/feedback-controller", feedbackController);
 app.use("/api/wishlist-controller", wishlistController);
 app.use("/api/enrolled-course-controller", enrolledcourseController);
+app.use("/api/media-user-controller", mediaUserController);
 
 app.get("/err", function (req, res) {
   throw new Error("Error!!!");
