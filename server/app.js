@@ -13,7 +13,7 @@ const mediaController = require("./api/controller/media.controller");
 const feedbackController = require("./api/controller/feedback.controller");
 const wishlistController = require("./api/controller/wishlist.controller");
 const enrolledcourseController = require("./api/controller/enrolledcourse.controller");
-const mediaUserController = require("./api/controller/meidauser.controller");
+const mediaUserController = require("./api/controller/mediauser.controller");
 require("dotenv").config();
 
 const app = express();

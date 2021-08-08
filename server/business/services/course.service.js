@@ -20,6 +20,7 @@ const lectureRepository = require("../../repositories/lecture.repository");
 const mediaRepository = require("../../repositories/media.repository");
 const feedbackRepository = require("../../repositories/feedback.repository");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
+const mediauserRepository = require("../../repositories/mediauser.repository")
 const moment = require("moment");
 
 const courseService = {
@@ -587,12 +588,18 @@ const courseService = {
               let listMedia = await mediaRepository.getMediaByLectureId(
                 lecture.Id
               );
-              let listMediaResponse = listMedia.map((media) => {
+              let listMediaResponse = await Promise.all(listMedia.map(async (media) => {
+                let listMediaUser = await mediauserRepository.getPlayedByUserIdAndMediaId({
+                  Media_Id: media.Id,
+                  User_Id: request.id,
+                });
                 return {
                   Id: media.Id,
                   Video_URL: media.Video_URL,
+                  Played: listMediaUser[0].Played,
                 };
-              });
+              })
+              )
               return {
                 Id: lecture.Id,
                 Media: listMediaResponse,

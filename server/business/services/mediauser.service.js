@@ -7,6 +7,7 @@ const mediaUserRepository = require("../../repositories/mediauser.repository");
 const operatorType = require("../../utils/enums/operatorType");
 const mediaUserService = {
   async createOneMediaUser(request) {
+    console.log(request.body);
     try {
       const resultValidator = createOneMediaUserValidator.validate(
         request.body.Media_Id,
