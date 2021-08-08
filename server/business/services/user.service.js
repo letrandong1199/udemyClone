@@ -467,13 +467,14 @@ const userService = {
   },
   async rejectRefreshToken(req) {
     const { refreshToken } = req.body;
-
+    console.log(req.body);
     try {
-      if (redisClient.check(refreshToken)) {
+      redisClient.get(refreshToken, (err, reply) => {
+        if (err) throw err;
         redisClient.del(refreshToken, (err, reply) => {
           console.log('reject', reply);
         })
-      }
+      })
     } catch (error) {
       console.log(error);
     }
