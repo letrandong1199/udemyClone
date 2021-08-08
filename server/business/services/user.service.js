@@ -24,6 +24,8 @@ const getOneUserValidator = require("../../api/validators/userValidators/getOneU
 const wishlistRepository = require("../../repositories/wishlist.repository");
 const changePasswordResponseEnum = require("../../api/validators/enums/userEnums/changePasswordResponseEnum");
 const changePasswordValidator = require("../../api/validators/userValidators/changePasswordValidator");
+const redisClient = require("../../api/extensions/redis");
+const { client } = require("../../api/extensions/redis");
 require("dotenv").config();
 const tokenList = {};
 
@@ -382,17 +384,36 @@ const userService = {
       };
 
       const jwToken = await jwt.sign(payload, process.env.SECRET_KEY, {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
       });
+      const refreshTokenLife = process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24;
       const refreshToken = await jwt.sign(
         payload,
         process.env.REFRESH_TOKEN_KEY,
         {
-          expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
+          expiresIn: refreshTokenLife,
         }
       );
       // Store refresh token in ...
-      tokenList[refreshToken] = payload;
+      // Redis
+      try {
+        redisClient.set(refreshToken, JSON.stringify(payload), (err, reply) => {
+          if (err) throw err;
+          console.log(reply);
+          redisClient.expire(refreshToken, refreshTokenLife, (err, reply) => {
+            if (err) throw err;
+            console.log(reply);
+            redisClient.get(refreshToken, (err, reply) => {
+              if (err) throw err;
+              console.log(JSON.parse(reply));
+            });
+          })
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      // tokenList[refreshToken] = payload;
       console.log(jwToken);
       return {
         Code: signInResponseEnum.SUCCESS,
@@ -407,10 +428,23 @@ const userService = {
   async refreshToken(req) {
     const { refreshToken } = req.body;
     console.log("Client: ", refreshToken);
-    if (refreshToken && refreshToken in tokenList) {
+    let payload = null;
+
+    payload = await new Promise((resolve, reject) => {
+      try {
+        redisClient.get(refreshToken, (err, reply) => {
+          payload = JSON.parse(reply);
+          resolve(payload);
+        });
+      } catch (error) {
+        reject(error);
+      }
+
+    })
+    console.log('redis', payload);
+    if (refreshToken && payload) {
       try {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
-        const payload = tokenList[refreshToken];
         const token = await jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
         });
@@ -420,7 +454,7 @@ const userService = {
           refreshToken: refreshToken,
         };
       } catch (error) {
-        console.error(err);
+        console.error(error);
         return {
           Code: "Invalid refresh token",
         };
@@ -431,6 +465,21 @@ const userService = {
       };
     }
   },
+  async rejectRefreshToken(req) {
+    const { refreshToken } = req.body;
+
+    try {
+      if (redisClient.check(refreshToken)) {
+        redisClient.del(refreshToken, (err, reply) => {
+          console.log('reject', reply);
+        })
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  },
+
   async changePassword(request) {
     try {
       const resultValidator = changePasswordValidator.validate(
