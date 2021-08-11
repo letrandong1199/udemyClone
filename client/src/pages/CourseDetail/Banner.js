@@ -26,7 +26,7 @@ import { Link } from 'react-router-dom';
 
 import { ROUTES } from '../../config/config';
 
-const Banner = ({ course, isPending, handleEnroll, handleAddWishlist }) => {
+const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLearn }) => {
     const { data, loading, error: error2 } = usePalette(course?.Thumbnail_Small);
     const classes = useStyles({
         error: error2,
@@ -124,6 +124,18 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist }) => {
                                     <span style={{ fontWeight: 'bold' }}>Languages: </span>
                                     &nbsp;{course?.Language_Name}
                                 </Typography>}
+                            {isPending
+                                ? <Skeleton width='100px' />
+                                : <Typography variant="body2">
+                                    <span style={{ fontWeight: 'bold' }}>Create at: </span>
+                                    &nbsp;1/1/2020
+                                </Typography>}
+                            {isPending
+                                ? <Skeleton width='100px' />
+                                : <Typography variant="body2">
+                                    <span style={{ fontWeight: 'bold' }}>Last update: </span>
+                                    &nbsp;1/1/2021
+                                </Typography>}
                         </Grid>
 
                         <Grid item xs={3}>
@@ -146,16 +158,38 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist }) => {
                         {isPending
                             ? <Skeleton><Button /></Skeleton>
                             : <Fragment>
-                                <Button
-                                    color="primary"
-                                    size="large"
-                                    variant="outlined"
-                                    style={{ marginRight: 20, textTransform: 'none' }}
-                                    startIcon={<AddCircleOutlineRoundedIcon />}
-                                    onClick={handleEnroll}
-                                >
-                                    Enroll for {course?.price ? course?.price + '$' : 'free'}
-                                </Button>
+                                {course.Is_Enrolled
+                                    ? <Button
+                                        color="primary"
+                                        size="large"
+                                        variant="outlined"
+                                        style={{ marginRight: 20, textTransform: 'none' }}
+                                        onClick={handleLearn}
+                                    >
+                                        Learn
+                                    </Button>
+                                    : <Button
+                                        color="primary"
+                                        size="large"
+                                        variant="outlined"
+                                        style={{ marginRight: 20, textTransform: 'none' }}
+                                        startIcon={<AddCircleOutlineRoundedIcon />}
+                                        onClick={handleEnroll}
+                                    >
+                                        Enroll for &nbsp;{course.Promote !== 0
+                                            && <span style={{
+                                                fontSize: 14,
+                                                textDecoration: 'line-through',
+                                                color: 'darkred',
+                                                marginRight: 5
+                                            }}>${course.Price}</span>}
+                                        {course.Promote !== 0
+                                            ? '$' + (parseFloat(course.Promote) * parseFloat(course.Price)).toFixed(2)
+                                            : course.Price !== 0
+                                                ? '$' + course.Price
+                                                : 'Free'}
+                                    </Button>
+                                }
                                 <Button
                                     color="primary"
                                     size="large"

@@ -51,17 +51,13 @@ export const useStyles = makeStyles((theme) => ({
         //marginRight: theme.spacing(2),
         //width: '25ch',
     },
-    button: {
-        height: 50,
-        maxWidth: 580,
-        width: '100%',
-        margin: 'auto'
-    },
+
     forgetButton: {
         maxWidth: 580,
-        left: 60,
-        padding: 0
+        left: -4,
+        textTransform: 'unset'
     },
+
     Tab: {
         '& .MuiTabs-indicator': {
             color: '#000',
@@ -75,4 +71,20 @@ export const useStyles = makeStyles((theme) => ({
         zIndex: theme.zIndex.snackbar + 1,
         color: '#fff',
     },
+
+    registerRoot: {
+        marginTop: 16,
+        '& button': {
+            height: 50,
+        },
+        '& > *': {
+            margin: '0 50px 0 50px',
+        }
+    },
+
+    registerForm: {
+        '& > *': {
+            marginBottom: 16,
+        }
+    }
 }));

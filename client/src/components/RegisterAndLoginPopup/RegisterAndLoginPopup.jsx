@@ -1,15 +1,16 @@
 import RegisterAndLogin from "../RegisterAndLogin/RegisterAndLogin";
 import Popover from '@material-ui/core/Popover';
 import { useStyles } from "./styles";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 const RegisterAndLoginPopup = ({ isOpened, tab }) => {
     const classes = useStyles();
     const history = useHistory();
-
-
-    const handleLogin = () => {
-        return history.goBack();
+    const location = useLocation();
+    const handleClose = () => {
+        let searchParams = new URLSearchParams(location.search);
+        searchParams.delete('auth');
+        history.push({ pathname: location.pathname, search: searchParams.toString() });
     }
 
     return (
@@ -17,7 +18,7 @@ const RegisterAndLoginPopup = ({ isOpened, tab }) => {
             id={tab}
             open={isOpened}
             anchorReference="none"
-            onClose={history.goBack}
+            onClose={handleClose}
             anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
@@ -28,7 +29,7 @@ const RegisterAndLoginPopup = ({ isOpened, tab }) => {
             }}
             className={classes.popoverRegisterAndLogin}
         >
-            <RegisterAndLogin handleLogin={handleLogin} tab={tab} />
+            <RegisterAndLogin defaultTab={tab} handleClose={handleClose} />
         </Popover>
     )
 }

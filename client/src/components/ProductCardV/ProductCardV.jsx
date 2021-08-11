@@ -39,14 +39,21 @@ function ProductCardV(props) {
                     image={props.course.Thumbnail_Medium}
                     title={props.course.Title}
                 >
-                    {!props.hidePrice && <Typography className={classes.price}>
-                        {props.course.Promote_Rate !== 0 && <span style={{ textDecoration: 'line-through', color: 'darkred', marginRight: 5 }}>${props.course.Price}</span>}
-                        {props.course.Promote_Rate !== 0
-                            ? (props.course.promote * props.course.Price)?.toFixed(2)
-                            : props.course.Price !== 0
-                                ? props.course.Price
-                                : 'Free'}
-                    </Typography>}
+                    {!props.hidePrice
+                        && <Typography className={classes.price}>
+                            {props.course.Promote_Rate !== 0
+                                && <span style={{
+                                    fontSize: 14,
+                                    textDecoration: 'line-through',
+                                    color: 'darkred',
+                                    marginRight: 5
+                                }}>${props.course.Price}</span>}
+                            {props.course.Promote_Rate !== 0
+                                ? '$' + (parseFloat(props.course.Promote_Rate) * parseFloat(props.course.Price)).toFixed(2)
+                                : props.course.Price !== 0
+                                    ? '$' + props.course.Price
+                                    : 'Free'}
+                        </Typography>}
                     {props.course.Tag && <Typography className={classes.tag}>
                         {props.course.Tag}
                     </Typography>}

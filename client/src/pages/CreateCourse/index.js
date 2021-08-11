@@ -8,23 +8,12 @@ import {
     ListItem,
     Divider,
     Typography,
-    TextField,
     Button,
     Grid,
     Container,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
     List,
     Tab,
-    Step,
-    StepLabel,
-    StepConnector,
-    Stepper,
-    Backdrop,
-    Snackbar,
-    CircularProgress,
+
 } from '@material-ui/core';
 
 import {
@@ -32,14 +21,12 @@ import {
     TabPanel,
     TabList,
     TabContext,
-    Alert,
 } from '@material-ui/lab';
 import {
     Link,
     Switch,
     Route,
     useRouteMatch,
-    useHistory,
     useParams,
 } from 'react-router-dom';
 
@@ -47,8 +34,7 @@ import { useStyles } from './styles';
 
 
 import courseService from '../../services/course.service';
-import categoryService from '../../services/category.service';
-import languageService from '../../services/language.service';
+
 import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
 
 
@@ -62,300 +48,9 @@ import DescriptionPanel from './DescriptionPanel';
 import CreateLecturePanel from './CreateLecturePanel';
 import BasicInfoPanel from './BasicInfoPanel';
 import PricingAndPublicPanel from './PricingAndPublicPanel';
+import CreateCourse from './CreateCourse';
 
-const CreateCourse = () => {
-    const history = useHistory();
-    const [info, setInfo] = useState({
-        Title: '',
-        Sub_Description: '',
-        Category_Id: null,
-        Language_Id: null,
-    });
-    const [categoriesTree, setCategoriesTree] = useState([]);
-    const [languagesTree, setLanguagesTree] = useState([]);
-    const [isPending, setIsPending] = useState([]);
 
-    const [openSnack, setOpenSnack] = useState(false);
-    const [snackContent, setSnackContent] = useState(null);
-    const [snackType, setSnackType] = useState('success');
-
-    const handleCloseSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return event;
-        }
-        setOpenSnack(false);
-    };
-
-    const handleSetIsPending = (index, loaded) => () => {
-        let array = [...isPending];
-
-        if (loaded) {
-            let ix = isPending.indexOf(index)
-            if (ix !== -1) {
-                array.splice(ix, 1);
-            }
-        } else {
-            array.push(index);
-        }
-        setIsPending(array);
-    }
-
-    const handleChange = (key) => (event) => {
-        let dic = { ...info };
-        dic[key] = event.target.value;
-        setInfo(dic);
-    }
-
-    const handleLoadCategory = () => {
-        handleSetIsPending('category', false)();
-        categoryService.getAll().then(response => {
-            const categoriesArray = response.listAllResponse;
-            if (categoriesArray !== undefined) {
-                setCategoriesTree(categoriesArray);
-            }
-            handleSetIsPending('category', true)();
-        }).catch(error => {
-            handleSetIsPending('category', true)();
-            console.log(error);
-        });
-    }
-
-    // Handle load languages
-    const handleLoadLang = () => {
-        handleSetIsPending('lang', false)();
-        languageService.getAll().then(response => {
-            const languagesArray = response.listAllResponse;
-            if (languagesArray !== undefined) {
-                setLanguagesTree(languagesArray);
-            }
-            handleSetIsPending('lang', true)();
-        }).catch(error => {
-            console.log(error);
-            handleSetIsPending('lang', true)();
-        });
-    }
-
-    const getSteps = () => {
-        return ['Start with a title',
-            'Write brief description',
-            'Choose category',
-            'Choose language'];
-    }
-
-    const getStepContent = (step) => {
-        switch (step) {
-            case 0:
-                return 'What are your course title?';
-            case 1:
-                return 'Brief description';
-            case 2:
-                return 'Which category your course should?';
-            case 3:
-                return 'What is language your course in?'
-            default:
-                return 'Unknown step';
-        }
-    }
-    const validateBasicInfo = (info) => {
-        if (info.Title && info.Title === '') {
-            return false;
-        }
-        if (info.Sub_Description && info.Sub_Description === '') {
-            return false;
-        }
-        if (info.Category_Id && info.Category_Id === '') {
-            return false;
-        }
-        if (info.Language_Id && info.Language_Id === '') {
-            return false;
-        }
-    }
-    const getInput = (step) => {
-        switch (step) {
-            case 0:
-                return <TextField
-                    id="title"
-                    label="Title"
-                    required
-                    error={validateBasicInfo}
-                    helperText={validateBasicInfo && 'Please fill this field'}
-                    variant="outlined"
-                    value={info?.Title || ''}
-                    fullWidth
-                    onChange={handleChange('Title')}
-                />
-            case 1:
-                return <TextField
-                    id="sub_description"
-                    label="Brief description"
-                    required
-                    error={info?.Sub_Description === '' ? true : false}
-                    helperText={info?.Sub_Description}
-                    variant="outlined"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    value={info?.Sub_Description || ''}
-                    onChange={handleChange('Sub_Description')}
-                />
-            case 2:
-                return <FormControl
-                    className={classes.formControl}
-                    variant='outlined'
-                    fullWidth
-                >
-                    <InputLabel id="catg-label" >Category</InputLabel>
-                    <Select
-                        labelId='catg-select-label'
-                        id='catg-select'
-                        value={info?.Category_Id || ''}
-                        onChange={handleChange('Category_Id')}
-                        label='Category'
-                        onOpen={handleLoadCategory}
-                    >
-
-                        {isPending.includes('category')
-                            ? <Skeleton width='100%' height='50px'><MenuItem key={'ske'} /></Skeleton>
-                            : categoriesTree?.map(category => (
-                                <MenuItem key={category.Id} value={category.Id}>
-                                    {category.Name}
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </FormControl>
-            case 3:
-                return <FormControl
-                    className={classes.formControl}
-                    variant="outlined"
-                    fullWidth
-                >
-                    <InputLabel id="lang-label" >Language</InputLabel>
-                    <Select
-                        labelId="lang-select-label"
-                        id="lang-select"
-                        value={info?.Language_Id || ''}
-                        onChange={handleChange('Language_Id')}
-                        label="Language"
-                        onOpen={handleLoadLang}
-                    >
-                        {isPending.includes('lang')
-                            ? <Skeleton width='100%' height='50px'><MenuItem key={'ske'} /></Skeleton>
-                            : languagesTree?.map(lang => (
-                                <MenuItem key={lang.Id} value={lang.Id}>
-                                    {lang.Name}
-                                </MenuItem>
-                            ))}
-                    </Select>
-                </FormControl>
-            default:
-                return
-        }
-    }
-
-    const classes = useStyles();
-    const [activeStep, setActiveStep] = useState(0);
-    const steps = getSteps();
-
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
-    };
-    const handleSave = () => {
-        handleSetIsPending('save', false)();
-        courseService.postOne({
-            Title: info.Title,
-            Sub_Description: info.Sub_Description,
-            Category_Id: info.Category_Id,
-            Language_Id: info.Language_Id,
-        }).then(response => {
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            handleSetIsPending('save', true)();
-            console.log(response);
-            return history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`)
-        }).catch(error => {
-            console.log(error);
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            handleSetIsPending('save', true)();
-        })
-    }
-    return (
-        <div>
-            <Typography variant="h3" className={classes.bigTitle}>
-                Create course
-            </Typography>
-            <Stepper alternativeLabel activeStep={activeStep} connector={<StepConnector />}>
-                {steps.map((label) => (
-                    <Step key={label}>
-                        <StepLabel >{label}</StepLabel>
-                    </Step>
-                ))}
-            </Stepper>
-            <Grid
-                container
-                style={{ justifyContent: 'center', padding: '0 100px 0 100px' }}>
-                {activeStep === steps.length ? (
-                    <Fragment>
-                        <Typography className={classes.instructions}>All steps completed</Typography>
-                        <Button
-                            onClick={handleReset}
-                            className={classes.backButton}
-                        >
-                            Reset
-                        </Button>
-                        <Button
-                            onClick={handleSave}
-                            variant='contained'
-                            color='primary'
-                        >
-                            Save
-                        </Button>
-                    </Fragment>
-                ) : (
-                    <Fragment>
-                        <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
-                        {getInput(activeStep)}
-                        <div style={{ marginTop: 10 }}>
-                            <Button
-                                disabled={activeStep === 0}
-                                onClick={handleBack}
-                                className={classes.backButton}
-                            >
-                                Back
-                            </Button>
-                            <Button variant="contained" color="primary" onClick={handleNext}>
-                                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                            </Button>
-                        </div>
-                    </Fragment>
-                )}
-            </Grid>
-            <Snackbar
-                open={openSnack}
-                autoHideDuration={4000}
-                onClose={handleCloseSnack}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnack} severity={snackType}>
-                    {snackContent}
-                </Alert>
-            </Snackbar>
-            <Backdrop open={isPending.includes('save')} className={classes.backdrop} >
-                <CircularProgress color='primary' />
-            </Backdrop>
-        </div >
-    )
-}
 
 const EditCourse = () => {
     const { id } = useParams();

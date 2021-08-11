@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SIGN_IN, config } from '../config/config';
+import { CREATE_USER, SIGN_IN, config } from '../config/config';
 
 const API_URL = `${config.HOST}/${config.USER_CONTROLLER}`;
 
@@ -7,18 +7,21 @@ const ADMIN = 1;
 const INSTRUCTOR = 2;
 
 class AuthService {
-    login(username, password) {
+    login(data) {
         return axios
-            .post(API_URL + "/authenticate-user", {
-                Email: username,
-                Password: password,
-            })
+            .post(API_URL + "/authenticate-user", data)
             .then(response => {
-                if (response.data.message.token) {
-                    window.localStorage.setItem("user", JSON.stringify(response.data.message));
+                if (response.data.message.Code === SIGN_IN.WRONG_EMAIL) {
+                    throw Error('email-Email not exists')
+                }
+                if (response.data.message.Code === SIGN_IN.WRONG_PASSWORD) {
+                    throw Error('password-Wrong password')
                 }
                 if (response.data.message.Code !== SIGN_IN.SUCCESS) {
                     throw Error(response.data.message.Code);
+                }
+                if (response.data.message.token) {
+                    window.localStorage.setItem("user", JSON.stringify(response.data.message));
                 }
                 console.log('Successfully');
 
@@ -39,12 +42,17 @@ class AuthService {
         }
     };
 
-    register(username, name, password) {
-        return axios.post(API_URL + "/sign-up", {
-            Email: username,
-            Name: name,
-            Password: password,
-        });
+    register(data) {
+        return axios.post(API_URL + "/sign-up", data).then(response => {
+            console.log(response);
+            if (response.data.message.Code === CREATE_USER.EMAIL_IS_EXIST) {
+                throw Error('Email already exists')
+            }
+            if (response.data.message.Code !== CREATE_USER.SUCCESS) {
+                throw Error(response.data.message.Code);
+            };
+            return response.data.message;
+        })
     };
 
     refreshToken() {

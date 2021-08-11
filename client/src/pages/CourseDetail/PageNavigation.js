@@ -14,7 +14,7 @@ import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRoun
 import { Skeleton } from '@material-ui/lab';
 import { useStyles } from './styles';
 
-const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist }) => {
+const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, handleLearn }) => {
     const classes = useStyles();
     const trigger = useScrollTrigger({ threshold: 700 });
 
@@ -37,16 +37,38 @@ const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist }) 
                         <Grid>
                             {isPending
                                 ? <Skeleton><Button /></Skeleton>
-                                : <Button
-                                    color='primary'
-                                    size='large'
-                                    variant='outlined'
-                                    style={{ marginRight: 20, textTransform: 'none' }}
-                                    onClick={handleEnroll}
-                                    startIcon={<AddCircleOutlineRoundedIcon />}
-                                >
-                                    Enroll for {course?.price ? course?.price + '$' : 'Free'}
-                                </Button>
+                                : course.Is_Enrolled
+                                    ? <Button
+                                        color="primary"
+                                        size="large"
+                                        variant="outlined"
+                                        style={{ marginRight: 20, textTransform: 'none' }}
+                                        onClick={handleLearn}
+                                    >
+                                        Learn
+                                    </Button>
+                                    : <Button
+                                        color="primary"
+                                        size="large"
+                                        variant="outlined"
+                                        style={{ marginRight: 20, textTransform: 'none' }}
+                                        startIcon={<AddCircleOutlineRoundedIcon />}
+                                        onClick={handleEnroll}
+                                    >
+                                        Enroll for &nbsp;{course.Promote !== 0
+                                            && <span style={{
+                                                fontSize: 14,
+                                                textDecoration: 'line-through',
+                                                color: 'darkred',
+                                                marginRight: 5
+                                            }}>${course.Price}</span>}
+                                        {course.Promote !== 0
+                                            ? '$' + (parseFloat(course.Promote) * parseFloat(course.Price)).toFixed(2)
+                                            : course.Price !== 0
+                                                ? '$' + course.Price
+                                                : 'Free'}
+                                    </Button>
+
                             }
                             {isPending
                                 ? <Skeleton><Button /></Skeleton>

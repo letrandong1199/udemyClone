@@ -10,7 +10,7 @@ import {
     Alert
 } from '@material-ui/lab';
 
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 
 import courseService from '../../services/course.service.js';
 import enrolledCourseService from '../../services/enrolledCourse.service';
@@ -25,12 +25,14 @@ import Content from './Content';
 import RecommendSection from './RecommendSection';
 import ReviewSection from './ReviewSection';
 import { useStyles } from './styles';
+import { ROUTES } from '../../config/config';
 
 
 function DetailCourse() {
     const classes = useStyles();
     // Get id by url params
     const { id } = useParams();
+    const history = useHistory();
 
     const [course, setCourse] = useState(null);
     const [isPending, setIsPending] = useState(true);
@@ -83,12 +85,27 @@ function DetailCourse() {
         })
     }
 
+    const handleLearn = (id) => () => {
+        history.push(`${ROUTES.course}${ROUTES.learn}/${id}`)
+    }
+
     useEffect(() => {
         setIsPending(true);
         courseService.getById(id)
             .then(response => {
-                setCourse(response.resultResponse);
-                setIsPending(false);
+                const courseRes = response.resultResponse;
+                enrolledCourseService.getEnrolledByUser().then(response => {
+                    const enrolled = response.listAllResponse;
+                    const isEnrolled = enrolled.every(x => x.Course_Id !== courseRes.Id)
+                    courseRes.Is_Enrolled = isEnrolled;
+                    console.log(courseRes);
+                    setCourse(courseRes);
+                    setIsPending(false);
+                }).catch(error => {
+                    console.log(error);
+                    setIsPending(false);
+                })
+
             }).catch(error => {
                 setError(error.message);
                 setIsPending(false);
@@ -114,6 +131,7 @@ function DetailCourse() {
                     isPending={isPending}
                     handleEnroll={handleEnroll}
                     handleAddWishlist={handleAddWishlist}
+                    handleLearn={handleLearn(course?.Id)}
                 />
             }
             <PageNavigation
@@ -121,6 +139,7 @@ function DetailCourse() {
                 isPending={isPending}
                 handleEnroll={handleEnroll}
                 handleAddWishlist={handleAddWishlist}
+                handleLearn={handleLearn(course?.Id)}
             />
             <div id="description-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
             {error

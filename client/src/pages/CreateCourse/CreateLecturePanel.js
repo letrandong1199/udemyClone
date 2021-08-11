@@ -82,12 +82,13 @@ const LectureCard = ({
                 (event) => setProgress(Math.round((100 * event.loaded) / event.total)))
                 .then((response => {
                     let dic = { ...course };
-                    dic.Content[indexSection].Lectures[index].Media.push(response.newMedia);
+                    dic.Content[indexSection].Lectures[index].Media = [response.newMedia];
                     setCourse(dic);
                     setSnackContent('Video is uploaded successfully.');
                     setSnackType('success');
                     setOpenSnack(true);
                     setAddVideo(false);
+                    console.log(isPending);
                     handleSetIsPending(index, true)();
                 })).catch(error => {
                     console.log(error);
@@ -491,13 +492,7 @@ const SectionCard = ({
     const classes = useStyles();
     return (<Card
         key={indexSection}
-        style={{
-            minHeight: 50,
-            minWidth: 700,
-            margin: 20,
-            background: 'rgb(241,241,241)',
-            position: 'relative'
-        }}
+        className={classes.sectionCard}
     >
         <TextField
             id={`section-name-${indexSection}`}
@@ -515,24 +510,27 @@ const SectionCard = ({
             onChange={handleChange(indexSection)}
             style={{ margin: 20 }}
         />
-        {lectures?.map((lecture, index) => {
-            return <LectureCard
-                key={index}
-                lecture={lecture}
-                index={index}
-                indexSection={indexSection}
-                editable={editableLecture}
-                editLecture={editLecture}
-                handleChange={handleChangeLecture}
-                handleEdit={handleEditLecture}
-                handleCancel={handleCancelLecture}
-                handleSave={handleSaveLecture}
-                handleDelete={handleDeleteLecture}
-                course={course}
-                setCourse={setCourse}
-            />
-        })}
-        {newLecture &&
+        {
+            lectures?.map((lecture, index) => {
+                return <LectureCard
+                    key={index}
+                    lecture={lecture}
+                    index={index}
+                    indexSection={indexSection}
+                    editable={editableLecture}
+                    editLecture={editLecture}
+                    handleChange={handleChangeLecture}
+                    handleEdit={handleEditLecture}
+                    handleCancel={handleCancelLecture}
+                    handleSave={handleSaveLecture}
+                    handleDelete={handleDeleteLecture}
+                    course={course}
+                    setCourse={setCourse}
+                />
+            })
+        }
+        {
+            newLecture &&
             <Card
                 key='new'
                 style={{
@@ -638,7 +636,7 @@ const SectionCard = ({
                 {snackContent}
             </Alert>
         </Snackbar>
-    </Card>
+    </Card >
     )
 }
 

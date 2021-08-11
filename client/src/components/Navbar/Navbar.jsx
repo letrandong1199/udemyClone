@@ -128,6 +128,7 @@ const ProfileButton = ({ handleSignOut }) => {
 // Component register button
 const RegisterButton = () => {
     const signUpLink = usePrepareLink({
+        keepOldQuery: true,
         query: {
             [GET_PARAMS.popup]: GET_ENUMS.popup.signUp
         }

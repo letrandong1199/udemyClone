@@ -36,10 +36,19 @@ function ProductCardH({ course, loading, linkTo, hidePrice }) {
                 title={course?.Title}
                 component={Link}
                 to={linkTo}
-                children={!hidePrice && <Typography
-                    className={classes.price}
-                >
-                    {course?.Price}$
+                children={!hidePrice && <Typography className={classes.price}>
+                    {course.Promote_Rate !== 0
+                        && <span style={{
+                            fontSize: 14,
+                            textDecoration: 'line-through',
+                            color: 'darkred',
+                            marginRight: 5
+                        }}>${course.Price}</span>}
+                    {course.Promote_Rate !== 0
+                        ? '$' + (parseFloat(course.Promote_Rate) * parseFloat(course.Price)).toFixed(2)
+                        : course.Price !== 0
+                            ? '$' + course.Price
+                            : 'Free'}
                 </Typography>
                 }
             />
