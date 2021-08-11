@@ -122,7 +122,7 @@ const enrolledcourseService = {
           };
         })
       );
-
+      console.log('GG', listAllCourseResponse);
       return {
         Code: getEnrolledCourseResponseEnum.SUCCESS,
         listAllResponse: listAllCourseResponse,
