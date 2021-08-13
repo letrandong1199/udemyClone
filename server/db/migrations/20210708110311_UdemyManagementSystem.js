@@ -98,6 +98,8 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.text("Content");
+      table.timestamp("Created_At").defaultTo(knex.fn.now());
+      table.timestamp("Updated_At").defaultTo(knex.fn.now());
     })
     .createTable("Media_User", function (table) {
       table.integer("Media_Id").unsigned().references("Id").inTable("Media");
@@ -106,9 +108,9 @@ exports.up = function (knex) {
       table.primary(["Media_Id", "User_Id"]);
     })
     .createTable("Wishlists", function (table) {
-      table.increments("Id").primary();
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
+      table.primary(["User_Id", "Course_Id"]);
     })
     .createTable("Enrolled_Courses", function (table) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
@@ -116,6 +118,11 @@ exports.up = function (knex) {
       table.float("Rating");
       table.timestamp("Enrolled_Date").defaultTo(knex.fn.now());
       table.primary(["User_Id", "Course_Id"]);
+    })
+    .createTable("Public_Information", function (table) {
+      table.integer("User_Id").unsigned().references("Id").inTable("Users");
+      table.text("Description").defaultTo("");
+      table.primary("User_Id");
     })
     .then(function (table) {
       if (knex.client.config.client == "pg") {
@@ -128,7 +135,6 @@ exports.up = function (knex) {
                           RETURN NEW;  
                           END; 
                           $BODY$ language plpgsql; `;
-
 
         knex.raw(trigFunc).then(function (response) {
           var trigger = `CREATE TRIGGER calAvgRating  
@@ -158,8 +164,7 @@ exports.up = function (knex) {
                               WHERE Id = NEW.Course_Id; `;
           knex.raw(triggerMysql_1).then(function (response) {
             console.log("defined rating trigger");
-          })
-
+          });
         });
       }
     });
@@ -168,6 +173,7 @@ exports.up = function (knex) {
 exports.down = function (knex) {
   return knex.schema
     .dropTableIfExists("Feedbacks")
+    .dropTableIfExists("Public_Information")
     .dropTableIfExists("Enrolled_Courses")
     .dropTableIfExists("Media_User")
     .dropTableIfExists("Media")

@@ -20,7 +20,7 @@ const lectureRepository = require("../../repositories/lecture.repository");
 const mediaRepository = require("../../repositories/media.repository");
 const feedbackRepository = require("../../repositories/feedback.repository");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
-const mediauserRepository = require("../../repositories/mediauser.repository")
+const mediauserRepository = require("../../repositories/mediauser.repository");
 const moment = require("moment");
 
 const courseService = {
@@ -100,7 +100,7 @@ const courseService = {
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneCourseResponseEnum.SERVER_ERROR };
       }
-      console.log('Id ne: ', ret[0])
+      console.log("Id ne: ", ret[0]);
       newCourse.Id = ret[0];
       return { Code: createOneCourseResponseEnum.SUCCESS, newCourse };
     } catch (e) {
@@ -354,7 +354,7 @@ const courseService = {
       course[0].Is_Completed = isCompleted;
       course[0].Category_Id = category[0].Id;
       course[0].Language_Id = language[0].Id;
-      course[0].Update_At = moment().format("YYYY-MM-DD");
+      course[0].Update_At = moment().format("YYYY-MM-DD HH:MM:ss.SSSSSS Z");
       if (
         (await _entityRepository("Courses").updateEntity(
           request.params.id,
@@ -436,6 +436,8 @@ const courseService = {
             Author: author[0],
             Promote_Rate: promote[0].Promote,
             Language_Id: course.Language_Id,
+            Create_At: course.Create_At,
+            Update_At: course.Update_At,
           };
         })
       );
@@ -464,6 +466,8 @@ const courseService = {
             User_Email: user[0].Email,
             Content: feedback.Content,
             Rating: rating[0].Rating,
+            Created_At: feedback.Created_At,
+            Updated_At: feedback.Updated_At,
           };
         })
       );
@@ -572,7 +576,9 @@ const courseService = {
       if (enrolled.length == 0) {
         return { Code: getOneCourseResponseEnum.IS_NOT_ENROLLED_COURSE };
       }
-      const feedback = await feedbackRepository.getFeedbackByUserIdAndCourseId(query)
+      const feedback = await feedbackRepository.getFeedbackByUserIdAndCourseId(
+        query
+      );
 
       const listSections = await sectionRepository.getSectionByCourseId(
         course[0].Id
@@ -588,23 +594,25 @@ const courseService = {
               let listMedia = await mediaRepository.getMediaByLectureId(
                 lecture.Id
               );
-              let listMediaResponse = await Promise.all(listMedia.map(async (media) => {
-                let listMediaUser = await mediauserRepository.getPlayedByUserIdAndMediaId({
-                  Media_Id: media.Id,
-                  User_Id: request.id,
-                });
-                if(listMediaUser.length != 0) {
+              let listMediaResponse = await Promise.all(
+                listMedia.map(async (media) => {
+                  let listMediaUser =
+                    await mediauserRepository.getPlayedByUserIdAndMediaId({
+                      Media_Id: media.Id,
+                      User_Id: request.id,
+                    });
+                  if (listMediaUser.length != 0) {
                     media.Played = listMediaUser[0].Played;
-                } else {
-                   media.Played = 0;
-                }
-                return {
-                  Id: media.Id,
-                  Video_URL: media.Video_URL,
-                  Played: media.Played,
-                };
-              })
-              )
+                  } else {
+                    media.Played = 0;
+                  }
+                  return {
+                    Id: media.Id,
+                    Video_URL: media.Video_URL,
+                    Played: media.Played,
+                  };
+                })
+              );
               return {
                 Id: lecture.Id,
                 Media: listMediaResponse,
