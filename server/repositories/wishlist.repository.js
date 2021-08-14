@@ -11,7 +11,21 @@ const wishlistRepository = {
     return db("Wishlists")
       .where("User_Id", user_id)
       .join("Courses", `Courses.Id`, `Wishlists.Course_Id`)
-      .catch((e) => { console.log(e); return operatorType.FAIL.READ });
+      .catch((e) => {
+        console.log(e);
+        return operatorType.FAIL.READ;
+      });
+  },
+  getWishlistByUserIdAndCourseId(query) {
+    return db("Wishlists")
+      .where(query)
+      .catch(() => operatorType.FAIL.READ);
+  },
+  deleteWishlistByUserIdAndCourseId(query) {
+    return db("Wishlists")
+      .where(query)
+      .del()
+      .catch(() => operatorType.FAIL.DELETE);
   },
 };
 module.exports = wishlistRepository;

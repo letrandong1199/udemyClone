@@ -1,3 +1,5 @@
+const moment = require("moment");
+
 const createOneFeedbackResponseEnum = require("../../api/validators/enums/feedbackEnums/createOneFeedbackResponseEnum");
 const deleteOneFeedbackResponseEnum = require("../../api/validators/enums/feedbackEnums/deleteOneFeedbackResponseEnum");
 const updateOneFeedbackEnum = require("../../api/validators/enums/feedbackEnums/updateOneFeedbackResponseEnum");
@@ -61,6 +63,7 @@ const feedbackService = {
         return { Code: updateOneFeedbackEnum.FEEDBACK_IS_NOT_EXIST };
       }
       feedback[0].Content = request.body.Content;
+      feedback[0].Updated_At = moment().format("YYYY-MM-DD HH:MM:ss.SSSSSS Z");
       if (
         (await _entityRepository("Feedbacks").updateEntity(
           request.params.id,
