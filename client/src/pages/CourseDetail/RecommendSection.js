@@ -17,7 +17,7 @@ const RecommendSection = ({ course, isPending }) => {
             </Typography>
             {isPending
                 ? <Skeleton width='100%' height='100px'></Skeleton>
-                : <MyCarousel courses={course.Similar_Courses} loading={isPending} />}
+                : course.Similar_Courses && <MyCarousel courses={course.Similar_Courses} loading={isPending} />}
         </Container >
     )
 };

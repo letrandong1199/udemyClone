@@ -28,7 +28,7 @@ import useGetParameter from '../../utils/useGetParameter';
 import { useStyles } from './styles';
 
 
-const AllCoursesSection = ({ id }) => {
+const AllCoursesSection = () => {
     const classes = useStyles();
     const query = useGetParameter();
     const location = useLocation();
@@ -120,7 +120,7 @@ const AllCoursesSection = ({ id }) => {
                     setIsPending(false);
                 })
         }
-    }, [id, querySearch, queryPage]);
+    }, [querySearch, queryPage]);
 
 
 

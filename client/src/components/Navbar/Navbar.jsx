@@ -48,6 +48,9 @@ import usePrepareLink from '../../utils/usePrepareLink';
 import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
 import listToTree from '../../utils/listToTree';
 
+import { useSelector, useDispatch } from 'react-redux'
+import { toggleTheme } from '../../features/theme/themeSlice';
+
 // Component profile button
 const ProfileButton = ({ handleSignOut }) => {
     const classes = useStyles();
@@ -423,6 +426,11 @@ const CategoryMenu = (props) => {
 // Main component
 function Navbar(props) {
     const classes = useStyles();
+    const dispatch = useDispatch();
+    const dark = useSelector((state) => state.toggleTheme.dark);
+    useEffect(() => {
+        console.log('s', dark);
+    }, [dark])
 
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -575,7 +583,7 @@ function Navbar(props) {
                             {isInstructor && <InstructorButton />}
                             {isAdmin && <AdminButton />}
                             {isLogin && <ProfileButton handleSignOut={handleSignOut} />}
-                            <IconButton onClick={props.handleToggle}>
+                            <IconButton onClick={() => dispatch(toggleTheme())}>
                                 <FlareRoundedIcon />
                             </IconButton>
                         </Hidden>

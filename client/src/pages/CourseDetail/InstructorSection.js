@@ -47,8 +47,8 @@ const InstructorSection = ({ course, isPending }) => {
                         ? <Skeleton><Avatar /></Skeleton>
                         : <Avatar
                             style={{ height: 128, width: 128 }}
-                            src={course.Author.Thumbnail} size="large">
-                            {course.Author.Name[0]}
+                            src={course?.Author?.Thumbnail} size="large">
+                            {course?.Author?.Name[0]}
                         </Avatar>
                     }
                 </Grid>
@@ -57,7 +57,7 @@ const InstructorSection = ({ course, isPending }) => {
 
                     <Typography variant="h6">{isPending
                         ? <Skeleton />
-                        : course.Author.Name
+                        : course?.Author?.Name
                     }
                     </Typography>
 

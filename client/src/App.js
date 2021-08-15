@@ -11,22 +11,18 @@ import GetParameterPopups from './components/GetParameterPopups/GetParameterPopu
 import { PrivateRouteUser, PrivateRouteAdmin, PrivateRouteInstructor } from './components/PrivateRoute';
 import { Suspense } from 'react';
 import { ROUTES } from './config/config';
+import { useSelector } from 'react-redux'
+
 
 function App() {
-  const [dark, setDark] = React.useState(false)
-
-  const handleToggle = () => {
-    setDark(!dark);
-    console.log(dark);
-  }
-
+  const dark = useSelector((state) => state.toggleTheme.dark);
   return (
     <MuiThemeProvider theme={dark ? darkTheme : lightTheme}>
       <Suspense fallback={<div>
         <CircularProgress style={{ position: 'absolute', top: '50%', left: '50%' }} />
       </div>}>
         <Router>
-          <Navbar handleToggle={handleToggle} />
+          <Navbar />
           <Switch>
             {routes.map(({ component, path, ...rest }) => {
               return rest.public
@@ -41,7 +37,7 @@ function App() {
           <GetParameterPopups />
         </Router>
       </Suspense>
-    </MuiThemeProvider >
+    </MuiThemeProvider>
   )
 }
 

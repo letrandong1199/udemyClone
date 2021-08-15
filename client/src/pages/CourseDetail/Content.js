@@ -51,7 +51,7 @@ const Content = ({ course, isPending }) => {
             </Typography>
             <Grid container>
                 <Card className={classes.cardContent}>
-                    {!isPending && course && course?.Content.map((section, index) => (
+                    {!isPending && course && course?.Content?.map((section, index) => (
                         <Accordion
                             key={index}
                             expanded={expanded === `panel-${index}`}

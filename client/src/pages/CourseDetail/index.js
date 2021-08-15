@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import {
     Typography,
     Backdrop,
@@ -26,7 +26,44 @@ import RecommendSection from './RecommendSection';
 import ReviewSection from './ReviewSection';
 import { useStyles } from './styles';
 import { ROUTES } from '../../config/config';
+import dataFetchReducer from '../../utils/dataFetchReducer';
 
+const snackbarReducer = (state, action) => {
+    switch (action.type) {
+        case "SNACK_INIT":
+            return {
+                ...state,
+                isLoading: true,
+                open: false,
+            };
+        case "SNACK_SUCCESS":
+            return {
+                ...state,
+                isLoading: false,
+                error: false,
+                snackContent: 'Success',
+                snackType: 'success',
+                open: true,
+            };
+        case "SNACK_ERROR":
+            return {
+                ...state,
+                isLoading: false,
+                snackContent: action.payload,
+                snackType: 'error',
+                open: true,
+            };
+        case 'CLOSE_SNACK':
+            return {
+                ...state,
+                snackContent: '',
+                snackType: '',
+                open: false,
+            };
+        default:
+            throw new Error('Action is invalid');
+    }
+}
 
 function DetailCourse() {
     const classes = useStyles();
@@ -34,84 +71,80 @@ function DetailCourse() {
     const { id } = useParams();
     const history = useHistory();
 
-    const [course, setCourse] = useState(null);
-    const [isPending, setIsPending] = useState(true);
-    const [error, setError] = useState(null);
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [state, dispatch] = useReducer(dataFetchReducer, {
+        data: [],
+        isLoading: false,
+        error: null,
+    });
 
-    const [openSnack, setOpenSnack] = useState(false);
-    const [snackContent, setSnackContent] = useState(null);
-    const [snackType, setSnackType] = useState('success');
+    const [stateEnrollment, dispatchEnrollment] = useReducer(dataFetchReducer, {
+        data: [],
+        isLoading: false,
+        error: null,
+    });
 
+    const [snackState, dispatchSnackState] = useReducer(snackbarReducer, {
+        isLoading: false,
+        open: false,
+    })
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
             return event;
         }
-        setOpenSnack(false);
+        dispatchSnackState({ type: 'CLOSE_SNACK' })
     };
 
     const handleEnroll = () => {
-        setIsProcessing(true);
-        enrolledCourseService.postOne({ Course_Id: course.Id }).then(response => {
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            setIsProcessing(false)
+        dispatchSnackState({ type: 'SNACK_INIT' })
+        enrolledCourseService.postOne({ Course_Id: state.data.Id }).then(response => {
+            dispatchSnackState({ type: 'SNACK_SUCCESS' })
             return response;
         }).catch(error => {
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            setIsProcessing(false)
+            dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
             console.log(error);
         })
-    }
+    };
+
     const handleAddWishlist = () => {
-        setIsProcessing(true);
-        console.log(course);
-        wishlistService.postOne({ Course_Id: course.Id }).then(response => {
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            setIsProcessing(false);
+        dispatchSnackState({ type: 'SNACK_INIT' })
+        wishlistService.postOne({ Course_Id: state.data.Id }).then(response => {
+            dispatchSnackState({ type: 'SNACK_SUCCESS' })
             return response;
         }).catch(error => {
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            setIsProcessing(false);
+            dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
             console.log(error);
         })
-    }
+    };
 
     const handleLearn = (id) => () => {
         history.push(`${ROUTES.course}${ROUTES.learn}/${id}`)
-    }
+    };
 
     useEffect(() => {
-        setIsPending(true);
+        dispatch({ type: 'FETCH_INIT' });
         courseService.getById(id)
             .then(response => {
                 const courseRes = response.resultResponse;
-                enrolledCourseService.getEnrolledByUser().then(response => {
-                    const enrolled = response.listAllResponse;
-                    const isEnrolled = enrolled.every(x => x.Course_Id !== courseRes.Id)
-                    courseRes.Is_Enrolled = isEnrolled;
-                    console.log(courseRes);
-                    setCourse(courseRes);
-                    setIsPending(false);
-                }).catch(error => {
-                    console.log(error);
-                    setIsPending(false);
-                })
-
+                dispatch({ type: 'FETCH_SUCCESS', payload: courseRes });
             }).catch(error => {
-                setError(error.message);
-                setIsPending(false);
+                dispatch({ type: 'FETCH_ERROR', payload: error.message })
             })
+        dispatchEnrollment({ type: 'FETCH_INIT' });
+        enrolledCourseService.getEnrolledByUser().then(response => {
+            const enrolled = response.listAllResponse;
+            dispatch({ type: 'FETCH_SUCCESS', payload: enrolled });
+        }).catch(error => {
+            dispatch({ type: 'FETCH_ERROR', payload: error.message })
+        })
     }, [id])
 
+    useEffect(() => {
+        if (state.data.length > 0 && stateEnrollment.data.length > 0) {
+            const isEnrolled = stateEnrollment.data.every(x => x.Course_Id !== state.data.Id)
+            dispatch({ type: 'FETCH_SUCCESS', payload: { ...state.data, Is_Enrolled: isEnrolled } })
+        }
+    }, [state, stateEnrollment])
 
     useEffect(() => {
         const scrollOptions = {
@@ -120,81 +153,81 @@ function DetailCourse() {
             behavior: 'auto',
         }
         window.scrollTo(scrollOptions);
-    }, [isPending])
+    }, [])
 
     return (
         <div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <Banner
-                    course={course}
-                    isPending={isPending}
+                    course={state.data}
+                    isPending={state.isLoading}
                     handleEnroll={handleEnroll}
                     handleAddWishlist={handleAddWishlist}
-                    handleLearn={handleLearn(course?.Id)}
+                    handleLearn={handleLearn(state.data?.Id)}
                 />
             }
             <PageNavigation
-                course={course}
-                isPending={isPending}
+                course={state.data}
+                isPending={state.isLoading}
                 handleEnroll={handleEnroll}
                 handleAddWishlist={handleAddWishlist}
-                handleLearn={handleLearn(course?.Id)}
+                handleLearn={handleLearn(state.data?.Id)}
             />
             <div id="description-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <Description
-                    course={course}
-                    isPending={isPending}
+                    course={state.data}
+                    isPending={state.isLoading}
                 />
             }
 
             <div id="instructor-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <InstructorSection
-                    course={course}
-                    isPending={isPending}
+                    course={state.data}
+                    isPending={state.isLoading}
                 />
             }
             <div id="recommend-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <RecommendSection
-                    course={course}
-                    isPending={isPending}
+                    course={state.data}
+                    isPending={state.isLoading}
                 />
             }
             < div id="content-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <Content
-                    course={course}
-                    isPending={isPending}
+                    course={state.data}
+                    isPending={state.isLoading}
                 />
             }
             < div id="review-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <ReviewSection
-                    course={course}
-                    loading={isPending}
+                    course={state.data}
+                    isPending={state.isLoading}
                 />
             }
 
 
-            <Backdrop className={classes.backdrop} open={isProcessing}>
+            <Backdrop className={classes.backdrop} open={snackState.isLoading}>
                 <CircularProgress color='primary' />
             </Backdrop>
             <Snackbar
-                open={openSnack}
-                autoHideDuration={4000}
+                open={snackState.open}
+                autoHideDuration={3000}
                 onClose={handleCloseSnack}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
-                <Alert onClose={handleCloseSnack} severity={snackType}>
-                    {snackContent}
+                <Alert onClose={handleCloseSnack} severity={snackState.snackType}>
+                    {snackState.snackContent}
                 </Alert>
             </Snackbar>
             <Footer style={{ marginTop: 20 }} />

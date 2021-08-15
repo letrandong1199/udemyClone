@@ -150,4 +150,13 @@ export const useStyles = makeStyles((theme) => ({
         zIndex: theme.zIndex.snackbar + 1,
         color: '#fff',
     },
+    limit: {
+        overflow: 'hidden',
+        WebkitLineClamp: 5,
+        textOverflow: 'ellipsis',
+        wordWrap: 'break-word',
+        display: '-webkit-box',
+        WebkitBoxOrient: 'vertical',
+        minHeight: '4em',
+    }
 }));

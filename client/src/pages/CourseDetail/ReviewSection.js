@@ -62,7 +62,7 @@ const ReviewSection = ({ course, loading }) => {
             </Typography>
             <Grid container>
                 <Grid container item sm={4} xs={12} >
-                    <Grid item container direction="row">
+                    <Grid item container direction="column">
                         <Typography
                             variant='h2'
                             style={{ fontSize: 54, fontWeight: 'bold' }}>
@@ -90,11 +90,9 @@ const ReviewSection = ({ course, loading }) => {
                                 {loading ? <Skeleton /> : `(${Number(course?.Number_Of_Rating).toLocaleString()})`}
                             </Typography>
                         </Grid>
-                    </Grid>
-                    <Grid item>
                         <List>
                             {[5, 4, 3, 2, 1].map((item, index) => {
-                                const res = course?.Feedbacks.filter(({
+                                const res = course?.Feedbacks?.filter(({
                                     Rating
                                 }) => Rating > item - 0.5 && Rating <= item + 0.5);
 
@@ -114,7 +112,8 @@ const ReviewSection = ({ course, loading }) => {
                                     <div style={{
                                         height: 13,
                                         minWidth: 200,
-                                        background: `linear-gradient(90deg,Orange ${per}%, #FFF ${per}%)`
+                                        borderRadius: 10,
+                                        background: `linear-gradient(90deg,Orange ${per}%, rgba(255, 165, 0, 0.5) ${per}%)`
                                     }}
                                     />
                                 </div>
@@ -125,7 +124,7 @@ const ReviewSection = ({ course, loading }) => {
                 <Grid container item sm={8} style={{ marginTop: 16 }}>
                     <Typography variant="h6" style={{ width: '100%' }}>Top feedbacks from enrollments</Typography>
                     <List style={{ width: '100%' }}>
-                        {!loading && course?.Feedbacks.map((feedback, index) => {
+                        {!loading && course?.Feedbacks?.map((feedback, index) => {
                             return <li><Feedback feedback={feedback} loading={loading} /></li>
                         })}
                         {!loading && course?.Feedbacks?.length === 0 &&

@@ -49,7 +49,7 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
 
 
     return (
-        <Container className={classes.outerBanner}>
+        <Container className={classes.outerBanner} >
             <Card className={classes.banner}>
                 <Grid
                     container
@@ -127,14 +127,14 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
                             {isPending
                                 ? <Skeleton width='100px' />
                                 : <Typography variant="body2">
-                                    <span style={{ fontWeight: 'bold' }}>Create at: </span>
-                                    &nbsp;1/1/2020
+                                    <span style={{ fontWeight: 'bold' }}>Created at: </span>
+                                    &nbsp;{new Date(course?.Created_At).toLocaleDateString()}
                                 </Typography>}
                             {isPending
                                 ? <Skeleton width='100px' />
                                 : <Typography variant="body2">
-                                    <span style={{ fontWeight: 'bold' }}>Last update: </span>
-                                    &nbsp;1/1/2021
+                                    <span style={{ fontWeight: 'bold' }}>Last updated: </span>
+                                    &nbsp;{new Date(course?.Updated_At).toLocaleDateString()}
                                 </Typography>}
                         </Grid>
 
@@ -158,7 +158,7 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
                         {isPending
                             ? <Skeleton><Button /></Skeleton>
                             : <Fragment>
-                                {course.Is_Enrolled
+                                {course?.Is_Enrolled
                                     ? <Button
                                         color="primary"
                                         size="large"
@@ -176,17 +176,17 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
                                         startIcon={<AddCircleOutlineRoundedIcon />}
                                         onClick={handleEnroll}
                                     >
-                                        Enroll for &nbsp;{course.Promote !== 0
+                                        Enroll for &nbsp;{course?.Promote !== 0
                                             && <span style={{
                                                 fontSize: 14,
                                                 textDecoration: 'line-through',
                                                 color: 'darkred',
                                                 marginRight: 5
-                                            }}>${course.Price}</span>}
-                                        {course.Promote !== 0
-                                            ? '$' + (parseFloat(course.Promote) * parseFloat(course.Price)).toFixed(2)
-                                            : course.Price !== 0
-                                                ? '$' + course.Price
+                                            }}>${course?.Price}</span>}
+                                        {course?.Promote !== 0
+                                            ? '$' + (parseFloat(course?.Promote) * parseFloat(course?.Price)).toFixed(2)
+                                            : course?.Price !== 0
+                                                ? '$' + course?.Price
                                                 : 'Free'}
                                     </Button>
                                 }

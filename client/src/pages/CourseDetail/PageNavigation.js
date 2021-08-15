@@ -37,7 +37,7 @@ const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, ha
                         <Grid>
                             {isPending
                                 ? <Skeleton><Button /></Skeleton>
-                                : course.Is_Enrolled
+                                : course?.Is_Enrolled
                                     ? <Button
                                         color="primary"
                                         size="large"
@@ -55,17 +55,17 @@ const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, ha
                                         startIcon={<AddCircleOutlineRoundedIcon />}
                                         onClick={handleEnroll}
                                     >
-                                        Enroll for &nbsp;{course.Promote !== 0
+                                        Enroll for &nbsp;{course?.Promote !== 0
                                             && <span style={{
                                                 fontSize: 14,
                                                 textDecoration: 'line-through',
                                                 color: 'darkred',
                                                 marginRight: 5
-                                            }}>${course.Price}</span>}
-                                        {course.Promote !== 0
-                                            ? '$' + (parseFloat(course.Promote) * parseFloat(course.Price)).toFixed(2)
-                                            : course.Price !== 0
-                                                ? '$' + course.Price
+                                            }}>${course?.Price}</span>}
+                                        {course?.Promote !== 0
+                                            ? '$' + (parseFloat(course?.Promote) * parseFloat(course.Price)).toFixed(2)
+                                            : course?.Price !== 0
+                                                ? '$' + course?.Price
                                                 : 'Free'}
                                     </Button>
 
