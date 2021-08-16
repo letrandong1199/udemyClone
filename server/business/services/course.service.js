@@ -25,6 +25,7 @@ const moment = require("moment");
 
 const courseService = {
   async createOneCourse(request) {
+    console.log('req', request.body);
     try {
       const resultValidator = createOneCourseValidator.validate(
         request.body.Title,
@@ -146,7 +147,7 @@ const courseService = {
           sort["ColName"] = "Price";
           sort["Orderby"] = "asc";
         } else if (keyToColName[value] === "most-recent") {
-          sort["ColName"] = "Update_At";
+          sort["ColName"] = "Updated_At";
           sort["Orderby"] = "desc";
         } else if (keyToColName[value] === "most-register") {
           console.log("huhuhuhuhuhuhhu");
@@ -219,7 +220,6 @@ const courseService = {
             Name: course.Title,
             Title: course.Title,
             Sub_Description: course.Sub_Description,
-            Description: course.Description,
             Thumbnail_Small: course.Thumbnail_Small,
             Thumbnail_Medium: course.Thumbnail_Medium,
             Thumbnail_Large: course.Thumbnail_Large,
@@ -412,35 +412,41 @@ const courseService = {
           offset: 0,
         })
       );
-      const listSimilarCourses_ = await Promise.all(
-        listSimilarCourses.map(async (course) => {
-          let category = await _entityRepository("Courses").getEntity(
-            course.Category_Id
-          );
-          let promote = await _entityRepository("Promotes").getEntity(
-            course.Promote_Id
-          );
-          let author = await _entityRepository("Users").getEntity(
-            course.Author_Id
-          );
-          return {
-            Id: course.Id,
-            Title: course.Title,
-            Sub_Description: course.Sub_Description,
-            Description: course.Description,
-            Thumbnail_Small: course.Thumbnail_Small,
-            Thumbnail_Medium: course.Thumbnail_Medium,
-            Thumbnail_Large: course.Thumbnail_Large,
-            Price: course.Price,
-            Category: category[0],
-            Author: author[0],
-            Promote_Rate: promote[0].Promote,
-            Language_Id: course.Language_Id,
-            Create_At: course.Create_At,
-            Update_At: course.Update_At,
-          };
-        })
-      );
+      let listSimilarCourses_ = []
+      try {
+        listSimilarCourses_ = await Promise.all(
+          listSimilarCourses.map(async (course) => {
+            let category = await _entityRepository("Courses").getEntity(
+              course.Category_Id
+            );
+            let promote = await _entityRepository("Promotes").getEntity(
+              course.Promote_Id
+            );
+            let author = await _entityRepository("Users").getEntity(
+              course.Author_Id
+            );
+            return {
+              Id: course.Id,
+              Title: course.Title,
+              Sub_Description: course.Sub_Description,
+              Description: course.Description,
+              Thumbnail_Small: course.Thumbnail_Small,
+              Thumbnail_Medium: course.Thumbnail_Medium,
+              Thumbnail_Large: course.Thumbnail_Large,
+              Price: course.Price,
+              Category: category[0],
+              Author: author[0],
+              Promote_Rate: promote[0].Promote,
+              Language_Id: course.Language_Id,
+              Create_At: course.Create_At,
+              Update_At: course.Update_At,
+            };
+          })
+        );
+      } catch (error) {
+        console.log(error);
+      }
+
       const listSections = await sectionRepository.getSectionByCourseId(
         course[0].Id
       );
@@ -543,6 +549,8 @@ const courseService = {
         Feedbacks: listFeedbackResponse,
         Number_Of_Enrolled: numberRegister.length,
         Number_Of_Rating: numberRating,
+        Created_At: course[0].Created_At,
+        Updated_At: course[0].Updated_At,
       };
       return {
         Code: getOneCourseResponseEnum.SUCCESS,

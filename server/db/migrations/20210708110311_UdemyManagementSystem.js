@@ -61,8 +61,8 @@ exports.up = function (knex) {
         .unsigned()
         .references("Id")
         .inTable("Languages");
-      table.timestamp("Update_At").defaultTo(knex.fn.now());
-      table.timestamp("Create_At").defaultTo(knex.fn.now());
+      table.timestamp("Updated_At").defaultTo(knex.fn.now());
+      table.timestamp("Created_At").defaultTo(knex.fn.now());
     })
 
     .createTable("Sections", function (table) {

@@ -23,7 +23,8 @@ const courseRepository = {
         "Author_Id",
         "Promote_Id",
         "Language_Id",
-        "Update_At"
+        "Courses.Updated_At",
+        "Courses.Created_At"
       )
       .count("User_Id", { as: "NumberOfEnrolled" })
       .groupBy("Id");

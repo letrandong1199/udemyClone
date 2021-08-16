@@ -8,7 +8,7 @@ router.post("/wishlists", authUser, async (req, res) => {
   const message = await wishlistService.createOneWishlist(req);
   res.json({ message }).end();
 });
-router.delete("/wishlists", authUser, async (req, res) => {
+router.delete("/wishlists/:id", authUser, async (req, res) => {
   const message = await wishlistService.deleteOneWishlist(req);
   res.json({ message }).end();
 });

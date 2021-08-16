@@ -87,6 +87,9 @@ const wishlistService = {
           let category = await _entityRepository("Categories").getEntity(
             course.Category_Id
           );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
           let author = await _entityRepository("Users").getEntity(
             course.Author_Id
           );
@@ -100,6 +103,7 @@ const wishlistService = {
             Thumbnail_Medium: course.Thumbnail_Medium,
             Thumbnail_Large: course.Thumbnail_Large,
             Price: course.Price,
+            Promote_Rate: promote[0].Promote,
             Rating: course.Rating,
             Category: category[0],
             Author: author[0],

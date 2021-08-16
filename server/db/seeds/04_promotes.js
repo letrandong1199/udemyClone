@@ -16,6 +16,26 @@ function createPromotes(knex) {
               //Id: 1,
               Promote: 0,
             },
+            {
+              //Id: 1,
+              Promote: 0.1,
+            },
+            {
+              //Id: 1,
+              Promote: 0.2,
+            },
+            {
+              //Id: 1,
+              Promote: 0.3,
+            },
+            {
+              //Id: 1,
+              Promote: 0.4,
+            },
+            {
+              //Id: 1,
+              Promote: 0.5,
+            },
           ])
       );
     });
