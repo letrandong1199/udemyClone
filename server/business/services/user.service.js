@@ -399,22 +399,22 @@ const userService = {
       );
       // Store refresh token in ...
       // Redis
-      // try {
-      //   redisClient.set(refreshToken, JSON.stringify(payload), (err, reply) => {
-      //     if (err) throw err;
-      //     console.log(reply);
-      //     redisClient.expire(refreshToken, refreshTokenLife, (err, reply) => {
-      //       if (err) throw err;
-      //       console.log(reply);
-      //       redisClient.get(refreshToken, (err, reply) => {
-      //         if (err) throw err;
-      //         console.log(JSON.parse(reply));
-      //       });
-      //     });
-      //   });
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      try {
+        redisClient.set(refreshToken, JSON.stringify(payload), (err, reply) => {
+          if (err) throw err;
+          console.log(reply);
+          redisClient.expire(refreshToken, refreshTokenLife, (err, reply) => {
+            if (err) throw err;
+            console.log(reply);
+            redisClient.get(refreshToken, (err, reply) => {
+              if (err) throw err;
+              console.log(JSON.parse(reply));
+            });
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
 
       // tokenList[refreshToken] = payload;
       console.log(jwToken);
