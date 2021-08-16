@@ -11,7 +11,7 @@ router.post("/sign-up", async (req, res) => {
 });
 router.post("/confirm-email/:token", async (req, res) => {
   await userService.confirmEmail(req);
-  res.redirect("https://udemy-client.herokuapp.com/?auth=sign-in")
+  res.redirect("https://udemy-client.herokuapp.com/?auth=sign-in");
 });
 router.put("/change-password", authUser, async (req, res) => {
   const message = await userService.changePassword(req);
@@ -61,6 +61,10 @@ router.delete("/users/:id", authAdmin, async (req, res) => {
 
 router.put("/users/:id", authAdmin, async (req, res) => {
   const message = await userService.updateOneUser(req);
+  res.json({ message }).end();
+});
+router.put("/users/is-blocked/:id", authAdmin, async (req, res) => {
+  const message = await userService.blockOneUser(req);
   res.json({ message }).end();
 });
 

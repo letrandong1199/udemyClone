@@ -26,6 +26,8 @@ const changePasswordResponseEnum = require("../../api/validators/enums/userEnums
 const changePasswordValidator = require("../../api/validators/userValidators/changePasswordValidator");
 const redisClient = require("../../api/extensions/redis");
 const { client } = require("../../api/extensions/redis");
+const blockOneCourseResponseEnum = require("../../api/validators/enums/courseEnums/blockOneCourseResponseEnum");
+const blockOneUserResponseEnum = require("../../api/validators/enums/userEnums/blockOneUserResponseEnum");
 require("dotenv").config();
 const tokenList = {};
 
@@ -168,6 +170,7 @@ const userService = {
             Email: user.Email,
             Name: user.Name,
             Role: roleOfUser[0].Name,
+            Is_Blocked: user.Is_Blocked,
           };
         })
       );
@@ -396,22 +399,22 @@ const userService = {
       );
       // Store refresh token in ...
       // Redis
-      try {
-        redisClient.set(refreshToken, JSON.stringify(payload), (err, reply) => {
-          if (err) throw err;
-          console.log(reply);
-          redisClient.expire(refreshToken, refreshTokenLife, (err, reply) => {
-            if (err) throw err;
-            console.log(reply);
-            redisClient.get(refreshToken, (err, reply) => {
-              if (err) throw err;
-              console.log(JSON.parse(reply));
-            });
-          })
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      // try {
+      //   redisClient.set(refreshToken, JSON.stringify(payload), (err, reply) => {
+      //     if (err) throw err;
+      //     console.log(reply);
+      //     redisClient.expire(refreshToken, refreshTokenLife, (err, reply) => {
+      //       if (err) throw err;
+      //       console.log(reply);
+      //       redisClient.get(refreshToken, (err, reply) => {
+      //         if (err) throw err;
+      //         console.log(JSON.parse(reply));
+      //       });
+      //     });
+      //   });
+      // } catch (error) {
+      //   console.log(error);
+      // }
 
       // tokenList[refreshToken] = payload;
       console.log(jwToken);
@@ -439,9 +442,8 @@ const userService = {
       } catch (error) {
         reject(error);
       }
-
-    })
-    console.log('redis', payload);
+    });
+    console.log("redis", payload);
     if (refreshToken && payload) {
       try {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
@@ -472,13 +474,12 @@ const userService = {
       redisClient.get(refreshToken, (err, reply) => {
         if (err) throw err;
         redisClient.del(refreshToken, (err, reply) => {
-          console.log('reject', reply);
-        })
-      })
+          console.log("reject", reply);
+        });
+      });
     } catch (error) {
       console.log(error);
     }
-
   },
 
   async changePassword(request) {
@@ -505,6 +506,28 @@ const userService = {
         return { Code: changePasswordResponseEnum.SERVER_ERROR };
       }
       return { Code: changePasswordResponseEnum.SUCCESS };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async blockOneUser(request) {
+    try {
+      const user = await _entityRepository("Users").getEntity(
+        request.params.id
+      );
+      if (user.length == 0) {
+        return { Code: blockOneUserResponseEnum.USER_IS_NOT_EXITS };
+      }
+      user[0].Is_Blocked = !user[0].Is_Blocked;
+      if (
+        (await _entityRepository("Users").updateEntity(
+          request.params.id,
+          user[0]
+        )) === operatorType.FAIL.UPDATE
+      ) {
+        return { Code: blockOneUserResponseEnum.SERVER_ERROR };
+      }
+      return { Code: blockOneUserResponseEnum.SUCCESS };
     } catch (e) {
       console.log(e);
     }

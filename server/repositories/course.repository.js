@@ -37,7 +37,7 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       filtered = filtered
-        .where("Title", "ilike", `%${search.search}%`)
+        .whereRaw(`to_tsvector("Title") @@ to_tsquery(?)`, search.search)
         .orWhereIn("Category_Id", search.category);
     }
 
@@ -64,7 +64,7 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       filtered = filtered
-        .where("Title", "ilike", `%${search.search}%`)
+        .whereRaw(`to_tsvector("Title") @@ to_tsquery(?)`, search.search)
         .orWhereIn("Category_Id", search.category);
     }
 

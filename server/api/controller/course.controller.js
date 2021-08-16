@@ -2,6 +2,7 @@ const Router = require("express");
 const courseService = require("../../business/services/course.service");
 const authUser = require("../middleware/authUser.mdw");
 const authTeacher = require("../middleware/authTeacher.mdw");
+const authAdmin = require("../../api/middleware/authAdmin.mdw");
 const countView = require("../../api/middleware/countView.mdw");
 const router = Router();
 router.post("/courses", authTeacher, async (req, res) => {
@@ -43,6 +44,10 @@ router.get("/my-courses/:id", authTeacher, async (req, res) => {
 });
 router.put("/courses/:id", authTeacher, async (req, res) => {
   const message = await courseService.updateOneCourse(req);
+  res.json({ message });
+});
+router.put("/courses/is-blocked/:id", authAdmin, async (req, res) => {
+  const message = await courseService.blockOneCourse(req);
   res.json({ message });
 });
 
