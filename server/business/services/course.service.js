@@ -22,6 +22,7 @@ const feedbackRepository = require("../../repositories/feedback.repository");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 const mediauserRepository = require("../../repositories/mediauser.repository");
 const moment = require("moment");
+const blockOneCourseResponseEnum = require("../../api/validators/enums/courseEnums/blockOneCourseResponseEnum");
 
 const courseService = {
   async createOneCourse(request) {
@@ -230,6 +231,7 @@ const courseService = {
             Promote_Rate: promote[0].Promote,
             Language_Id: course.Language_Id,
             Number_Of_Rating: numberRating,
+            Is_Blocked: course.Is_Blocked,
           };
         })
       );
@@ -960,6 +962,29 @@ const courseService = {
     } catch (e) {
       console.log(e);
       return { Code: getAllCourseResponseEnum.SERVER_ERROR };
+    }
+  },
+  async blockOneCourse(request) {
+    try {
+      const course = await _entityRepository("Courses").getEntity(
+        request.params.id
+      );
+      console.log(request.params.id);
+      if (course.length == 0) {
+        return { Code: blockOneCourseResponseEnum.COURSE_IS_NOT_EXIST };
+      }
+      course[0].Is_Blocked = !course[0].Is_Blocked;
+      if (
+        (await _entityRepository("Courses").updateEntity(
+          request.params.id,
+          course[0]
+        )) === operatorType.FAIL.UPDATE
+      ) {
+        return { Code: blockOneCourseResponseEnum.SERVER_ERROR };
+      }
+      return { Code: blockOneCourseResponseEnum.SUCCESS };
+    } catch (e) {
+      console.log(e);
     }
   },
 };

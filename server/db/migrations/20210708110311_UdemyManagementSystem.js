@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.string("Email").notNullable();
       table.string("Name").notNullable();
       table.string("Password").notNullable();
+      table.boolean("Is_Blocked").defaultTo(false);
       table.integer("Role_Id").unsigned().references("Id").inTable("Role");
       table.timestamp("Created_At").defaultTo(knex.fn.now());
       table.timestamp("Updated_At").defaultTo(knex.fn.now());
@@ -43,6 +44,7 @@ exports.up = function (knex) {
       table.string("Thumbnail_Medium").defaultTo("");
       table.string("Thumbnail_Large").defaultTo("");
       table.float("Price").defaultTo(0.0);
+      table.boolean("Is_Blocked").defaultTo(false);
       table.float("Rating");
       table.integer("View").defaultTo(0);
       table
