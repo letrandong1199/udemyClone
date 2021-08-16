@@ -1,6 +1,6 @@
 import { GET_ENUMS } from '../../config/config';
 import useGetPopupState from '../../utils/useGetPopupState';
-import RegisterAndLoginPopup from '../RegisterAndLoginPopup/RegisterAndLoginPopup.jsx';
+import RegisterAndLoginPopup from '../RegisterAndLoginPopup';
 
 const popups = {
     [GET_ENUMS.popup.signIn]: RegisterAndLoginPopup,

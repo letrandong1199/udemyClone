@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
     Typography,
     Grid,
@@ -52,7 +53,7 @@ const Feedback = ({ feedback, loading }) => {
     )
 }
 
-const ReviewSection = ({ course, loading }) => {
+const ReviewSection = memo(({ course, loading }) => {
     const classes = useStyles();
     return (
         <Container className={`${classes.padding}`}>
@@ -77,11 +78,11 @@ const ReviewSection = ({ course, loading }) => {
                         >
                             {loading ? <Skeleton width="120px" height='30px' />
                                 : <Rating
-                                    name="hover-feedback"
+                                    name='feedback'
                                     className={classes.rating}
-                                    value={course?.Rating?.toFixed(1)}
+                                    value={parseFloat(course?.Rating?.toFixed(1))}
                                     precision={0.5}
-                                    size="medium"
+                                    size='medium'
                                     readOnly={true}
                                     style={{ left: '-2px' }}
                                 />
@@ -98,7 +99,7 @@ const ReviewSection = ({ course, loading }) => {
 
                                 const per = (res?.length / course?.Number_Of_Rating * 100)?.toFixed(0);
 
-                                return <div
+                                return <li
                                     key={index}
                                     style={{
                                         display: 'flex',
@@ -116,7 +117,7 @@ const ReviewSection = ({ course, loading }) => {
                                         background: `linear-gradient(90deg,Orange ${per}%, rgba(255, 165, 0, 0.5) ${per}%)`
                                     }}
                                     />
-                                </div>
+                                </li>
                             })}
                         </List>
                     </Grid>
@@ -125,7 +126,7 @@ const ReviewSection = ({ course, loading }) => {
                     <Typography variant="h6" style={{ width: '100%' }}>Top feedbacks from enrollments</Typography>
                     <List style={{ width: '100%' }}>
                         {!loading && course?.Feedbacks?.map((feedback, index) => {
-                            return <li><Feedback feedback={feedback} loading={loading} /></li>
+                            return <li key={index}><Feedback feedback={feedback} loading={loading} /></li>
                         })}
                         {!loading && course?.Feedbacks?.length === 0 &&
                             <Typography>This course has no feedbacks yet.</Typography>
@@ -137,7 +138,7 @@ const ReviewSection = ({ course, loading }) => {
         </Container>
 
     )
-};
+});
 
 export default ReviewSection;
 

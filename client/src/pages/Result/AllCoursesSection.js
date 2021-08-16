@@ -22,7 +22,7 @@ import courseService from '../../services/course.service';
 import languageService from '../../services/language.service';
 import { ROUTES } from '../../config/config';
 
-import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
+import ProductCardH from '../../components/ProductCardH';
 import { useLocation, useHistory } from 'react-router-dom';
 import useGetParameter from '../../utils/useGetParameter';
 import { useStyles } from './styles';

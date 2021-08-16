@@ -11,6 +11,8 @@ const ReTextField = ({
     error = null,
     multiple,
     rows,
+    readOnly,
+    ...props
 }) => (
     <TextField
         variant="outlined"
@@ -27,7 +29,8 @@ const ReTextField = ({
                     <InputAdornment position="start">
                         {startIcon}
                     </InputAdornment>
-                )
+                ),
+                readOnly: readOnly
             }
         }
         required
@@ -35,6 +38,7 @@ const ReTextField = ({
         error={error ? true : false}
         multiple={multiple}
         rows={rows}
+        {...props}
     />
 );
 

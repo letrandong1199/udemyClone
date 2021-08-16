@@ -7,7 +7,7 @@ import {
 import { LinearProgress } from '@material-ui/core';
 import categoryService from '../../services/category.service';
 import dataFetchReducer from '../../utils/dataFetchReducer';
-const HomeSection = lazy(() => import('../../components/HomeSection/HomeSection.jsx'))
+const HomeSection = lazy(() => import('../../components/HomeSection'))
 
 const HotCategories = () => {
     const [state, dispatch] = useReducer(dataFetchReducer, {

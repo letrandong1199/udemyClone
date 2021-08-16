@@ -1,4 +1,4 @@
-import RegisterAndLogin from "../RegisterAndLogin/RegisterAndLogin";
+import RegisterAndLogin from "../RegisterAndLogin";
 import Popover from '@material-ui/core/Popover';
 import { useStyles } from "./styles";
 import { useHistory, useLocation } from "react-router-dom";

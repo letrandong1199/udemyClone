@@ -48,8 +48,8 @@ import usePrepareLink from '../../utils/usePrepareLink';
 import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
 import listToTree from '../../utils/listToTree';
 
-import { useSelector, useDispatch } from 'react-redux'
-import { toggleTheme } from '../../features/theme/themeSlice';
+import { useDispatch } from 'react-redux'
+import { toggleTheme } from '../../store/features/theme/themeSlice';
 
 // Component profile button
 const ProfileButton = ({ handleSignOut }) => {
@@ -427,10 +427,6 @@ const CategoryMenu = (props) => {
 function Navbar(props) {
     const classes = useStyles();
     const dispatch = useDispatch();
-    const dark = useSelector((state) => state.toggleTheme.dark);
-    useEffect(() => {
-        console.log('s', dark);
-    }, [dark])
 
     const [mobileOpen, setMobileOpen] = useState(false);
 

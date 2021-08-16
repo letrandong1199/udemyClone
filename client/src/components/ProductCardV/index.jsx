@@ -6,7 +6,7 @@ import CardActions from '@material-ui/core/CardActions';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import IconButton from '@material-ui/core/IconButton';
 import Rating from '@material-ui/lab/Rating';
-import React from 'react'
+import React, { useEffect } from 'react'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import clsx from 'clsx';
@@ -17,12 +17,23 @@ import { Link, useHistory } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
 import { ROUTES } from '../../config/config';
 import Button from '@material-ui/core/Button';
-import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-function ProductCardV(props) {
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import { useSelector } from 'react-redux';
+
+function ProductCardV({ course,
+    loading,
+    linkTo,
+    hidePrice,
+    isEnrolled,
+    isWishlist,
+    handleAdd,
+    handleRemove }) {
     const classes = useStyles();
     const history = useHistory();
 
     const [expanded, setExpanded] = React.useState(false);
+
+    isWishlist = useSelector((state) => state.wishlist.map(e => { return e?.Id; }).indexOf(course?.Id) !== -1) || isWishlist;
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -33,29 +44,29 @@ function ProductCardV(props) {
 
     return (
         <Card className={classes.root} elevation={3}>
-            <Link to={`${ROUTES.courseDetail}/${props.course.Id}`}>
+            <Link to={`${ROUTES.courseDetail}/${course.Id}`}>
                 <CardMedia
                     className={classes.media}
-                    image={props.course.Thumbnail_Medium}
-                    title={props.course.Title}
+                    image={course.Thumbnail_Medium}
+                    title={course.Title}
                 >
-                    {!props.hidePrice
+                    {!hidePrice
                         && <Typography className={classes.price}>
-                            {props.course.Promote_Rate !== 0
+                            {course.Promote_Rate !== 0
                                 && <span style={{
                                     fontSize: 14,
                                     textDecoration: 'line-through',
                                     color: 'darkred',
                                     marginRight: 5
-                                }}>${props.course.Price}</span>}
-                            {props.course.Promote_Rate !== 0
-                                ? '$' + (parseFloat(props.course.Promote_Rate) * parseFloat(props.course.Price)).toFixed(2)
-                                : props.course.Price !== 0
-                                    ? '$' + props.course.Price
+                                }}>${course.Price}</span>}
+                            {course.Promote_Rate !== 0
+                                ? '$' + (parseFloat(course.Promote_Rate) * parseFloat(course.Price)).toFixed(2)
+                                : course.Price !== 0
+                                    ? '$' + course.Price
                                     : 'Free'}
                         </Typography>}
-                    {props.course.Tag && <Typography className={classes.tag}>
-                        {props.course.Tag}
+                    {course.Tag && <Typography className={classes.tag}>
+                        {course.Tag}
                     </Typography>}
                 </CardMedia>
             </Link>
@@ -64,36 +75,36 @@ function ProductCardV(props) {
                     variant="body2"
                     style={{ fontSize: 10, textTransform: 'uppercase' }}
                 >
-                    {props.course.Category.Name}
+                    {course.Category.Name}
                 </Typography>
                 <Grid container className={classes.header}>
-                    <Typography variant="subtitle1" className={classes.headerText}>{props.course.Title}</Typography>
+                    <Typography variant="subtitle1" className={classes.headerText}>{course.Title}</Typography>
                 </Grid>
-                <Typography variant="body2" color="textSecondary">{`by ${props.course.Author.Name}`}</Typography>
+                <Typography variant="body2" color="textSecondary">{`by ${course.Author.Name}`}</Typography>
                 <Grid container direction="row">
                     <Rating
-                        name={`hover-feedback-${props.course.Id}`}
+                        name={`hover-feedback-${course.Id}`}
                         readOnly={true}
                         className={classes.rating}
-                        value={props.course.Rating}
+                        value={course.Rating}
                         size="small"
                     />
-                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{props.course?.num_rating}</Typography>
+                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>{course?.num_rating}</Typography>
                 </Grid>
                 <Collapse in={expanded} timeout="auto" unmountOnExit>
                     <Typography variant="body2" color="textSecondary" component="p">
-                        {props.course.Sub_Description}
+                        {course.Sub_Description}
                     </Typography>
                 </Collapse>
                 <Hidden smUp>
                     <CardActions disableSpacing className={classes.action}>
-                        {props.isEnrolled
-                            ? props.isWishlist
-                                ? <IconButton aria-label="remove to favorites" onClick={props.handleRemove}>
-                                    <HighlightOffRoundedIcon />
+                        {isEnrolled
+                            ? isWishlist
+                                ? <IconButton aria-label="remove to favorites" onClick={handleRemove}>
+                                    <FavoriteRoundedIcon />
                                 </IconButton>
-                                : <Button onClick={props.handleLearn}>Learn</Button>
-                            : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
+                                : <Button onClick={handleLearn}>Learn</Button>
+                            : <IconButton aria-label="add to favorites" onClick={handleAdd}>
                                 <FavoriteBorderRoundedIcon />
                             </IconButton>
                         }
@@ -117,13 +128,13 @@ function ProductCardV(props) {
                 <Divider />
                 <CardActions disableSpacing className={classes.action}>
 
-                    {props.isWishlist && props.isWishlist !== undefined
-                        ? <IconButton aria-label="remove to favorites" onClick={props.handleRemove}>
-                            <HighlightOffRoundedIcon />
-                        </IconButton>
-                        : props.isEnrolled && props.isEnrolled !== undefined
-                            ? < Button onClick={handleLearn(props.course.Id)}>Learn</Button>
-                            : <IconButton aria-label="add to favorites" onClick={props.handleAdd}>
+                    {isEnrolled && isEnrolled !== undefined
+                        ? < Button onClick={handleLearn(course.Id)}>Learn</Button>
+                        : isWishlist && isWishlist !== undefined
+                            ? <IconButton aria-label="remove to favorites" onClick={handleRemove}>
+                                <FavoriteRoundedIcon />
+                            </IconButton>
+                            : <IconButton aria-label="add to favorites" onClick={handleAdd}>
                                 <FavoriteBorderRoundedIcon />
                             </IconButton>
                     }
@@ -143,5 +154,7 @@ function ProductCardV(props) {
         </Card >
     )
 };
+
+
 
 export default ProductCardV;

@@ -30,7 +30,7 @@ import languageService from '../../services/language.service';
 import courseService from '../../services/course.service';
 import { ROUTES } from '../../config/config';
 import validateCourse from './validateCourse';
-import ReTextField from '../../components/ReTextField/ReTextField.jsx'
+import ReTextField from '../../components/ReTextField'
 import useForm from '../../utils/useForm';
 
 const CreateCourse = () => {
@@ -50,36 +50,14 @@ const CreateCourse = () => {
     const [snackContent, setSnackContent] = useState(null);
     const [snackType, setSnackType] = useState('success');
 
-    const handleSave = () => {
-        handleSetIsPending('save', false)();
-        courseService.postOne({
-            Title: info.title,
-            Sub_Description: info.subDescription,
-            Category_Id: info.categoryId,
-            Language_Id: info.languageId,
-        }).then(response => {
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            handleSetIsPending('save', true)();
-            console.log(response);
-            return history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`)
-        }).catch(error => {
-            console.log(error);
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            handleSetIsPending('save', true)();
-        })
-    }
 
-    const {
-        handleChange,
-        values: info,
-        errors,
-        setErrors,
-        handleSubmit,
-    } = useForm(initValues, true, validateCourse, handleSave);
+
+    const keyByStep = {
+        0: 'title',
+        1: 'subDescription',
+        2: 'categoryId',
+        3: 'languageId'
+    }
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
@@ -233,9 +211,39 @@ const CreateCourse = () => {
     const [activeStep, setActiveStep] = useState(0);
     const steps = getSteps();
 
+    const handleSave = () => {
+        handleSetIsPending('save', false)();
+        courseService.postOne({
+            Title: info.title,
+            Sub_Description: info.subDescription,
+            Category_Id: info.categoryId,
+            Language_Id: info.languageId,
+        }).then(response => {
+            setSnackContent('Added');
+            setSnackType('success');
+            setOpenSnack(true);
+            handleSetIsPending('save', true)();
+            return history.push(`${ROUTES.instructor}${ROUTES.editCourse}/${response.newCourse.Id}`)
+        }).catch(error => {
+            console.log(error);
+            setSnackContent(error.message);
+            setSnackType('error');
+            setOpenSnack(true);
+            setActiveStep(0);
+            handleSetIsPending('save', true)();
+        })
+    }
+    const {
+        handleChange,
+        values: info,
+        errors,
+        handleSubmit,
+    } = useForm(initValues, true, validateCourse, handleSave);
+
     const handleNext = () => {
-        if (errors)
+        if (errors[keyByStep[activeStep]] === '') {
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        }
     };
 
     const handleBack = () => {

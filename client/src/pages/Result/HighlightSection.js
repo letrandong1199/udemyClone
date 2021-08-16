@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 
 import useGetParameter from '../../utils/useGetParameter'
 import courseService from '../../services/course.service';
-import MyCarousel from '../../components/MyCarousel/MyCarousel.jsx';
+import MyCarousel from '../../components/MyCarousel';
 import { useStyles } from './styles';
 
 const TabPanel = forwardRef(function TabPanel(props, ref) {

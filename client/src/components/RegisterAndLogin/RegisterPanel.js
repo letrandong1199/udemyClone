@@ -14,7 +14,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { useStyles } from './styles';
 import validateInfo from './validateInfo';
 import { SuccessForm } from './ConfirmSignup';
-import ReTextField from '../ReTextField/ReTextField.jsx';
+import ReTextField from '../ReTextField';
 
 
 

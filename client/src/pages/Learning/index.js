@@ -51,7 +51,6 @@ const Dashboard = () => {
     const [expandedList, setExpandedList] = useState([]);
     const [content, setContent] = useState([]);
     const [openReviewDialog, setOpenReviewDialog] = useState(false);
-    const [url, setUrl] = useState(null);
     const [rating, setRating] = useState(null);
     const [hover, setHover] = useState(-1);
     const [review, setReview] = useState(null);
@@ -140,8 +139,6 @@ const Dashboard = () => {
     };
 
     const handleListItemClick = (event, lecture, indexLecture) => {
-        setUrl(`${lecture?.Media[0]?.Video_URL}`);
-        console.log(lecture);
         setCurrentPlaying(lecture?.Media[0]);
         setSelectedIndex(indexLecture);
     };

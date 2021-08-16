@@ -35,7 +35,7 @@ import { useStyles } from './styles';
 
 import courseService from '../../services/course.service';
 
-import ProductCardH from '../../components/ProductCardH/ProductCardH.jsx';
+import ProductCardH from '../../components/ProductCardH';
 
 
 import { ROUTES } from '../../config/config';

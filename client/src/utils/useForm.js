@@ -23,7 +23,6 @@ const useForm = (initValues, validateOnchange = false, validate, callback) => {
     }
 
     const handleSubmit = (event) => {
-        console.log("Sumb");
         event.preventDefault();
         const temp = validate(values)
         setErrors({ ...errors, ...temp })

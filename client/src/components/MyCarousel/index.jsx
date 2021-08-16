@@ -1,4 +1,4 @@
-import ProductCardV from '../ProductCardV/ProductCardV.jsx';
+import ProductCardV from '../ProductCardV';
 import {
     Fragment,
     useState,

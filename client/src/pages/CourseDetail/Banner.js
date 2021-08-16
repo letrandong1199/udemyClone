@@ -1,5 +1,6 @@
 import {
-    Fragment
+    Fragment,
+    memo,
 } from 'react';
 import {
     Grid,
@@ -19,6 +20,7 @@ import {
 
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 
 import { useStyles } from './styles';
 import { usePalette } from 'react-palette'
@@ -26,7 +28,15 @@ import { Link } from 'react-router-dom';
 
 import { ROUTES } from '../../config/config';
 
-const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLearn }) => {
+const Banner = memo(({
+    course,
+    isPending,
+    handleEnroll,
+    handleAddWishlist,
+    handleLearn,
+    isEnrolled,
+    isWishlist,
+}) => {
     const { data, loading, error: error2 } = usePalette(course?.Thumbnail_Small);
     const classes = useStyles({
         error: error2,
@@ -34,7 +44,6 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
         isPending,
         loading
     });
-
 
     const categories = (categories_tree) => categories_tree?.map((category, index) => {
         return <Link
@@ -158,7 +167,7 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
                         {isPending
                             ? <Skeleton><Button /></Skeleton>
                             : <Fragment>
-                                {course?.Is_Enrolled
+                                {isEnrolled
                                     ? <Button
                                         color="primary"
                                         size="large"
@@ -194,7 +203,7 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
                                     color="primary"
                                     size="large"
                                     variant="outlined"
-                                    startIcon={<FavoriteBorderRoundedIcon />}
+                                    startIcon={isWishlist ? <FavoriteRoundedIcon /> : <FavoriteBorderRoundedIcon />}
                                     style={{ marginRight: 20, textTransform: 'none' }}
                                     onClick={handleAddWishlist}
                                 >
@@ -205,10 +214,10 @@ const Banner = ({ course, isPending, handleEnroll, handleAddWishlist, handleLear
                     </Grid>
                 </Grid>
             </Card >
-        </Container>
+        </Container >
 
 
     )
-};
+});
 
 export default Banner;

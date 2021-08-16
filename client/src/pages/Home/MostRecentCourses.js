@@ -7,7 +7,7 @@ import {
 import { LinearProgress } from '@material-ui/core';
 import courseService from '../../services/course.service.js';
 import dataFetchReducer from '../../utils/dataFetchReducer';
-const HomeSection = lazy(() => import('../../components/HomeSection/HomeSection.jsx'))
+const HomeSection = lazy(() => import('../../components/HomeSection'))
 
 const MostRecentCourses = () => {
     const [state, dispatch] = useReducer(dataFetchReducer, {

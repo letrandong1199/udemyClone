@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, Fragment, memo } from 'react';
 import {
     Container,
     Typography,
@@ -21,7 +21,7 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 import { useStyles } from './styles';
 
-const Content = ({ course, isPending }) => {
+const Content = memo(({ course, isPending }) => {
     const classes = useStyles();
     const [expanded, setExpanded] = useState(false);
     const [expandedList, setExpandedList] = useState([]);
@@ -137,5 +137,5 @@ const Content = ({ course, isPending }) => {
             </Grid>
         </Container >
     )
-};
+});
 export default Content;

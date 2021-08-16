@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import {
     Container,
     Typography,
@@ -13,7 +13,7 @@ import draftToHtml from 'draftjs-to-html';
 
 import { useStyles } from './styles';
 
-const Description = ({ course, isPending }) => {
+const Description = memo(({ course, isPending }) => {
     const classes = useStyles();
     let description = '';
 
@@ -64,6 +64,6 @@ const Description = ({ course, isPending }) => {
             </Grid>
         </Container >
     )
-};
+});
 
 export default Description;

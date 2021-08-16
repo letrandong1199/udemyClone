@@ -16,7 +16,7 @@ import courseService from '../../services/course.service.js';
 import enrolledCourseService from '../../services/enrolledCourse.service';
 import wishlistService from '../../services/wishlist.service';
 
-import Footer from '../../components/Footer/Footer.jsx';
+import Footer from '../../components/Footer';
 import Banner from './Banner';
 import Description from './Description';
 import PageNavigation from './PageNavigation';
@@ -27,6 +27,13 @@ import ReviewSection from './ReviewSection';
 import { useStyles } from './styles';
 import { ROUTES } from '../../config/config';
 import dataFetchReducer from '../../utils/dataFetchReducer';
+
+
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    addWishlist,
+    removeWishlist,
+} from '../../store/features/wishlist/wishlistSlice';
 
 const snackbarReducer = (state, action) => {
     switch (action.type) {
@@ -56,8 +63,6 @@ const snackbarReducer = (state, action) => {
         case 'CLOSE_SNACK':
             return {
                 ...state,
-                snackContent: '',
-                snackType: '',
                 open: false,
             };
         default:
@@ -70,12 +75,24 @@ function DetailCourse() {
     // Get id by url params
     const { id } = useParams();
     const history = useHistory();
+    const reduxDispatch = useDispatch();
+    const wishlist = useSelector((state) => state.wishlist);
+    const [isWishlist, setIsWishlist] = useState(false);
+    const [isEnrolled, setIsEnrolled] = useState(false);
+
 
     const [state, dispatch] = useReducer(dataFetchReducer, {
         data: [],
         isLoading: false,
         error: null,
     });
+
+    useEffect(() => {
+        const inWishlist = wishlist.map(
+            e => { return e?.Id; }).indexOf(state.data?.Id) !== -1
+
+        setIsWishlist(inWishlist);
+    }, [wishlist, state.data]);
 
     const [stateEnrollment, dispatchEnrollment] = useReducer(dataFetchReducer, {
         data: [],
@@ -99,6 +116,7 @@ function DetailCourse() {
         dispatchSnackState({ type: 'SNACK_INIT' })
         enrolledCourseService.postOne({ Course_Id: state.data.Id }).then(response => {
             dispatchSnackState({ type: 'SNACK_SUCCESS' })
+            history.push(`${ROUTES.profile}${ROUTES.myLearning}/${id}`)
             return response;
         }).catch(error => {
             dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
@@ -107,14 +125,28 @@ function DetailCourse() {
     };
 
     const handleAddWishlist = () => {
-        dispatchSnackState({ type: 'SNACK_INIT' })
-        wishlistService.postOne({ Course_Id: state.data.Id }).then(response => {
-            dispatchSnackState({ type: 'SNACK_SUCCESS' })
-            return response;
-        }).catch(error => {
-            dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
-            console.log(error);
-        })
+        console.log('wis', wishlist, 'w', isWishlist);
+        if (isWishlist) {
+            dispatchSnackState({ type: 'SNACK_INIT' })
+            wishlistService.deleteOne(state.data.Id).then(response => {
+                dispatchSnackState({ type: 'SNACK_SUCCESS' });
+                reduxDispatch(removeWishlist(state.data.Id));
+                return response;
+            }).catch(error => {
+                dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
+                console.log(error);
+            })
+        } else {
+            dispatchSnackState({ type: 'SNACK_INIT' })
+            wishlistService.postOne({ Course_Id: state.data.Id }).then(response => {
+                dispatchSnackState({ type: 'SNACK_SUCCESS' });
+                reduxDispatch(addWishlist(state.data));
+                return response;
+            }).catch(error => {
+                dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
+                console.log(error);
+            })
+        }
     };
 
     const handleLearn = (id) => () => {
@@ -133,16 +165,18 @@ function DetailCourse() {
         dispatchEnrollment({ type: 'FETCH_INIT' });
         enrolledCourseService.getEnrolledByUser().then(response => {
             const enrolled = response.listAllResponse;
-            dispatch({ type: 'FETCH_SUCCESS', payload: enrolled });
+
+            dispatchEnrollment({ type: 'FETCH_SUCCESS', payload: enrolled });
         }).catch(error => {
-            dispatch({ type: 'FETCH_ERROR', payload: error.message })
+            dispatchEnrollment({ type: 'FETCH_ERROR', payload: error.message })
         })
     }, [id])
 
     useEffect(() => {
-        if (state.data.length > 0 && stateEnrollment.data.length > 0) {
-            const isEnrolled = stateEnrollment.data.every(x => x.Course_Id !== state.data.Id)
-            dispatch({ type: 'FETCH_SUCCESS', payload: { ...state.data, Is_Enrolled: isEnrolled } })
+
+        if (state.data && stateEnrollment.data.length > 0) {
+
+            setIsEnrolled(!stateEnrollment.data.every(x => x.Id !== state.data.Id));
         }
     }, [state, stateEnrollment])
 
@@ -165,6 +199,8 @@ function DetailCourse() {
                     handleEnroll={handleEnroll}
                     handleAddWishlist={handleAddWishlist}
                     handleLearn={handleLearn(state.data?.Id)}
+                    isEnrolled={isEnrolled}
+                    isWishlist={isWishlist}
                 />
             }
             <PageNavigation
@@ -173,6 +209,8 @@ function DetailCourse() {
                 handleEnroll={handleEnroll}
                 handleAddWishlist={handleAddWishlist}
                 handleLearn={handleLearn(state.data?.Id)}
+                isEnrolled={isEnrolled}
+                isWishlist={isWishlist}
             />
             <div id="description-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
             {state.error

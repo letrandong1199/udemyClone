@@ -1,9 +1,10 @@
+import { memo } from 'react';
 import { Container, Typography } from "@material-ui/core";
 import { Skeleton } from '@material-ui/lab';
-import MyCarousel from '../../components/MyCarousel/MyCarousel.jsx';
+import MyCarousel from '../../components/MyCarousel';
 import { useStyles } from './styles';
 
-const RecommendSection = ({ course, isPending }) => {
+const RecommendSection = memo(({ course, isPending }) => {
     const classes = useStyles();
 
     return (
@@ -20,5 +21,5 @@ const RecommendSection = ({ course, isPending }) => {
                 : course.Similar_Courses && <MyCarousel courses={course.Similar_Courses} loading={isPending} />}
         </Container >
     )
-};
+});
 export default RecommendSection;

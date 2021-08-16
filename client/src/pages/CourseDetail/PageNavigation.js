@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, memo } from 'react';
 import {
     AppBar,
     Toolbar,
@@ -10,11 +10,20 @@ import {
 } from '@material-ui/core';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
+import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
 
 import { Skeleton } from '@material-ui/lab';
 import { useStyles } from './styles';
 
-const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, handleLearn }) => {
+const PageNavigation = memo(({
+    course,
+    isPending,
+    handleEnroll,
+    handleAddWishlist,
+    handleLearn,
+    isEnrolled,
+    isWishlist, }
+) => {
     const classes = useStyles();
     const trigger = useScrollTrigger({ threshold: 700 });
 
@@ -37,7 +46,7 @@ const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, ha
                         <Grid>
                             {isPending
                                 ? <Skeleton><Button /></Skeleton>
-                                : course?.Is_Enrolled
+                                : isEnrolled
                                     ? <Button
                                         color="primary"
                                         size="large"
@@ -76,7 +85,9 @@ const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, ha
                                     color="primary"
                                     size="large"
                                     variant="outlined"
-                                    startIcon={<FavoriteBorderRoundedIcon />}
+                                    startIcon={isWishlist
+                                        ? <FavoriteRoundedIcon />
+                                        : <FavoriteBorderRoundedIcon />}
                                     onClick={handleAddWishlist}
                                     style={{ marginRight: 20, textTransform: 'none' }}
                                 >
@@ -106,6 +117,6 @@ const PageNavigation = ({ course, isPending, handleEnroll, handleAddWishlist, ha
             </ButtonGroup >
         </Fragment >
     )
-};
+});
 
 export default PageNavigation;

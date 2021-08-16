@@ -13,6 +13,7 @@ export const config = {
     "WISHLIST_CONTROLLER": "wishlist-controller",
     "FEEDBACK_CONTROLLER": "feedback-controller",
     "MEDIA_USER_CONTROLLER": 'media-user-controller',
+    "PUBLIC_INFO_CONTROLLER": 'public-info-controller',
 };
 
 export const ROUTES = {
@@ -28,6 +29,7 @@ export const ROUTES = {
     search: "/search",
     course: "/course",
     learn: "/learn",
+    publicInfo: "/public-info",
 }
 
 export const GET_PARAMS = {
@@ -377,7 +379,39 @@ export const GET_ONE_MEDIA_USER = {
     SERVER_ERROR: "server_error",
     MEDIA_USER_IS_NOT_EXISTS: "media_user_is_not_exits",
 };
+export const GET_ALL_USER = {
+    SUCCESS: "get_all_user_success",
+    SERVER_ERROR: "server_error",
+};
 
+export const GET_USER = {
+    SUCCESS: "get_one_user_success",
+    SERVER_ERROR: "server_error",
+    ID_IS_INVALID: "id_is_invalid",
+    ID_IS_EMPTY: "id_is_empty",
+};
 
+export const DELETE_WISHLIST = {
+    SUCCESS: "delete_feedback_success",
+    COURSE_ID_IS_INVALID: "course_id_is_invalid",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    USER_IS_NOT_EXIST: "user_is_not_exist",
+    ID_IS_INVALID: "id_is_invalid",
+    ID_IS_EMPTY: "id_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const UPDATE_PUBLIC_INFO = {
+    SUCCESS: "update_public_info_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_PUBLIC_INFO = {
+    SUCCESS: "get_public_info_success",
+    SERVER_ERROR: "server_error",
+    USER_IS_NOT_EXISTS: "user_is_not_exists",
+    PUBLIC_INFO_IS_NOT_EXISTS: "public_info_is_not_exists",
+};
 
 export default config;

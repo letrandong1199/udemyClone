@@ -1,86 +1,77 @@
-import axios from 'axios';
-import authHeader from './authHeader.service.js';
-import { UPDATE_USER, CHANGE_PASSWORD, config } from '../config/config';
+import axiosClient from './axiosClientSetup';
+import { GET_USER, CREATE_USER, GET_ALL_USER, UPDATE_USER, CHANGE_PASSWORD, config } from '../config/config';
 
-const API_URL = `${config.HOST}/${config.USER_CONTROLLER}`;
+const API_URL = `/${config.USER_CONTROLLER}`;
 class UserService {
-    constructor() {
-        axios.interceptors.response.use(
-            (response) => {
-                return response;
-            },
-            function (error) {
-                const originalRequest = error.config;
-                let user = JSON.parse(localStorage.getItem("user"));
-                if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
-                    originalRequest._retry = true;
-                    return axios
-                        .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
-                        .then((res) => {
-                            if (res.status === 200) {
-                                user = res.data.message
-                                localStorage.setItem("user", JSON.stringify(user));
-                                console.log("Access token refreshed!");
-                                originalRequest.headers = authHeader();
-                                return axios(originalRequest);
-                            }
-                        });
-                }
-                return Promise.reject(error);
-            }
-        );
-    };
     getAll() {
-        return axios.get(API_URL + '/users', { headers: authHeader() })
-    }
-    deleteOne(id) {
-        return axios.delete(API_URL + '/users/' + id, { headers: authHeader() })
+        return axiosClient
+            .get(API_URL + '/users')
+            .then((response) => {
+                if (response.Code !== GET_ALL_USER.SUCCESS) {
+                    throw Error(response.Code)
+                }
+                return response;
+            })
     }
     updateOne(id, data) {
-        return axios.put(API_URL + '/users/' + id, data, { headers: authHeader() }
-        )
+        return axiosClient
+            .put(API_URL + '/users/' + id, data)
+            .then(response => {
+                if (response.Code !== UPDATE_USER.SUCCESS) {
+                    throw Error(response.Code)
+                }
+                return response;
+            })
     }
     updateInfo(data) {
-        return axios.put(API_URL + '/update-user', data, { headers: authHeader() })
+        return axiosClient
+            .put(API_URL + '/update-user', data)
             .then(response => {
-                console.log(response);
-                if (response.data.message.Code !== UPDATE_USER.SUCCESS) {
-                    throw Error(response.data.message.Code)
+                if (response.Code !== UPDATE_USER.SUCCESS) {
+                    throw Error(response.Code)
                 }
-                return response.data.message;
+                return response;
             })
     }
     changePassword(data) {
-        return axios.put(API_URL + '/change-password', data, { headers: authHeader() })
+        return axiosClient
+            .put(API_URL + '/change-password', data)
             .then(response => {
-                console.log(response);
-                if (response.data.message.Code !== CHANGE_PASSWORD.SUCCESS) {
-                    throw Error(response.data.message.Code)
+                if (response.Code !== CHANGE_PASSWORD.SUCCESS) {
+                    throw Error(response.Code)
                 }
-                return response.data.message;
+                return response;
             })
     }
     postOne(user) {
-        return axios
-            .post(API_URL + '/users', user, { headers: authHeader() })
+        return axiosClient
+            .post(API_URL + '/users', user)
             .then(response => {
-                console.log(response);
+                if (response.Code !== CREATE_USER.SUCCESS) {
+                    throw Error(response.Code)
+                }
                 return response
             })
     }
 
-
     getUserBoard() {
-        return axios.get(API_URL + '/get-info', { headers: authHeader() });
+        return axiosClient
+            .get(API_URL + '/get-info')
+            .then(response => {
+                if (response.Code !== GET_USER.SUCCESS) {
+                    throw Error(response.Code)
+                }
+                return response;
+            })
     }
 
-    getModeratorBoard() {
-        return axios.get(API_URL + 'mod', { headers: authHeader() });
+    getInstructorBoard() {
+        return axiosClient.get(API_URL + '/instructor');
     }
 
     getAdminBoard() {
-        return axios.get(API_URL + 'admin', { headers: authHeader() });
+        return axiosClient.get(API_URL + '/admin');
     }
-}
+};
 
 export default new UserService();

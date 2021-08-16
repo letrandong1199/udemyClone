@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
     Container,
     Typography,
@@ -13,7 +14,7 @@ import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
 import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import { useStyles } from './styles';
 
-const InstructorSection = ({ course, isPending }) => {
+const InstructorSection = memo(({ course, isPending }) => {
     const classes = useStyles();
     return (
         <Container className={`${classes.vibrant} ${classes.padding}`}>
@@ -78,6 +79,6 @@ const InstructorSection = ({ course, isPending }) => {
             </Grid>
         </Container>
     )
-};
+});
 
 export default InstructorSection;

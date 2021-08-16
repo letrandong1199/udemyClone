@@ -9,7 +9,7 @@ import { useStyles } from './styles';
 import useForm from '../../utils/useForm';
 import { useState, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
-import ReTextField from '../ReTextField/ReTextField.jsx';
+import ReTextField from '../ReTextField';
 import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import validateInfo from './validateInfo';

@@ -7,7 +7,7 @@ import {
 import { LinearProgress } from '@material-ui/core';
 import courseService from '../../services/course.service.js';
 import dataFetchReducer from '../../utils/dataFetchReducer';
-const Carousel = lazy(() => import('../../components/Carousel/Carousel.jsx'))
+const Carousel = lazy(() => import('../../components/Carousel'))
 
 const WeeklyHotCourses = () => {
     const [state, dispatch] = useReducer(dataFetchReducer, {
