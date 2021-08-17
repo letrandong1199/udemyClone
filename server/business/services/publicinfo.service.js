@@ -12,7 +12,7 @@ const publicInfoService = {
       if (publicInfo.length == 0) {
         let newPublicInfo = {
           User_Id: request.id,
-          Description: "",
+          Description: request.body.Description,
         };
         if (
           (await publicInfoRepository.addPublicInfo(newPublicInfo)) ===

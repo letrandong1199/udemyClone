@@ -11,6 +11,10 @@ router.post("/courses", authTeacher, async (req, res) => {
 });
 router.get("/courses", async (req, res) => {
   console.log(req.query);
+  const message = await courseService.getAllCourseQuery(req);
+  res.json({ message });
+});
+router.get("/courses/manage", authAdmin, async (req, res) => {
   const message = await courseService.getAllCourse(req);
   res.json({ message });
 });

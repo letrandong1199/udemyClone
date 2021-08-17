@@ -24,7 +24,8 @@ const courseRepository = {
         "Promote_Id",
         "Language_Id",
         "Courses.Updated_At",
-        "Courses.Created_At"
+        "Courses.Created_At",
+        "Is_Blocked"
       )
       .count("User_Id", { as: "NumberOfEnrolled" })
       .groupBy("Id");
@@ -38,7 +39,7 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       filtered = filtered
-        .whereRaw(`to_tsvector("Title") @@ to_tsquery(?)`, search.search)
+        .whereRaw(`to_tsvector("Title") @@ to_tsquery(?)`, search.search.replace(' ', '&'))
         .orWhereIn("Category_Id", search.category);
     }
 
@@ -49,6 +50,7 @@ const courseRepository = {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
     }
     filtered = filtered.where("Is_Completed", true);
+    filtered = filtered.where("Is_Blocked", false);
     console.log(filtered.toSQL().toNative());
     return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
@@ -73,17 +75,19 @@ const courseRepository = {
       filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
     }
     filtered = filtered.where("Is_Completed", true);
+    filtered = filtered.where("Is_Blocked", false);
+
     return filtered.count("Id", { as: "Count" }).first();
   },
 
   getCourseByTitle(title) {
     return db("Courses")
-      .where("Title", title)
+      .where("Title", title).where("Is_Blocked", false)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCourseByCategoryId(category_id) {
     return db("Courses")
-      .where("Category_Id", category_id)
+      .where("Category_Id", category_id).where("Is_Blocked", false)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCourseByAuthorId(author_id) {
@@ -94,13 +98,15 @@ const courseRepository = {
   getCourseMostView() {
     let filtered = db("Courses");
     filtered = filtered.where("Is_Completed", true);
+    filtered = filtered.where("Is_Blocked", false);
     filtered.orderBy("View", "desc");
     return filtered.limit(10);
   },
   getCourseMostRecent() {
     let filtered = db("Courses");
     filtered = filtered.where("Is_Completed", true);
-    filtered.orderBy("Update_At", "desc");
+    filtered = filtered.where("Is_Blocked", false);
+    filtered.orderBy("Updated_At", "desc");
     return filtered.limit(10);
   },
 };

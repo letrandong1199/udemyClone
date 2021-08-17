@@ -63,7 +63,7 @@ const feedbackService = {
         return { Code: updateOneFeedbackEnum.FEEDBACK_IS_NOT_EXIST };
       }
       feedback[0].Content = request.body.Content;
-      feedback[0].Updated_At = moment().format("YYYY-MM-DD HH:MM:ss.SSSSSS Z");
+      feedback[0].Updated_At = new Date();
       if (
         (await _entityRepository("Feedbacks").updateEntity(
           request.params.id,

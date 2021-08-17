@@ -21,6 +21,7 @@ const mediaRepository = require("../../repositories/media.repository");
 const feedbackRepository = require("../../repositories/feedback.repository");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 const mediauserRepository = require("../../repositories/mediauser.repository");
+const publicInfoRepository = require("../../repositories/publicinfo.repository")
 const moment = require("moment");
 const blockOneCourseResponseEnum = require("../../api/validators/enums/courseEnums/blockOneCourseResponseEnum");
 
@@ -109,7 +110,7 @@ const courseService = {
       console.log(e);
     }
   },
-  async getAllCourse(request) {
+  async getAllCourseQuery(request) {
     const query = request.query;
     console.log("Query", query);
     const keyToColName = {
@@ -245,6 +246,64 @@ const courseService = {
       return { Code: getAllCourseResponseEnum.SERVER_ERROR };
     }
   },
+  async getAllCourse(request) {
+
+    try {
+
+      const listCourse = await _entityRepository("Courses").getEntities();
+
+      const listAllCourseResponse = await Promise.all(
+        listCourse.map(async (course) => {
+          let category = await _entityRepository("Categories").getEntity(
+            course.Category_Id
+          );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
+          let author = await _entityRepository("Users").getEntity(
+            course.Author_Id
+          );
+          let numberRegister =
+            await enrolledcourseRepository.getEnrolledCourseByCourse(course.Id);
+          let numberRating = 0;
+          if (numberRegister) {
+            let count = 0;
+            for (item of numberRegister) {
+              if (item.Rating !== 0) {
+                console.log(item);
+                count = count + 1;
+              }
+            }
+            numberRating = count;
+          }
+          return {
+            Id: course.Id,
+            Name: course.Title,
+            Title: course.Title,
+            Sub_Description: course.Sub_Description,
+            Thumbnail_Small: course.Thumbnail_Small,
+            Thumbnail_Medium: course.Thumbnail_Medium,
+            Thumbnail_Large: course.Thumbnail_Large,
+            Price: course.Price,
+            Rating: course.Rating,
+            Category: category[0],
+            Author: author[0],
+            Promote_Rate: promote[0] ? promote[0].Promote : 0,
+            Language_Id: course.Language_Id,
+            Number_Of_Rating: numberRating,
+            Is_Blocked: course.Is_Blocked,
+          };
+        })
+      );
+      return {
+        Code: getAllCourseResponseEnum.SUCCESS,
+        listAllResponse: listAllCourseResponse,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCourseResponseEnum.SERVER_ERROR };
+    }
+  },
   async updateOneCourse(request) {
     try {
       const resultValidator = updateOneCourseValidator.validate(
@@ -356,7 +415,7 @@ const courseService = {
       course[0].Is_Completed = isCompleted;
       course[0].Category_Id = category[0].Id;
       course[0].Language_Id = language[0].Id;
-      course[0].Update_At = moment().format("YYYY-MM-DD HH:MM:ss.SSSSSS Z");
+      course[0].Updated_At = new Date();
       if (
         (await _entityRepository("Courses").updateEntity(
           request.params.id,
@@ -395,6 +454,9 @@ const courseService = {
       const author = await _entityRepository("Users").getEntity(
         course[0].Author_Id
       );
+      let publicInfo = await publicInfoRepository.getPublicInfoByUserId(
+        course[0].Author_Id
+      )
       const language = await _entityRepository("Languages").getEntity(
         course[0].Language_Id
       );
@@ -404,7 +466,7 @@ const courseService = {
       const categoryParent = await _entityRepository("Categories").getEntity(
         category[0].Parent_Id
       );
-      console.log("hi", [course[0].Category_Id]);
+      console.log(publicInfo);
       const listSimilarCourses = await courseRepository.getCourseByQuery(
         (query = {
           Category_Id: [course[0].Category_Id],
@@ -427,6 +489,15 @@ const courseService = {
             let author = await _entityRepository("Users").getEntity(
               course.Author_Id
             );
+            let publicInfo = await publicInfoRepository.getPublicInfoByUserId(
+              course.Author_Id
+            )
+            const authorRe = {
+              Id: author[0].Id,
+              Email: author[0].Email,
+              Name: author[0].Name,
+              Description: publicInfo[0] ? publicInfo[0].Description : '',
+            }
             return {
               Id: course.Id,
               Title: course.Title,
@@ -437,7 +508,7 @@ const courseService = {
               Thumbnail_Large: course.Thumbnail_Large,
               Price: course.Price,
               Category: category[0],
-              Author: author[0],
+              Author: authorRe,
               Promote_Rate: promote[0].Promote,
               Language_Id: course.Language_Id,
               Create_At: course.Create_At,
@@ -531,7 +602,12 @@ const courseService = {
       if (categoryParent.length > 0) {
         categories_tree.unshift(categoryParent[0]);
       }
-
+      const authorRe = {
+        Id: author[0].Id,
+        Email: author[0].Email,
+        Name: author[0].Name,
+        Description: publicInfo[0] ? publicInfo[0].Description : '',
+      }
       const courseResponse = {
         Id: course[0].Id,
         Title: course[0].Title,
@@ -543,7 +619,7 @@ const courseService = {
         Categories_Tree: categories_tree,
         Language_Name: language[0].Name,
         Similar_Courses: listSimilarCourses_,
-        Author: author[0],
+        Author: authorRe,
         Price: course[0].Price,
         Promote: promote[0].Promote,
         Rating: course[0].Rating,

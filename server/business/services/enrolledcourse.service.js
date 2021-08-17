@@ -42,6 +42,7 @@ const enrolledcourseService = {
     }
   },
   async updateOneEnrolledCourse(request) {
+    console.log(request.body);
     try {
       const resultValidator = createOneEnrolledCourseValidator.validate(
         request.id,
@@ -63,7 +64,7 @@ const enrolledcourseService = {
       if (typeof request.body.Rating != "number") {
         return { Code: updateOneEnrolledCourseResponseEnum.RATING_IS_INVALID };
       }
-      if (request.body.Rating > 5 || request.body.Rating < 1) {
+      if (request.body.Rating > 5 || request.body.Rating < 0) {
         return { Code: updateOneEnrolledCourseResponseEnum.RATING_IS_INVALID };
       }
       const course = await _entityRepository("Courses").getEntity(

@@ -105,7 +105,7 @@ const userService = {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
       }
       user[0].Name = request.body.Name;
-      user[0].Updated_At = moment().format("YYYY-MM-DD");
+      user[0].Updated_At = new Date();
       if (
         (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
         operatorType.FAIL.UPDATE
@@ -137,7 +137,7 @@ const userService = {
       }
       console.log(new Date());
       user[0].Name = request.body.Name;
-      user[0].Updated_At = moment().format("YYYY-MM-DD");
+      user[0].Updated_At = new Date();
       if (
         (await _entityRepository("Users").updateEntity(
           request.params.id,
@@ -376,6 +376,9 @@ const userService = {
       const user = await userRepository.getUserByEmail(request.Email);
       if (user.length == 0) {
         return { Code: signInResponseEnum.WRONG_EMAIL };
+      }
+      if (user[0].Is_Blocked) {
+        return { Code: signInResponseEnum.IS_BLOCKED };
       }
       if (!bcrypt.compareSync(request.Password, user[0].Password)) {
         return { Code: signInResponseEnum.WRONG_PASSWORD };

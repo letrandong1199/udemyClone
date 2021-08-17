@@ -133,6 +133,7 @@ const categoryService = {
   },
   // Create one category
   async createOneCategory(request) {
+
     try {
       const resultValidator = createOneCategoryValidator.validate(request.Name);
       if (!resultValidator.IsSuccess) {
@@ -147,9 +148,11 @@ const categoryService = {
         const categoryParent = await _entityRepository("Categories").getEntity(
           request.Parent_Id
         );
-        if (category.length == 0) {
+
+        if (category.length == 0 && request.Parent_Id != '') {
           return { Code: createOneCategoryResponseEnum.PARENT_IS_NOT_EXIST };
         }
+        request.Parent_Id = null;
       }
       const newCategory = {
         Name: request.Name,
