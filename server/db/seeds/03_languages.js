@@ -11,28 +11,30 @@ function createLanguages(knex) {
       return (
         knex("Languages")
           // .returning("Id")
-          .insert([
-            {
-              //'Id': 1,
-              Name: "English",
-            },
-            {
-              // 'Id': 2,
-              Name: "Indian",
-            },
-            {
-              // 'Id': 3,
-              Name: "France",
-            },
-            {
-              // 'Id': 4,
-              Name: "Vietnamese",
-            },
-            {
-              // 'Id': 5,
-              Name: "日本語",
-            },
-          ])
+          .insert([{
+            // 'Id': 1,
+            'Name': 'English'
+          },
+          {
+            // 'Id': 2,
+            'Name': 'Indian'
+          },
+          {
+            //  'Id': 3,
+            'Name': 'France'
+          },
+          {
+            //  'Id': 4,
+            'Name': 'Vietnamese'
+          },
+          {
+            //  'Id': 5,
+            'Name': '日本語'
+          },
+          {
+            // 'Id': 6,
+            'Name': '英語'
+          }])
       );
     });
 }
