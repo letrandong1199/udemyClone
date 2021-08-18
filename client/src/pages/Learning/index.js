@@ -23,7 +23,8 @@ import {
     Backdrop,
     Snackbar,
     Box,
-    DialogTitle
+    DialogTitle,
+    Checkbox,
 } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
@@ -123,6 +124,23 @@ const Dashboard = () => {
                 console.log(error);
             })
         }
+    }
+
+    const handleSetCompleted = (sectionId, lectureId) => (event) => {
+
+        mediaUserService.postOne({
+            Media_Id: content[sectionId].Lectures[lectureId].Media[0].Id,
+            Is_Completed: event.target.checked
+        }).then(response => {
+            const temp = [...content];
+
+            temp[sectionId].Lectures[lectureId].Media[0].Is_Completed = !event.target.checked;
+            console.log('object', event.target.checked, temp[sectionId].Lectures[lectureId].Media[0]);
+            setContent(temp);
+            return response;
+        }).catch(err => {
+            console.log(error);
+        })
     }
 
     const handleOpenList = (list) => (event, isExpanded) => {
@@ -250,6 +268,14 @@ const Dashboard = () => {
                                                         <PlayCircleFilledWhiteRoundedIcon />
                                                     </ListItemIcon>
                                                     <ListItemText primary={lecture.Title} />
+                                                    <ListItemIcon>
+                                                        <Checkbox
+                                                            onChange={handleSetCompleted(index, indexLecture)}
+                                                            checked={lecture?.Media[0]?.Is_Completed}
+                                                            color="primary"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />
+                                                    </ListItemIcon>
                                                 </ListItem>)}
                                         </List>
                                     </Collapse>

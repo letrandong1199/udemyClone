@@ -1,4 +1,4 @@
-import { fork, call, take, put } from 'redux-saga/effects';
+import { call, take, put, all } from 'redux-saga/effects';
 import { authActions as actions } from './authSlice';
 import service from '../../../services/auth.service';
 import history from '../../../history';
@@ -11,7 +11,6 @@ function* handleLogin(info) {
         const isInstructor = yield call(service.isInstructor)
         const isAdmin = yield call(service.isAdmin)
         yield put(actions.loginSuccess({ user, isInstructor, isAdmin }))
-        history.goBack();
     } catch (error) {
         yield put(actions.loginFailed(error.message.toString()))
         console.log(error);
@@ -29,7 +28,9 @@ function* handleLogout() {
 
 
 }
-function* watchFlow() {
+
+
+function* watchLoginFlow() {
     while (true) {
         const isLoggedIn = localStorage.getItem('user');
         if (!isLoggedIn) {
@@ -48,6 +49,22 @@ function* watchFlow() {
     }
 };
 
+function* watchSignupFlow() {
+    while (true) {
+        try {
+            const action = yield take(actions.signUp.type);
+            yield call(service.register, action.payload);
+            yield put(actions.signUpSuccess())
+        } catch (error) {
+            yield put(actions.loginFailed(error.message.toString()))
+            console.log(error);
+        }
+    }
+};
+
 export default function* userSaga() {
-    yield fork(watchFlow);
-}
+    yield all([
+        watchLoginFlow(),
+        watchSignupFlow(),
+    ])
+};

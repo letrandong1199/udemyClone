@@ -160,6 +160,7 @@ function DetailCourse() {
                 const courseRes = response.resultResponse;
                 dispatch({ type: 'FETCH_SUCCESS', payload: courseRes });
             }).catch(error => {
+                history.push('/500')
                 dispatch({ type: 'FETCH_ERROR', payload: error.message })
             })
         dispatchEnrollment({ type: 'FETCH_INIT' });
@@ -170,6 +171,7 @@ function DetailCourse() {
         }).catch(error => {
             dispatchEnrollment({ type: 'FETCH_ERROR', payload: error.message })
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id])
 
     useEffect(() => {

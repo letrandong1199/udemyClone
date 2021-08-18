@@ -16,7 +16,7 @@ import {
     authActions, authSelector
 } from '../../store/features/auth/authSlice';
 
-const LoginPanel = () => {
+const LoginPanel = ({ handleClose }) => {
     const classes = useStyles();
     const { logging, isLoggedIn, isError, errorMessage } = useSelector(
         authSelector
@@ -61,8 +61,8 @@ const LoginPanel = () => {
     } = useForm(initValues, true, validateInfo, handleLogin);
 
     useEffect(() => {
-        console.log('efff');
         if (isLoggedIn) {
+            handleClose();
             dispatch(authActions.clearState())
         }
         if (isError) {
@@ -92,6 +92,7 @@ const LoginPanel = () => {
                             variant="contained"
                             color="primary"
                             fullWidth
+                            style={{marginBottom: 16}}
                         >
                             Continue with google
                         </Button>
@@ -105,6 +106,7 @@ const LoginPanel = () => {
                             onChange={handleChange('email')}
                             error={errors.email}
                             type='email'
+                            style={{marginBottom: 16}}
                         />
 
                         <ReTextField
@@ -116,6 +118,7 @@ const LoginPanel = () => {
                             onChange={handleChange('password')}
                             error={errors.password}
                             type='password'
+                            style={{marginBottom: 16}}
                         />
                         <Button
                             className={classes.forgetButton}

@@ -1,6 +1,5 @@
-import { useState, Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
 import useForm from '../../utils/useForm';
-import authService from '../../services/auth.service';
 import {
     Grid,
     Button,
@@ -15,7 +14,10 @@ import { useStyles } from './styles';
 import validateInfo from './validateInfo';
 import { SuccessForm } from './ConfirmSignup';
 import ReTextField from '../ReTextField';
-
+import { useSelector, useDispatch } from 'react-redux'
+import {
+    authActions, authSelector
+} from '../../store/features/auth/authSlice';
 
 
 
@@ -26,6 +28,32 @@ const RegisterPanel = ({ value, index }) => {
         name: '',
         password: '',
     }
+    const { logging, isSuccess, isError, errorMessage } = useSelector(
+        authSelector
+    );
+
+    const dispatch = useDispatch();
+
+    const handleRegister = () => {
+        dispatch(authActions.signUp({
+            Email: values.email,
+            Name: values.name,
+            Password: values.password,
+        }))
+    };
+
+    useEffect(() => {
+        if (isSuccess) {
+            dispatch(authActions.clearState())
+        }
+        if (isError) {
+            setErrors({ ...errors, email: errorMessage })
+            dispatch(authActions.clearState())
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isSuccess, isError]);
+
+    /*
     const [isPending, setIsPending] = useState(false);
     const [success, setSuccess] = useState(false);
 
@@ -44,6 +72,7 @@ const RegisterPanel = ({ value, index }) => {
         }
         );
     }
+*/
 
     const {
         handleChange,
@@ -61,7 +90,7 @@ const RegisterPanel = ({ value, index }) => {
                 alignItems='center'
                 className={classes.registerRoot}
             >
-                {success
+                {isSuccess
                     ? <SuccessForm />
                     : <form onSubmit={handleSubmit}>
                         <Grid
@@ -86,6 +115,7 @@ const RegisterPanel = ({ value, index }) => {
                                 error={errors.email}
                                 startIcon={<MailOutlineRoundedIcon />}
                                 type='email'
+                                style={{marginBottom: 16}}
                             />
                             <ReTextField
                                 name='name'
@@ -95,6 +125,7 @@ const RegisterPanel = ({ value, index }) => {
                                 onChange={handleChange('name')}
                                 error={errors.name}
                                 startIcon={<PermIdentityRoundedIcon />}
+                                style={{marginBottom: 16}}
                             />
                             <ReTextField
                                 name='password'
@@ -105,6 +136,7 @@ const RegisterPanel = ({ value, index }) => {
                                 error={errors.password}
                                 startIcon={<LockOutlinedIcon />}
                                 type='password'
+                                style={{marginBottom: 16}}
                             />
 
                             <Button
@@ -112,7 +144,7 @@ const RegisterPanel = ({ value, index }) => {
                                 color="primary"
                                 size='large'
                                 fullWidth
-                                disabled={isPending}
+                                disabled={logging}
                                 type='submit'
                             >
                                 Register
@@ -122,7 +154,7 @@ const RegisterPanel = ({ value, index }) => {
                     </form>}
 
             </Grid >
-            <Backdrop className={classes.backdrop} open={isPending}>
+            <Backdrop className={classes.backdrop} open={logging}>
                 <CircularProgress color='primary' />
             </Backdrop>
         </Fragment>

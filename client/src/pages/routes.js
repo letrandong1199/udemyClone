@@ -7,6 +7,7 @@ const ProfilePage = lazy(() => import('./Profile'));
 const ResultPage = lazy(() => import('./Result'));
 const CreateCoursePage = lazy(() => import('./CreateCourse'));
 const Page404 = lazy(() => import('./Page404'));
+const Page500 = lazy(() => import('./Page500'));
 const AdminPage = lazy(() => import('./Admin'));
 const LearningPage = lazy(() => import('./Learning'));
 
@@ -54,6 +55,12 @@ const routes = [
         exact: false,
         public: false,
         component: CreateCoursePage,
+    },
+    {
+        path: '/500',
+        exact: false,
+        public: true,
+        component: Page500,
     },
     {
         path: '*',

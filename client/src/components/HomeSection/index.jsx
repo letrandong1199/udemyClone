@@ -10,6 +10,7 @@ import CategoryCard from '../CategoryCard'
 
 function HomeSection({
     title,
+    showProgress,
     disableTitle,
     courses,
     categories,
@@ -25,6 +26,7 @@ function HomeSection({
         list_ = courses.map((course, index) => {
             return <Grid item key={index} >
                 <ProductCardV
+                    showProgress={showProgress}
                     course={course}
                     isEnrolled={isEnrolled}
                     isWishlist={isWishlist}

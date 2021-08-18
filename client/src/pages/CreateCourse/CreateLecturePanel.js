@@ -21,6 +21,7 @@ import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import VideoLibraryIcon from '@material-ui/icons/VideoLibrary';
 import { useStyles } from './styles';
+import PlayerPopper from '../../components/PlayerPopper'
 
 import sectionService from '../../services/section.service';
 import lectureService from '../../services/lecture.service';
@@ -47,6 +48,7 @@ const LectureCard = ({
     const [openSnack, setOpenSnack] = useState(false);
     const [snackContent, setSnackContent] = useState(null);
     const [snackType, setSnackType] = useState('success');
+    const [openPlayer, setOpenPlayer] = useState(false);
 
     const handleCloseSnack = (event, reason) => {
         if (reason === 'clickaway') {
@@ -212,7 +214,7 @@ const LectureCard = ({
                             <VideoLibraryIcon size='large' />
                             {!isPending.includes(`media-${index}-${indexMedia}`) &&
                                 <Fragment>
-                                    <Button href={media?.Video_URL}>View</Button>
+                                    <Button onClick={() => setOpenPlayer(media?.Video_URL)}>View</Button>
                                     <FormGroup row>
                                         <FormControlLabel
                                             control={
@@ -340,7 +342,11 @@ const LectureCard = ({
                 }
 
             </Grid>
-
+            <PlayerPopper
+                open={openPlayer ? true : false}
+                url={openPlayer}
+                onClose={() => setOpenPlayer(false)}
+            />
             <Snackbar
                 open={openSnack}
                 autoHideDuration={4000}

@@ -35,6 +35,7 @@ const MyLearning = () => {
                     disableTitle
                     isEnrolled
                     hidePrice
+                    showProgress
                 />
             }
         </Container>

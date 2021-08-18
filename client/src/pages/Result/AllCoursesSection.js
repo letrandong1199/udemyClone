@@ -43,7 +43,7 @@ const AllCoursesSection = () => {
     const [selectedLanguages, setSelectedLanguages] = useState([]);
     const sortOptions = [
         { label: 'Most rating', value: 'desc-rating' },
-        { label: 'Less price', value: 'asc-rating' },
+        { label: 'Less price', value: 'asc-price' },
         { label: 'Most recent', value: 'most-recent' },
         { label: 'Most enrollment', value: 'most-register' },
     ];

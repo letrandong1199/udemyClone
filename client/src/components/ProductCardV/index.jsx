@@ -1,33 +1,109 @@
-import Card from '@material-ui/core/Card';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
+import {
+    Card,
+    CardMedia,
+    Typography,
+    CardContent,
+    CardActions,
+    IconButton,
+    Collapse,
+    Grid,
+    Hidden,
+    Divider,
+    Button,
+    CircularProgress,
+    Box
+} from '@material-ui/core';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
-import IconButton from '@material-ui/core/IconButton';
-import Rating from '@material-ui/lab/Rating';
-import React from 'react'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Collapse from '@material-ui/core/Collapse';
-import clsx from 'clsx';
-import Grid from '@material-ui/core/Grid';
-import { useStyles } from './styles';
-import Hidden from '@material-ui/core/Hidden';
-import { Link, useHistory } from 'react-router-dom';
-import Divider from '@material-ui/core/Divider';
-import { ROUTES } from '../../config/config';
-import Button from '@material-ui/core/Button';
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
 import FavoriteRoundedIcon from '@material-ui/icons/FavoriteRounded';
+import DoneOutlineRoundedIcon from '@material-ui/icons/DoneOutlineRounded';
+
+import { Rating } from '@material-ui/lab';
+
+import React from 'react'
+import clsx from 'clsx';
+import { useStyles } from './styles';
+import { Link, useHistory } from 'react-router-dom';
+import { ROUTES } from '../../config/config';
 import { useSelector } from 'react-redux';
 
-function ProductCardV({ course,
+const divide2number = (num1, num2) => {
+    if (num2 === 0 || num1 === 0) {
+        return 0;
+    }
+    return num1 / num2 * 100;
+};
+
+const Progression = ({ value, style }) => {
+    const classes = useStyles({ value });
+
+    return (
+        <dic style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            lineHeight: 0
+        }}>
+            <div className={classes.rootCircular}>
+                <CircularProgress
+                    variant="static"
+                    className={classes.bottomCircular}
+                    size={100}
+                    thickness={10}
+                    value={100}
+
+                />
+                <CircularProgress
+                    variant="static"
+                    disableShrink
+                    className={classes.topCircular}
+                    classes={{
+                        circle: classes.circleCircular,
+                    }}
+                    value={value}
+                    size={100}
+                    thickness={10}
+                />
+                <Box
+                    top={0}
+                    left={0}
+                    bottom={0}
+                    right={0}
+                    position='absolute'
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    className={classes.boxCircular}
+                >{value === 100
+                    ? <DoneOutlineRoundedIcon color='actions' />
+                    : <Typography
+                        color='inherit'
+                        variant='h6'
+                        component='div'
+                        style={{ fontWeight: 'bold' }}
+                    >
+                        {`${Math.round(
+                            value,
+                        )}`}
+                    </Typography>
+                    }
+                </Box >
+            </div>
+        </dic >
+    )
+}
+
+const ProductCardV = ({
+    course,
     loading,
     linkTo,
+    showProgress,
     hidePrice,
     isEnrolled,
     isWishlist,
     handleAdd,
-    handleRemove }) {
+    handleRemove }) => {
     const classes = useStyles();
     const history = useHistory();
 
@@ -50,6 +126,10 @@ function ProductCardV({ course,
                     image={course.Thumbnail_Medium}
                     title={course.Title}
                 >
+                    {showProgress && <Progression className={classes.price}
+                        value={divide2number(course?.Num_Completed, course?.Num_All_Media)}
+                    />
+                    }
                     {!hidePrice
                         && <Typography className={classes.price}>
                             {course.Promote_Rate !== 0
@@ -117,7 +197,7 @@ function ProductCardV({ course,
                             aria-label="show more"
                             size="small"
                         >
-                            <ExpandMoreIcon />
+                            <ExpandMoreRoundedIcon />
                         </IconButton>
                     </CardActions>
                 </Hidden>
@@ -146,8 +226,9 @@ function ProductCardV({ course,
                         aria-expanded={expanded}
                         aria-label="show more"
                     >
-                        <ExpandMoreIcon />
+                        <ExpandMoreRoundedIcon />
                     </IconButton>
+
                 </CardActions>
             </Hidden>
 

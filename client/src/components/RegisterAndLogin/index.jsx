@@ -103,7 +103,7 @@ function RegisterAndLogin({ defaultTab, handleClose }) {
                 <RegisterTab />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <LoginTab />
+                <LoginTab handleClose={handleClose} />
             </TabPanel>
         </Paper >
     )

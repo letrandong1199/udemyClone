@@ -187,7 +187,7 @@ const BasicInfoPanel = ({ id, course, loading, setCourse }) => {
                                 labelId="lang-select-label"
                                 id="lang-select"
                                 value={info?.Language || ''}
-                                onChange={handleChange()}
+                                onChange={handleChange('Language')}
                                 label="Language"
                                 onOpen={handleLoadLang}
                             >

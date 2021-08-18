@@ -8,6 +8,7 @@ const initialState = {
     errorMessage: undefined,
     isInstructor: false,
     isAdmin: false,
+    isSuccess: false,
 }
 
 export const authSlice = createSlice({
@@ -35,6 +36,18 @@ export const authSlice = createSlice({
             state.user = undefined;
             state.isInstructor = false;
             state.isAdmin = false;
+        },
+        signUp(state, action) {
+            state.logging = true;
+        },
+        signUpSuccess(state, action) {
+            state.logging = false;
+            state.isSuccess = true;
+        },
+        signUpFailed(state, action) {
+            state.logging = false;
+            state.isError = true;
+            state.errorMessage = action.payload;
         },
         clearState(state) {
             state.logging = false;
