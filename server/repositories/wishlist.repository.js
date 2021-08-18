@@ -29,7 +29,7 @@ const wishlistRepository = {
   },
   addWishlist(newWishlist) {
       console.log(newWishlist);
-      return db("Wishlists)
+      return db("Wishlists")
         .insert(newWishlist)
         .catch((e) => {
           console.log(e);
