@@ -28,7 +28,7 @@ const wishlistService = {
         User_Id: request.id,
         Course_Id: request.body.Course_Id,
       };
-      const ret = await _entityRepository("Wishlists").addEntity(newWishlist);
+      const ret = await wishlistRepository.addWishlist(newWishlist);
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneWishlistResponseEnum.SERVER_ERROR };
       }
