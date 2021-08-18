@@ -17,6 +17,9 @@ class AuthService {
                 if (response.Code === SIGN_IN.WRONG_PASSWORD) {
                     throw Error('password-Wrong password')
                 }
+                if (response.Code === SIGN_IN.IS_BLOCKED) {
+                    throw Error('email-Your account is blocked. Please contact admin.')
+                }
                 if (response.Code !== SIGN_IN.SUCCESS) {
                     throw Error(response.Code);
                 }
@@ -29,6 +32,7 @@ class AuthService {
     };
 
     logout() {
+        console.log('object');
         let user = localStorage.getItem("user");
         if (user) {
             const refreshToken = JSON.parse(user).refreshToken;
@@ -69,7 +73,20 @@ class AuthService {
     };
 
     getCurrentUser() {
-        return JSON.parse(localStorage.getItem('user'));
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const user_ = JSON.parse(atob(user.token.split('.')[1]));
+                return {
+                    email: user_.Email,
+                    name: user_.Name,
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return undefined;
     };
 
     getCurrentUserId() {

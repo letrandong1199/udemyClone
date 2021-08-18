@@ -1,21 +1,24 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import {
     Container,
     Typography,
     Grid,
     Avatar,
-    Divider
+    Divider,
+    Button,
 } from '@material-ui/core';
 import {
     Skeleton,
     Rating
 } from '@material-ui/lab';
-import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
-import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
+import ExpandLessRoundedIcon from '@material-ui/icons/ExpandLessRounded';
+import ExpandMoreRoundedIcon from '@material-ui/icons/ExpandMoreRounded';
+
 import { useStyles } from './styles';
 
 const InstructorSection = memo(({ course, isPending }) => {
     const classes = useStyles();
+    const [more, setMore] = useState(false);
     return (
         <Container className={`${classes.vibrant} ${classes.padding}`}>
             <Typography variant="h5" className={classes.title}>
@@ -36,7 +39,7 @@ const InstructorSection = memo(({ course, isPending }) => {
                         className={classes.rating}
                         value={0}
                         precision={0.5}
-                        size="small"
+                        size='small'
                         style={{ color: 'rgb(247, 187, 86)' }}
                     />
                     <Typography variant="subtitle2">100</Typography>
@@ -54,15 +57,45 @@ const InstructorSection = memo(({ course, isPending }) => {
                     }
                 </Grid>
 
-                <Grid item xs={4} container direction="column" style={{ marginLeft: 32 }} >
-
-                    <Typography variant="h6">{isPending
+                <Grid item xs container direction='column' style={{ marginLeft: 32 }} >
+                    <Typography variant='h6'>{isPending
                         ? <Skeleton />
                         : course?.Author?.Name
                     }
                     </Typography>
 
-                    <Grid container alignItems="center">
+                    <div>
+                        <Typography
+                            variant='body1'
+                            component='div'
+                            className={!more ? `${classes.limit}` : 'off'}
+                        >
+                            {isPending
+                                ? <Skeleton />
+                                : course?.Author?.Description
+                            }
+
+                        </Typography>
+
+
+
+                        <Button
+                            variant='text'
+                            size='small'
+                            disableRipple
+                            disableFocusRipple
+                            disableElevation
+                            color='primary'
+                            style={{ padding: 0 }}
+                            onClick={() => setMore(!more)}
+                            endIcon={more ? <ExpandLessRoundedIcon /> : <ExpandMoreRoundedIcon />}
+                        >
+                            {more ? 'Show less' : 'Show more'}
+                        </Button>
+                    </div>
+
+
+                    { /*<Grid container alignItems="center">
                         <PeopleAltRoundedIcon />
                         <Typography variant="body2">
                             &nbsp;&nbsp;4500 learners
@@ -73,7 +106,7 @@ const InstructorSection = memo(({ course, isPending }) => {
                         <Typography variant="body2">
                             &nbsp;&nbsp;45 courses
                         </Typography>
-                    </Grid>
+                    </Grid>*/}
 
                 </Grid>
             </Grid>

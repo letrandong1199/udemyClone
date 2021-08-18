@@ -18,6 +18,7 @@ import SubjectIcon from '@material-ui/icons/Subject';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import PlayerPopper from '../../components/PlayerPopper';
 
 import { useStyles } from './styles';
 
@@ -25,6 +26,7 @@ const Content = memo(({ course, isPending }) => {
     const classes = useStyles();
     const [expanded, setExpanded] = useState(false);
     const [expandedList, setExpandedList] = useState([]);
+    const [openPlayer, setOpenPlayer] = useState(false);
 
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -114,7 +116,7 @@ const Content = memo(({ course, isPending }) => {
                                                     {lecture.Media.map((media, index) => {
                                                         return media && <ListItem
                                                             key={index}
-                                                            href={media.Video_URL}
+                                                            onClick={() => setOpenPlayer(media.Video_URL)}
                                                             className={classes.nested}
                                                             component='a'
                                                         >
@@ -135,6 +137,11 @@ const Content = memo(({ course, isPending }) => {
                     }
                 </Card>
             </Grid>
+            <PlayerPopper
+                open={openPlayer ? true : false}
+                url={openPlayer}
+                onClose={() => setOpenPlayer(false)}
+            />
         </Container >
     )
 });

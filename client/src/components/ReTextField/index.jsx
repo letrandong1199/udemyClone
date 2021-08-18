@@ -24,10 +24,10 @@ const ReTextField = ({
         onChange={onChange}
         type={type}
         InputProps={
-            startIcon && {
+            {
                 startAdornment: (
                     <InputAdornment position="start">
-                        {startIcon}
+                        {startIcon || ''}
                     </InputAdornment>
                 ),
                 readOnly: readOnly

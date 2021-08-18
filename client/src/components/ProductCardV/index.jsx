@@ -6,7 +6,7 @@ import CardActions from '@material-ui/core/CardActions';
 import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
 import IconButton from '@material-ui/core/IconButton';
 import Rating from '@material-ui/lab/Rating';
-import React, { useEffect } from 'react'
+import React from 'react'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import clsx from 'clsx';

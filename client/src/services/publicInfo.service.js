@@ -7,7 +7,6 @@ class PublicInfoService {
         return axiosClient
             .get(API_URL + '/public-info')
             .then((response) => {
-                console.log(response);
                 if (response.Code === GET_PUBLIC_INFO.PUBLIC_INFO_IS_NOT_EXISTS) {
                     response['resultResponse'] = '';
                     return response;

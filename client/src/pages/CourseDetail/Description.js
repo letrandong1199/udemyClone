@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useRef, useEffect } from 'react';
 import {
     Container,
     Typography,
@@ -25,7 +25,11 @@ const Description = memo(({ course, isPending }) => {
     } catch (error) {
         console.log(error);
     }
-    const [more, setMore] = useState(false);
+    const [more, setMore] = useState(undefined);
+    const desRef = useRef();
+    useEffect(() => {
+        setMore(desRef.current?.scrollHeight > 200 ? false : undefined);
+    }, [course])
     return (
         <Container className={classes.padding}>
             <Grid
@@ -38,28 +42,34 @@ const Description = memo(({ course, isPending }) => {
                 </Typography>
                 {isPending
                     ? <Skeleton width='100%' height='50px' />
-                    : <Typography
-                        className={!more ? `${classes.limit}` : 'off'}
-                        component="div"
-                        dangerouslySetInnerHTML={{
-                            __html: description
-                        }} >
-                    </Typography>
+                    : <div>
+                        <Typography
+                            ref={desRef}
+                            className={more ? 'off' : `${classes.limit}`}
+                            component="div"
+                            dangerouslySetInnerHTML={{
+                                __html: description
+                            }} >
+                        </Typography>
+                        {more === false && <div className={classes.fade} />}
+                    </div>
                 }
 
-                <Button
-                    variant='text'
-                    size='small'
-                    disableRipple
-                    disableFocusRipple
-                    disableElevation
-                    color='primary'
-                    style={{ padding: 0 }}
-                    onClick={() => setMore(!more)}
-                    endIcon={more ? <ExpandLessRoundedIcon /> : <ExpandMoreRoundedIcon />}
-                >
-                    {more ? 'Show less' : 'Show more'}
-                </Button>
+                {isPending ? <Skeleton width='100%' height='50px' />
+                    : more !== undefined &&
+                    <Button
+                        variant='text'
+                        size='small'
+                        disableRipple
+                        disableFocusRipple
+                        disableElevation
+                        color='primary'
+                        style={{ padding: 0 }}
+                        onClick={() => setMore(!more)}
+                        endIcon={more ? <ExpandLessRoundedIcon /> : <ExpandMoreRoundedIcon />}
+                    >
+                        {more ? 'Show less' : 'Show more'}
+                    </Button>}
 
             </Grid>
         </Container >

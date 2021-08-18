@@ -1,5 +1,5 @@
 export const config = {
-    "HOST": "http://localhost:8080/api",
+    "HOST": "https://udemy-apis.herokuapp.com/api",
     "PORT": "8000",
     "USER_CONTROLLER": "user-controller",
     "COURSE_CONTROLLER": "course-controller",
@@ -62,6 +62,7 @@ export const SIGN_IN = {
     WRONG_EMAIL: "wrong_email",
     WRONG_PASSWORD: "wrong_password",
     SERVER_ERROR: "server_error",
+    IS_BLOCKED: "is_blocked",
 }
 
 export const DELETE_CATEGORY = {
@@ -412,6 +413,18 @@ export const GET_PUBLIC_INFO = {
     SERVER_ERROR: "server_error",
     USER_IS_NOT_EXISTS: "user_is_not_exists",
     PUBLIC_INFO_IS_NOT_EXISTS: "public_info_is_not_exists",
+};
+
+export const BLOCK_USER = {
+    SUCCESS: "block_is_success",
+    SERVER_ERROR: "server_error",
+    USER_IS_NOT_EXITS: "user_is_not_exist",
+};
+
+export const BLOCK_COURSE = {
+    SUCCESS: "block_is_success",
+    SERVER_ERROR: "server_error",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
 };
 
 export default config;

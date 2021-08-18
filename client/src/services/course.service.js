@@ -1,11 +1,18 @@
 import axiosClient from './axiosClientSetup';
-import { GET_ONE_COURSE, UPDATE_COURSE, GET_ALL_COURSE, CREATE_COURSE, config } from '../config/config';
+import {
+    BLOCK_COURSE,
+    GET_ONE_COURSE,
+    UPDATE_COURSE,
+    GET_ALL_COURSE,
+    CREATE_COURSE,
+    config
+} from '../config/config';
 
 const API_URL = `/${config.COURSE_CONTROLLER}`;
 
 class CourseService {
     getAll() {
-        return axiosClient.get(API_URL + '/courses').then(response => {
+        return axiosClient.get(API_URL + '/courses/manage').then(response => {
             if (response.Code !== GET_ALL_COURSE.SUCCESS) {
                 throw Error(response.Code);
             }
@@ -101,6 +108,16 @@ class CourseService {
             }
             return response;
         })
+    }
+    updateStatus(id) {
+        return axiosClient
+            .put(API_URL + '/courses/is-blocked/' + id)
+            .then(response => {
+                if (response.Code !== BLOCK_COURSE.SUCCESS) {
+                    throw Error(response.Code)
+                }
+                return response;
+            })
     }
 }
 

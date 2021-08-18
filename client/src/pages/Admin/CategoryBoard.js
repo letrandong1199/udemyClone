@@ -50,6 +50,7 @@ const CategoryBoard = () => {
         setIsProcessing(true)
         categoryService.postOne({ Name: name, Parent_Id: parent }).then(response => {
             setSnackContent('Added');
+            setSnackType('success');
             setOpenSnack(true);
             setIsProcessing(false)
             setOpenAdd(false);
@@ -110,16 +111,18 @@ const CategoryBoard = () => {
         setIsProcessing(true)
         categoryService.updateOne(open?.Id, open).then(response => {
             let array = [...categories];
-            let index = array.indexOf(open)
+            let index = array.map(x => x.Id).indexOf(open.Id);
 
             if (index !== -1) {
                 array.splice(index, 1);
                 array.push(open);
+                console.log('sssm');
                 setCategories(array);
                 setSnackType('success');
                 setSnackContent('Updated')
                 setOpenSnack(true);
                 setOpen(false);
+                setRefresh(!refresh);
             }
             setIsProcessing(false)
         }).catch(error => {

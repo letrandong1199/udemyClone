@@ -24,7 +24,7 @@ export const lightTheme = unstable_createMuiStrictModeTheme({
             main: red.A400,
         },
         background: {
-            default: '#fff',
+            default: 'rgb(255, 255, 255)',
             vibrant: 'rgba(243,243,255,1)',
             acrylic: 'rgba(195,195,195,0.7)',
         },

@@ -4,26 +4,38 @@ import {
     Button,
     CircularProgress,
 } from '@material-ui/core'
-import authService from '../../services/auth.service';
 import { useStyles } from './styles';
 import useForm from '../../utils/useForm';
-import { useState, Fragment } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Fragment, useEffect } from 'react';
 import ReTextField from '../ReTextField';
 import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import validateInfo from './validateInfo';
+import { useSelector, useDispatch } from 'react-redux'
+import {
+    authActions, authSelector
+} from '../../store/features/auth/authSlice';
 
 const LoginPanel = () => {
     const classes = useStyles();
-    const [loading, setLoading] = useState(false);
+    const { logging, isLoggedIn, isError, errorMessage } = useSelector(
+        authSelector
+    );
     const initValues = {
         email: '',
         password: '',
     }
-    const history = useHistory();
+
+    const dispatch = useDispatch();
 
     const handleLogin = () => {
+        dispatch(authActions.login({
+            Email: values.email,
+            Password: values.password,
+        }))
+    }
+
+    /*const handleLogin = () => {
         setLoading(true);
         authService.login({
             Email: values.email,
@@ -37,7 +49,8 @@ const LoginPanel = () => {
             setErrors({ ...errors, [splitted[0]]: splitted[1] })
         }
         );
-    }
+    }*/
+
 
     const {
         handleChange,
@@ -46,6 +59,19 @@ const LoginPanel = () => {
         setErrors,
         handleSubmit,
     } = useForm(initValues, true, validateInfo, handleLogin);
+
+    useEffect(() => {
+        console.log('efff');
+        if (isLoggedIn) {
+            dispatch(authActions.clearState())
+        }
+        if (isError) {
+            const [type, message] = errorMessage.split('-');
+            setErrors({ ...errors, [type]: message })
+            dispatch(authActions.clearState())
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoggedIn, isError])
 
     return (
         <Fragment>
@@ -110,7 +136,7 @@ const LoginPanel = () => {
                 </form>
 
             </Grid >
-            <Backdrop className={classes.backdrop} open={loading}>
+            <Backdrop className={classes.backdrop} open={logging}>
                 <CircularProgress color='primary' />
             </Backdrop>
         </Fragment >

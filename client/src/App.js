@@ -3,7 +3,7 @@ import './App.css';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { React, useEffect } from 'react';
 import { lightTheme, darkTheme } from './theme';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import routes from './pages/routes';
 import Navbar from './components/Navbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -15,6 +15,7 @@ import {
 } from './components/PrivateRoute';
 import { Suspense } from 'react';
 import { ROUTES } from './config/config';
+import history from './history';
 import { useSelector, useDispatch } from 'react-redux'
 import {
   setWishlist,
@@ -40,7 +41,7 @@ function App() {
       <Suspense fallback={<div>
         <CircularProgress style={{ position: 'absolute', top: '50%', left: '50%' }} />
       </div>}>
-        <Router>
+        <Router history={history}>
           <Navbar />
           <Switch>
             {routes.map(({ component, path, ...rest }) => {

@@ -10,7 +10,6 @@ import {
     ListItem,
     ListItemText,
     ListItemIcon,
-    Container,
     Drawer,
 } from "@material-ui/core";
 
@@ -22,8 +21,6 @@ import PublicRoundedIcon from '@material-ui/icons/PublicRounded';
 import { useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
 
 import { ROUTES } from '../../config/config';
-import enrolledCourseService from '../../services/enrolledCourse.service';
-import HomeSection from '../../components/HomeSection/index.jsx';
 import Wishlist from './Wishlist';
 import AccountInfo from './AccountInfo';
 import PublicInfo from './PublicInfo';
@@ -55,7 +52,7 @@ function Profile() {
                 break;
             default: setSelectedIndex(-1);
         }
-    }, [location])
+    }, [location, path])
 
     const drawer = (
         <div className={classes.drawerContainer}>

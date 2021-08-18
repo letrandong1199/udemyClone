@@ -1,5 +1,5 @@
 import axiosClient from './axiosClientSetup';
-import { GET_USER, CREATE_USER, GET_ALL_USER, UPDATE_USER, CHANGE_PASSWORD, config } from '../config/config';
+import { BLOCK_USER, GET_USER, CREATE_USER, GET_ALL_USER, UPDATE_USER, CHANGE_PASSWORD, config } from '../config/config';
 
 const API_URL = `/${config.USER_CONTROLLER}`;
 class UserService {
@@ -53,6 +53,16 @@ class UserService {
                 return response
             })
     }
+    updateStatus(id) {
+        return axiosClient
+            .put(API_URL + '/users/is-blocked/' + id)
+            .then(response => {
+                if (response.Code !== BLOCK_USER.SUCCESS) {
+                    throw Error(response.Code)
+                }
+                return response;
+            })
+    }
 
     getUserBoard() {
         return axiosClient
@@ -72,6 +82,7 @@ class UserService {
     getAdminBoard() {
         return axiosClient.get(API_URL + '/admin');
     }
+
 };
 
 export default new UserService();

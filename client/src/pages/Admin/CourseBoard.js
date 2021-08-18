@@ -1,23 +1,15 @@
 import {
-    AppBar,
-    TextField,
-    Typography,
     Grid,
     Backdrop,
-    Dialog,
-    IconButton,
-    Button,
-    Toolbar,
     CircularProgress,
-    Snackbar,
 } from '@material-ui/core';
+import clsx from 'clsx';
 
-import { Alert } from '@material-ui/lab';
 import { DataGrid, GridToolbar } from '@material-ui/data-grid';
 import { useState, useEffect } from 'react';
 import useStyles from './styles'
 import courseService from '../../services/course.service';
-import CloseIcon from '@material-ui/icons/Close'
+import DetailRowDialog from './DetailRowDialog';
 
 
 const CourseBoard = () => {
@@ -26,10 +18,6 @@ const CourseBoard = () => {
     const [error, setError] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const [openSnack, setOpenSnack] = useState(false);
-    const [snackContent, setSnackContent] = useState(null);
-    const [snackType, setSnackType] = useState('success');
-
     const [refresh, setRefresh] = useState(null);
 
 
@@ -37,12 +25,16 @@ const CourseBoard = () => {
         setIsPending(true);
         courseService.getAll().then(response => {
             const list = response.listAllResponse;
+            console.log('a', response.listAllResponse);
             const resultArray = list.map(elm => {
                 elm['id'] = elm.Id;
-                elm['Author_Id'] = elm.Author.Id;
-                elm['Category_Id'] = elm.Category.Id;
+                elm['Author_Name'] = elm.Author.Name;
+                elm['Category_Name'] = elm.Category.Name;
+                elm['Is_Blocked'] = Boolean(elm['Is_Blocked']);
+                elm['Status'] = elm.Is_Blocked ? 'Blocked' : 'Active';
                 return elm
             });
+
             setIsPending(false);
             setCourses(resultArray)
         }).catch(error => {
@@ -62,26 +54,31 @@ const CourseBoard = () => {
             field: 'Sub_Description',
             headerName: 'Sub Description',
             width: 250,
+            hide: true,
         },
         {
             field: 'Description',
             headerName: 'Description',
             width: 250,
+            hide: true,
         },
         {
             field: 'Thumbnail_Small',
             headerName: 'Thumbnail Small',
             width: 250,
+            hide: true,
         },
         {
             field: 'Thumbnail_Medium',
             headerName: 'Thumbnail Medium',
             width: 250,
+            hide: true,
         },
         {
             field: 'Thumbnail_Large',
             headerName: 'Thumbnail Large',
             width: 250,
+            hide: true,
         },
         {
             field: 'Price',
@@ -91,39 +88,45 @@ const CourseBoard = () => {
         {
             field: 'Rating',
             headerName: 'Rating',
+            width: 130,
+        },
+        {
+            field: 'Category_Name',
+            headerName: 'Category',
             width: 150,
         },
         {
-            field: 'Category_Id',
-            headerName: 'Category Id',
-            width: 150,
-        },
-        {
-            field: 'Author_Id',
-            headerName: 'Author Id',
+            field: 'Author_Name',
+            headerName: 'Author',
             width: 150,
         },
         {
             field: 'Promote_Rate',
             headerName: 'Promote Rate',
             width: 150,
+            hide: true,
         },
         {
             field: 'Language_Id',
-            headerName: 'Language Id',
+            headerName: 'Language',
             width: 150,
+            hide: true,
         },
+        {
+            field: 'Status',
+            headerName: 'Status',
+            width: 130,
+            cellClassName: (params) =>
+                clsx('super-app', {
+                    negative: params.value === 'Active',
+                    positive: params.value === 'Blocked',
+                }),
+        }
 
     ];
 
     const [open, setOpen] = useState(false);
 
-    const handleCloseSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenSnack(false);
-    };
 
     const handleClick = (event) => {
         setOpen(event.row);
@@ -132,39 +135,28 @@ const CourseBoard = () => {
         setOpen(false);
     };
 
-    const handleDelete = () => {
+    const handleBlock = () => {
         setIsProcessing(true)
-        courseService.deleteOne(open?.Id).then(response => {
-            let array = [...courses];
-            let index = array.indexOf(open)
+        return new Promise(() => {
+            courseService.updateStatus(open?.Id).then(response => {
+                let array = [...courses];
+                let index = array.indexOf(open)
 
-            if (index !== -1) {
-                array.splice(index, 1);
-                setCourses(array);
-                setSnackType('success');
-                setSnackContent('Deleted')
-                setOpenSnack(true);
-                setOpen(false);
-            }
-            setIsProcessing(false)
-            setRefresh(!refresh);
-        }).catch(error => {
-            console.log(error);
-            setSnackType('error');
-            setSnackContent(error.message);
-            setOpenSnack(true);
-            setIsProcessing(false);
-        })
-    }
-
-    const handleChange = (event) => {
-        const dic = {
-            Id: open.Id,
-            id: open.id,
-            Name: event.target.value
+                if (index !== -1) {
+                    array[index]['Is_Blocked'] = !array[index]['Is_Blocked'];
+                    array[index]['Status'] = array[index]['Is_Blocked'] ? 'Blocked' : 'Active';
+                    setCourses(array);
+                }
+                setIsProcessing(false)
+                return true;
+            }).catch(error => {
+                console.log(error);
+                setIsProcessing(false);
+            })
         }
-        setOpen(dic);
+        )
     }
+
 
     const classes = useStyles();
     return (
@@ -177,57 +169,28 @@ const CourseBoard = () => {
                 loading={isPending}
                 onRowClick={handleClick}
                 disableSelectionOnClick
+                className={classes.dataGridRoot}
                 components={{
                     Toolbar: GridToolbar,
                 }}
             />
 
-            <Dialog open={open ? true : false} onClose={handleClose} className={classes.dialog}>
-                <AppBar className={classes.dialogAppBar} style={{ position: 'static' }}>
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Detail
-                        </Typography>
+            <DetailRowDialog
+                setIsProcessing={setIsProcessing}
+                setRefresh={setRefresh}
+                refresh={refresh}
+                open={open ? true : false}
+                row={open}
+                columns={coursesColumns}
+                onClose={() => setOpen(false)}
+                onDelete={handleBlock}
+                readOnly
+            />
 
-                        <Button autoFocus color="inherit" onClick={handleDelete}>
-                            Delete
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <Grid container>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Name"
-                        type="text"
-                        variant="outlined"
-                        value={open ? open.Title : ''}
-                        onChange={handleChange}
-                        disabled
-                        fullWidth
-                        style={{ margin: 20 }}
-                    />
-
-                </Grid>
-            </Dialog>
 
             <Backdrop className={classes.backdrop} open={isProcessing} onClick={handleClose}>
                 <CircularProgress />
             </Backdrop>
-            <Snackbar
-                open={openSnack}
-                autoHideDuration={3000}
-                onClose={handleCloseSnack}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnack} severity={snackType}>
-                    {snackContent}
-                </Alert>
-            </Snackbar>
         </Grid>
     )
 };

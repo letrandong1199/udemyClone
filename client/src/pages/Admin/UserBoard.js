@@ -1,28 +1,22 @@
 import {
-    AppBar,
-    TextField,
-    Typography,
-    Grid,
     Backdrop,
-    Dialog,
     IconButton,
-    Button,
-    Toolbar,
     CircularProgress,
     Snackbar,
 } from '@material-ui/core';
+import clsx from 'clsx';
 
 import { Alert } from '@material-ui/lab';
-import { DataGrid } from '@material-ui/data-grid'
+import { DataGrid } from '@material-ui/data-grid';
 
 import { useState, useEffect } from 'react';
-import useStyles from './styles'
+import useStyles from './styles';
 import userService from '../../services/user.service';
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
 import CachedRoundedIcon from '@material-ui/icons/CachedRounded';
-import CloseIcon from '@material-ui/icons/Close'
 
 import AddInstructorDialog from './AddInstructorDialog';
+import DetailRowDialog from './DetailRowDialog';
 
 const UserBoard = () => {
     const [users, setUsers] = useState([]);
@@ -34,7 +28,6 @@ const UserBoard = () => {
     const [snackContent, setSnackContent] = useState(null);
     const [snackType, setSnackType] = useState('success');
 
-    const [editable, setEditable] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
 
     const [refresh, setRefresh] = useState(null);
@@ -45,6 +38,8 @@ const UserBoard = () => {
             const list = response.listAllResponse;
             const resultArray = list.map(elm => {
                 elm['id'] = elm.Id;
+                elm['Is_Blocked'] = Boolean(elm.Is_Blocked);
+                elm['Status'] = elm.Is_Blocked ? 'Blocked' : 'Active';
                 return elm
             });
             setIsPending(false);
@@ -56,7 +51,11 @@ const UserBoard = () => {
     }, [refresh])
 
     const usersColumns = [
-        { field: 'Id', headerName: 'Id', width: 90 },
+        {
+            field: 'Id',
+            headerName: 'Id',
+            width: 90
+        },
         {
             field: 'Name',
             headerName: 'Name',
@@ -67,7 +66,49 @@ const UserBoard = () => {
             headerName: 'Email',
             width: 250,
         },
-        { field: 'Role', headerName: 'Role', width: 150 },
+        {
+            field: 'Role',
+            headerName: 'Role',
+            width: 150
+        },
+        {
+            field: 'Role',
+            headerName: 'Role',
+            width: 150
+        },
+        {
+            field: 'Status',
+            headerName: 'Status',
+            width: 150,
+            cellClassName: (params) =>
+                clsx('super-app', {
+                    negative: params.value === 'Active',
+                    positive: params.value === 'Blocked',
+                }),
+        },
+    ];
+
+    const detailColumns = [
+        {
+            field: 'Id',
+            headerName: 'Id',
+            type: 'text',
+        },
+        {
+            field: 'Name',
+            headerName: 'Name',
+            type: 'text'
+        },
+        {
+            field: 'Email',
+            headerName: 'Email',
+            type: 'email'
+        },
+        {
+            field: 'Role',
+            headerName: 'Role',
+            type: 'text'
+        },
 
     ];
 
@@ -113,39 +154,29 @@ const UserBoard = () => {
         })
     }
 
-    const handleDelete = () => {
+    const handleBlock = () => {
         setIsProcessing(true)
-        userService.deleteOne(open?.Id).then(response => {
-            let array = [...users]; // make a separate copy of the array
-            let index = array.indexOf(open)
+        return new Promise(() => {
+            userService.updateStatus(open?.Id).then(response => {
+                let array = [...users];
+                let index = array.indexOf(open)
 
-            if (index !== -1) {
-                array.splice(index, 1);
-                setUsers(array);
-                setSnackType('success');
-                setSnackContent('Deleted')
-                setOpenSnack(true);
-                setOpen(false);
-            }
-            setIsProcessing(false)
-            console.log('del', response);
-        }).catch(error => {
-            console.log(error);
-            setSnackType('error');
-            setSnackContent(error.message);
-            setOpenSnack(true);
-            setIsProcessing(false);
-        })
-    }
-
-    const handleChange = (event) => {
-        const dic = {
-            Id: open.Id,
-            id: open.id,
-            Name: event.target.value
+                if (index !== -1) {
+                    array[index]['Is_Blocked'] = !array[index]['Is_Blocked'];
+                    array[index]['Status'] = array[index]['Is_Blocked'] ? 'Blocked' : 'Active';
+                    setUsers(array);
+                }
+                setIsProcessing(false)
+                console.log('del', response);
+                return true;
+            }).catch(error => {
+                console.log(error);
+                setIsProcessing(false);
+            })
         }
-        setOpen(dic);
+        )
     }
+
 
     const classes = useStyles();
     return (
@@ -157,6 +188,7 @@ const UserBoard = () => {
                 error={error}
                 loading={isPending}
                 onRowClick={handleClick}
+                className={classes.dataGridRoot}
                 disableSelectionOnClick
             />
             <div style={{ position: 'absolute', top: 70, right: 100 }}>
@@ -172,45 +204,18 @@ const UserBoard = () => {
                 </IconButton>
             </div>
 
-            <Dialog open={open ? true : false} onClose={handleClose} className={classes.dialog}>
-                <AppBar className={classes.dialogAppBar} style={{ position: 'static' }}>
-                    <Toolbar>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography variant="h6" className={classes.title}>
-                            Detail
-                        </Typography>
-                        {editable
-                            ? <Button autoFocus color="inherit" onClick={handleSave}>
-                                Save
-                            </Button>
-                            : <Button autoFocus color="inherit"
-                                onClick={() => { setEditable(!editable) }}>
-                                Edit
-                            </Button>}
-                        <Button autoFocus color="inherit" onClick={handleDelete}>
-                            Delete
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-                <Grid container>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Name"
-                        type="text"
-                        variant="outlined"
-                        value={open ? open.Name : ''}
-                        onChange={handleChange}
-                        disabled={!editable}
-                        fullWidth
-                        style={{ margin: 20 }}
-                    />
-
-                </Grid>
-            </Dialog>
+            <DetailRowDialog
+                setIsProcessing={setIsProcessing}
+                setRefresh={setRefresh}
+                refresh={refresh}
+                open={open ? true : false}
+                row={open}
+                columns={detailColumns}
+                onClose={() => setOpen(false)}
+                onDelete={handleBlock}
+                onUpdate={handleSave}
+                readOnly
+            />
 
             <AddInstructorDialog
                 setIsProcessing={setIsProcessing}
@@ -221,7 +226,7 @@ const UserBoard = () => {
             />
 
             <Backdrop className={classes.backdrop} open={isProcessing} onClick={handleClose}>
-                <CircularProgress color="inherit" />
+                <CircularProgress />
             </Backdrop>
             <Snackbar
                 open={openSnack}

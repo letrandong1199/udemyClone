@@ -42,20 +42,23 @@ import {
 import { Link, useLocation, useHistory } from 'react-router-dom';
 
 import { useStyles } from './styles';
-import authService from '../../services/auth.service';
 import categoryService from '../../services/category.service';
 import usePrepareLink from '../../utils/usePrepareLink';
 import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
 import listToTree from '../../utils/listToTree';
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toggleTheme } from '../../store/features/theme/themeSlice';
+import {
+    authActions, authSelector
+} from '../../store/features/auth/authSlice';
 
 // Component profile button
-const ProfileButton = ({ handleSignOut }) => {
+const ProfileButton = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const anchorRef = useRef(null);
+    const dispatch = useDispatch();
 
     const handleOpen = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -113,7 +116,7 @@ const ProfileButton = ({ handleSignOut }) => {
                                             <ListItemText primary='Dashboard' />
                                         </MenuItem>
                                     </Link>
-                                    <MenuItem onClick={handleSignOut}>
+                                    <MenuItem onClick={() => dispatch(authActions.logout())}>
                                         <ListItemIcon><ExitToAppRoundedIcon /></ListItemIcon>
                                         <ListItemText primary='Log-out' />
                                     </MenuItem>
@@ -422,7 +425,6 @@ const CategoryMenu = (props) => {
     )
 }
 
-
 // Main component
 function Navbar(props) {
     const classes = useStyles();
@@ -440,7 +442,6 @@ function Navbar(props) {
         return event;
     };
     let location = useLocation();
-    let history = useHistory();
 
     useEffect(() => {
         switch (location.pathname) {
@@ -454,23 +455,12 @@ function Navbar(props) {
         }
     }, [location.pathname])
 
-    const [isLogin, setIsLogin] = useState(authService.isUser())
-    const [isInstructor, setIsInstructor] = useState(authService.isInstructor())
-    const [isAdmin, setIsAdmin] = useState(authService.isAdmin())
 
-    const auth = authService.isUser();
+    const { isLoggedIn, isAdmin, isInstructor } = useSelector(
+        authSelector
+    );
 
-    useEffect(() => {
-        if (authService.isUser()) {
-            setIsLogin(true);
-        }
-        if (authService.isInstructor()) {
-            setIsInstructor(true);
-        }
-        if (authService.isAdmin()) {
-            setIsAdmin(true);
-        }
-    }, [auth])
+    /*
     const handleSignOut = () => {
         authService.logout();
         setIsLogin(false);
@@ -478,6 +468,7 @@ function Navbar(props) {
         setIsAdmin(false);
         history.push(ROUTES.home);
     };
+    */
 
 
     const drawer = (
@@ -488,7 +479,7 @@ function Navbar(props) {
                 </ButtonBase>
             </List>
             <Divider />
-            {isLogin &&
+            {isLoggedIn &&
                 <List>
                     {['Profile', 'My learning', 'Wishlist'].map((text, index) => (
                         <ListItem
@@ -518,8 +509,8 @@ function Navbar(props) {
                 <IconButton onClick={props.handleToggle}>
                     <FlareRoundedIcon />
                 </IconButton>
-                {isLogin &&
-                    <IconButton onClick={handleSignOut}>
+                {isLoggedIn &&
+                    <IconButton onClick={() => dispatch(authActions.logout())}>
                         <ExitToAppRoundedIcon />
                     </IconButton>
                 }
@@ -574,11 +565,11 @@ function Navbar(props) {
                         </Hidden>
 
                         <SearchBar />
-                        {!isLogin && <RegisterButton />}
+                        {!isLoggedIn && <RegisterButton />}
                         <Hidden xsDown>
                             {isInstructor && <InstructorButton />}
                             {isAdmin && <AdminButton />}
-                            {isLogin && <ProfileButton handleSignOut={handleSignOut} />}
+                            {isLoggedIn && <ProfileButton />}
                             <IconButton onClick={() => dispatch(toggleTheme())}>
                                 <FlareRoundedIcon />
                             </IconButton>

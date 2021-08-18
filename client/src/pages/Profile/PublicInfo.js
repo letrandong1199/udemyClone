@@ -8,14 +8,12 @@ import {
     Grid,
     Container,
     Typography,
-    Avatar,
     Button,
     CircularProgress,
     Snackbar,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import PermIdentityRoundedIcon from '@material-ui/icons/PermIdentityRounded';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import clsx from 'clsx';
 import useForm from '../../utils/useForm';
 
@@ -74,7 +72,6 @@ const PublicInfo = () => {
         values,
         setValues,
         errors,
-        setErrors,
         handleSubmit,
     } = useForm(initValues, true, validateInfo, handleSave);
 
@@ -90,7 +87,7 @@ const PublicInfo = () => {
         }).catch(error => {
             setError(error.message);
             console.log(error.message);
-            //history.goBack();
+            history.goBack();
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -114,6 +111,7 @@ const PublicInfo = () => {
                         startIcon={<PermIdentityRoundedIcon />}
                         readOnly={!editable}
                         onChange={handleChange('info')}
+                        multiline
                         value={values.info}
                         error={errors.info}
                     />
