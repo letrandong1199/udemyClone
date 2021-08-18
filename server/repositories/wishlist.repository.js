@@ -28,8 +28,8 @@ const wishlistRepository = {
       .catch(() => operatorType.FAIL.DELETE);
   },
   addWishlist(newWishlist) {
-      console.log(entity);
-      return db(nameEntity)
+      console.log(newWishlist);
+      return db("Wishlists)
         .insert(newWishlist)
         .catch((e) => {
           console.log(e);
