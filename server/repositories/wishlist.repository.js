@@ -27,5 +27,14 @@ const wishlistRepository = {
       .del()
       .catch(() => operatorType.FAIL.DELETE);
   },
+  addWishlist(newWishlist) {
+      console.log(entity);
+      return db(nameEntity)
+        .insert(newWishlist)
+        .catch((e) => {
+          console.log(e);
+          return operatorType.FAIL.CREATE;
+        });
+    },
 };
 module.exports = wishlistRepository;
