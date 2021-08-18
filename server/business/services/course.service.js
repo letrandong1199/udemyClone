@@ -21,13 +21,13 @@ const mediaRepository = require("../../repositories/media.repository");
 const feedbackRepository = require("../../repositories/feedback.repository");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 const mediauserRepository = require("../../repositories/mediauser.repository");
-const publicInfoRepository = require("../../repositories/publicinfo.repository")
+const publicInfoRepository = require("../../repositories/publicinfo.repository");
 const moment = require("moment");
 const blockOneCourseResponseEnum = require("../../api/validators/enums/courseEnums/blockOneCourseResponseEnum");
 
 const courseService = {
   async createOneCourse(request) {
-    console.log('req', request.body);
+    console.log("req", request.body);
     try {
       const resultValidator = createOneCourseValidator.validate(
         request.body.Title,
@@ -247,9 +247,7 @@ const courseService = {
     }
   },
   async getAllCourse(request) {
-
     try {
-
       const listCourse = await _entityRepository("Courses").getEntities();
 
       const listAllCourseResponse = await Promise.all(
@@ -456,7 +454,7 @@ const courseService = {
       );
       let publicInfo = await publicInfoRepository.getPublicInfoByUserId(
         course[0].Author_Id
-      )
+      );
       const language = await _entityRepository("Languages").getEntity(
         course[0].Language_Id
       );
@@ -476,7 +474,7 @@ const courseService = {
           offset: 0,
         })
       );
-      let listSimilarCourses_ = []
+      let listSimilarCourses_ = [];
       try {
         listSimilarCourses_ = await Promise.all(
           listSimilarCourses.map(async (course) => {
@@ -491,13 +489,13 @@ const courseService = {
             );
             let publicInfo = await publicInfoRepository.getPublicInfoByUserId(
               course.Author_Id
-            )
+            );
             const authorRe = {
               Id: author[0].Id,
               Email: author[0].Email,
               Name: author[0].Name,
-              Description: publicInfo[0] ? publicInfo[0].Description : '',
-            }
+              Description: publicInfo[0] ? publicInfo[0].Description : "",
+            };
             return {
               Id: course.Id,
               Title: course.Title,
@@ -606,8 +604,8 @@ const courseService = {
         Id: author[0].Id,
         Email: author[0].Email,
         Name: author[0].Name,
-        Description: publicInfo[0] ? publicInfo[0].Description : '',
-      }
+        Description: publicInfo[0] ? publicInfo[0].Description : "",
+      };
       const courseResponse = {
         Id: course[0].Id,
         Title: course[0].Title,

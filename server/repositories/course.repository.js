@@ -38,8 +38,12 @@ const courseRepository = {
       search != null &&
       (search.search || search.category)
     ) {
+      console.log("aloaloalolao");
       filtered = filtered
-        .whereRaw(`to_tsvector("Title") @@ to_tsquery(?)`, search.search.replace(' ', '&'))
+        .whereRaw(
+          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+          search.search
+        )
         .orWhereIn("Category_Id", search.category);
     }
 
@@ -67,7 +71,10 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       filtered = filtered
-        .whereRaw(`to_tsvector("Title") @@ to_tsquery(?)`, search.search)
+        .whereRaw(
+          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+          search.search
+        )
         .orWhereIn("Category_Id", search.category);
     }
 
@@ -82,12 +89,14 @@ const courseRepository = {
 
   getCourseByTitle(title) {
     return db("Courses")
-      .where("Title", title).where("Is_Blocked", false)
+      .where("Title", title)
+      .where("Is_Blocked", false)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCourseByCategoryId(category_id) {
     return db("Courses")
-      .where("Category_Id", category_id).where("Is_Blocked", false)
+      .where("Category_Id", category_id)
+      .where("Is_Blocked", false)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCourseByAuthorId(author_id) {
