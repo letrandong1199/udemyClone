@@ -111,6 +111,7 @@ const courseService = {
     }
   },
   async getAllCourseQuery(request) {
+
     const query = request.query;
     console.log("Query", query);
     const keyToColName = {
@@ -126,6 +127,30 @@ const courseService = {
     const paging = {};
     const search = {};
     const sort = {};
+    let listChildrenCatg
+    if (query['category']) {
+
+      if (typeof value === "object") {
+        const temp = [];
+        for (item of query['category']) {
+          listChildrenCatg = await categoryRepository.getCategoryByParent(item);
+          temp.concat(listChildrenCatg);
+          listChildrenCatg = listChildrenCatg.map((child) => {
+            return child.Id
+          })
+        }
+        query['category'].concat(temp);
+      } else {
+        listChildrenCatg = await categoryRepository.getCategoryByParent(query['category']);
+
+        if (listChildrenCatg.length > 0) {
+          const res = listChildrenCatg.map((child) => {
+            return child.Id
+          })
+          query['category'] = res;
+        }
+      }
+    }
 
     for (const [key, value] of Object.entries(query)) {
       if (key === "search") {

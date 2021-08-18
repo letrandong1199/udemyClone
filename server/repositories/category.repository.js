@@ -16,5 +16,10 @@ const categoryRepository = {
       .where("Name", "like", `%${name}%`)
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
+  getCategoryByParent(id) {
+    return db("Categories")
+      .where("Parent_Id", id)
+      .catch(() => operatorType.FAIL.NOT_EXIST);
+  },
 };
 module.exports = categoryRepository;
