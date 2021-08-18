@@ -3,9 +3,12 @@ const createOneEnrolledCourseResponseEnum = require("../../api/validators/enums/
 const updateOneEnrolledCourseResponseEnum = require("../../api/validators/enums/enrolledcourseEnums/updateOneEnrolledCourseResponseEnum");
 const getEnrolledCourseResponseEnum = require("../../api/validators/enums/enrolledcourseEnums/getEnrolledCourseResponseEnum");
 const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
-
+const lectureRepository = require("../../repositories/lecture.repository");
+const sectionRepository = require("../../repositories/section.repository");
 const _entityRepository = require("../../repositories/entity.repository");
+const mediaRepository = require("../../repositories/media.repository");
 const operatorType = require("../../utils/enums/operatorType");
+const mediauserRepository = require("../../repositories/mediauser.repository");
 const enrolledcourseService = {
   async createOneEnrolledCourse(request) {
     console.log(request.body);
@@ -95,9 +98,10 @@ const enrolledcourseService = {
 
   async getAllEnrolled(request) {
     const { id } = request;
+    console.log('id', id);
     try {
       const listEnrolled = await enrolledcourseRepository.getEnrolledCourseByUser(id);
-
+      console.log('list', listEnrolled);
       const listAllCourseResponse = await Promise.all(
         listEnrolled.map(async (course) => {
           let category = await _entityRepository("Categories").getEntity(
@@ -106,6 +110,31 @@ const enrolledcourseService = {
           let author = await _entityRepository("Users").getEntity(
             course.Author_Id
           );
+          let sections = await sectionRepository.getSectionByCourseId(course.Id);
+
+          let numAll = 0;
+          let numCompleted = 0;
+          for (let section of sections) {
+            let lectures = await lectureRepository.getLectureBySectionId(section.Id);
+            for (let lecture of lectures) {
+              let media = await mediaRepository.getMediaByLectureId(lecture.Id);
+              for (let item of media) {
+                numAll += 1;
+                let mediaUser = await mediauserRepository.getPlayedByUserIdAndMediaId({
+                  User_Id: id,
+                  Media_Id: item.Id
+                })
+
+                if (mediaUser.length > 0) {
+                  if (Boolean(mediaUser[0].Is_Completed)) {
+                    numCompleted += 1;
+                  }
+                }
+              }
+            }
+          }
+
+          console.log('num', numAll);
           return {
             Id: course.Id,
             Name: course.Title,
@@ -120,6 +149,8 @@ const enrolledcourseService = {
             Category: category[0],
             Author: author[0],
             Language_Id: course.Language_Id,
+            Num_All_Media: numAll,
+            Num_Completed: numCompleted,
           };
         })
       );

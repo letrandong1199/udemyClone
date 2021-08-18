@@ -17,6 +17,9 @@ const mediaUserService = {
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
+      if (request.body.Played == undefined) {
+        request.body.Played = 0;
+      }
       const media = _entityRepository("Media").getEntity(request.body.Media_Id);
       if (media.length == 0) {
         return { Code: createOneMediaUserResponseEnum.MEDIA_IS_NOT_EXIST };
@@ -32,6 +35,7 @@ const mediaUserService = {
           User_Id: request.id,
           Media_Id: request.body.Media_Id,
           Played: request.body.Played,
+          Is_Completed: request.body.IsCompleted || false,
         };
         if (
           (await mediaUserRepository.addMediaUser(newMediaUser)) ===
@@ -42,6 +46,8 @@ const mediaUserService = {
         return { Code: createOneMediaUserResponseEnum.SUCCESS };
       } else {
         media_user[0].Played = request.body.Played;
+        media_user[0].Is_Completed = request.body.Is_Completed;
+        console.log('Cap nhat ne');
         if (
           (await mediaUserRepository.updatePlayedByUserIdAndMediaId(
             { User_Id: request.id, Media_Id: request.body.Media_Id },

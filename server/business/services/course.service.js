@@ -694,6 +694,7 @@ const courseService = {
                     Id: media.Id,
                     Video_URL: media.Video_URL,
                     Played: media.Played,
+                    Is_Completed: listMediaUser[0].Is_Completed,
                   };
                 })
               );

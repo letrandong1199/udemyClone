@@ -107,6 +107,7 @@ exports.up = function (knex) {
       table.integer("Media_Id").unsigned().references("Id").inTable("Media");
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.float("Played");
+      table.boolean("Is_Completed").defaultTo(false);
       table.primary(["Media_Id", "User_Id"]);
     })
     .createTable("Wishlists", function (table) {

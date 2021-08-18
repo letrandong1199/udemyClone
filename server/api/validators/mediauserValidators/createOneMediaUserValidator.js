@@ -14,18 +14,22 @@ module.exports = {
         Isuccess: false,
       };
     }
+    /*
     if (played == null || played == "") {
       return {
         Code: createOneMediaUserResponseEnum.PLAYED_IS_EMPTY,
         Isuccess: false,
       };
     }
-    if (typeof played != "number") {
-      return {
-        Code: createOneMediaUserResponseEnum.PLAYED_IS_INVALID,
-        Isuccess: false,
-      };
-    }
+    */
+    /*
+     if (typeof played != "number") {
+       return {
+         Code: createOneMediaUserResponseEnum.PLAYED_IS_INVALID,
+         Isuccess: false,
+       };
+     }
+     */
     return { Code: createOneMediaUserResponseEnum.SUCCESS, Isuccess: true };
   },
 };
