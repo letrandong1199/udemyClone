@@ -308,6 +308,10 @@ const userService = {
           Password: decode.user.Password,
           Role_Id: decode.user.Role_Id,
         };
+        var user = await userRepository.getUserByEmail(decode.user.Email);
+        if (user.length != 0) {
+          return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
+        }
         ret = await _entityRepository("Users").addEntity(newUser);
         console.log(ret);
         // console.log(newUser);
