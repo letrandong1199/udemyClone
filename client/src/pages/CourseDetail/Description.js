@@ -42,7 +42,7 @@ const Description = memo(({ course, isPending }) => {
                 </Typography>
                 {isPending
                     ? <Skeleton width='100%' height='50px' />
-                    : <div>
+                    : <div style={{width: '100%'}}>
                         <Typography
                             ref={desRef}
                             className={more ? 'off' : `${classes.limit}`}
