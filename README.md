@@ -2,8 +2,8 @@
 ## Introduction
 This is a application serve as final project for advanced web delvelopment
 ## Contribute
-@letrandong1199
-@zzf7ktx
+- https://github.com/letrandong1199
+- https://github.com/zzf7ktx
 ## Image
 ![image](https://user-images.githubusercontent.com/41227962/130090745-f8fe1925-a7fc-4430-a28b-3850d47872d5.png)
 ![image](https://user-images.githubusercontent.com/41227962/130090807-8ea3e91a-cef2-4352-b5fd-c4216c48164c.png)
