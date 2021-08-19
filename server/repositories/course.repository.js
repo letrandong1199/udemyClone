@@ -51,11 +51,16 @@ const courseRepository = {
     if (paging && paging.limit != null && paging.offset != null) {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
     }
-    filtered = filtered.where("Is_Completed", true);
-    filtered = filtered
-      .where("Is_Blocked", false)
-      .orWhereIn("Category_Id", search.category)
-      .andWhere("Is_Completed", true);
+    if (search.category) {
+      filtered = filtered
+        .where("Is_Blocked", false)
+        .orWhereIn("Category_Id", search.category)
+        .andWhere("Is_Completed", true);
+    } else {
+      filtered = filtered
+        .where("Is_Blocked", false)
+        .andWhere("Is_Completed", true);
+    }
     console.log(filtered.toSQL().toNative());
     return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
@@ -80,12 +85,16 @@ const courseRepository = {
     if (sort && sort.ColName && sort.OrderBy) {
       filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
     }
-    filtered = filtered.where("Is_Completed", true);
-    filtered = filtered
-      .where("Is_Blocked", false)
-      .orWhereIn("Category_Id", search.category)
-      .andWhere("Is_Completed", true);
-
+    if (search.category) {
+      filtered = filtered
+        .where("Is_Blocked", false)
+        .orWhereIn("Category_Id", search.category)
+        .andWhere("Is_Completed", true);
+    } else {
+      filtered = filtered
+        .where("Is_Blocked", false)
+        .andWhere("Is_Completed", true);
+    }
     return filtered.count("Id", { as: "Count" }).first();
   },
 

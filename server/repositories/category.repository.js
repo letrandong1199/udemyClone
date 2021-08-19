@@ -16,9 +16,9 @@ const categoryRepository = {
       .catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCategoryByParent(id) {
-    return db("Categories")
-      .where("Parent_Id", id)
-      .catch(() => operatorType.FAIL.NOT_EXIST);
+    let filtered = db("Categories").where("Parent_Id", id);
+    console.log(filtered.toSQL().toNative());
+    return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
 };
 module.exports = categoryRepository;
