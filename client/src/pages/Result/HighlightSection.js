@@ -75,7 +75,7 @@ const StyledTabs = withStyles({
     },
 })((props) => <Tabs {...props} />);
 
-const HighlightSection = ({ setTitle, setLoading, }) => {
+const HighlightSection = ({ setTitle, setLoading, setCategories, }) => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const category = useGetParameter('category');
@@ -98,7 +98,8 @@ const HighlightSection = ({ setTitle, setLoading, }) => {
                 for (let course of listCourses) {
                     course.Tag = 'Best seller'
                 }
-                setTitle(listCourses[0].Category.Name);
+                setTitle(response.Category.Name);
+                setCategories(response.Category.Children);
                 setLoading(false);
                 setCourses(listCourses);
                 setIsPending(false);

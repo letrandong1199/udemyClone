@@ -25,9 +25,9 @@ import Content from './Content';
 import RecommendSection from './RecommendSection';
 import ReviewSection from './ReviewSection';
 import { useStyles } from './styles';
-import { ROUTES } from '../../config/config';
 import dataFetchReducer from '../../utils/dataFetchReducer';
-
+import usePrepareLink from '../../utils/usePrepareLink';
+import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
 
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -77,6 +77,7 @@ function DetailCourse() {
     const history = useHistory();
     const reduxDispatch = useDispatch();
     const wishlist = useSelector((state) => state.wishlist);
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const [isWishlist, setIsWishlist] = useState(false);
     const [isEnrolled, setIsEnrolled] = useState(false);
 
@@ -85,6 +86,13 @@ function DetailCourse() {
         data: [],
         isLoading: false,
         error: null,
+    });
+
+    const signInLink = usePrepareLink({
+        keepOldQuery: true,
+        query: {
+            [GET_PARAMS.popup]: GET_ENUMS.popup.signIn
+        }
     });
 
     useEffect(() => {
@@ -113,6 +121,9 @@ function DetailCourse() {
     };
 
     const handleEnroll = () => {
+        if (!isLoggedIn) {
+            return history.push(signInLink);
+        }
         dispatchSnackState({ type: 'SNACK_INIT' })
         enrolledCourseService.postOne({ Course_Id: state.data.Id }).then(response => {
             dispatchSnackState({ type: 'SNACK_SUCCESS' })
@@ -125,7 +136,9 @@ function DetailCourse() {
     };
 
     const handleAddWishlist = () => {
-        console.log('wis', wishlist, 'w', isWishlist);
+        if (!isLoggedIn) {
+            return history.push(signInLink);
+        }
         if (isWishlist) {
             dispatchSnackState({ type: 'SNACK_INIT' })
             wishlistService.deleteOne(state.data.Id).then(response => {
@@ -214,7 +227,10 @@ function DetailCourse() {
                 isEnrolled={isEnrolled}
                 isWishlist={isWishlist}
             />
-            <div id="description-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
+            <div style={{ position: 'relative' }}>
+                <div id="description-section" className={classes.mark}></div>
+            </div>
+
             {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <Description
@@ -222,8 +238,9 @@ function DetailCourse() {
                     isPending={state.isLoading}
                 />
             }
-
-            <div id="instructor-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
+            <div style={{ position: 'relative' }}>
+                <div id="instructor-section" className={classes.mark}></div>
+            </div>
             {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <InstructorSection
@@ -231,7 +248,10 @@ function DetailCourse() {
                     isPending={state.isLoading}
                 />
             }
-            <div id="recommend-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
+            <div style={{ position: 'relative' }}>
+                <div id="recommend-section" className={classes.mark} />
+            </div>
+
             {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <RecommendSection
@@ -239,7 +259,10 @@ function DetailCourse() {
                     isPending={state.isLoading}
                 />
             }
-            < div id="content-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
+            <div style={{ position: 'relative' }}>
+                < div id="content-section" className={classes.mark} />
+            </div>
+
             {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <Content
@@ -247,7 +270,10 @@ function DetailCourse() {
                     isPending={state.isLoading}
                 />
             }
-            < div id="review-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
+            <div style={{ position: 'relative' }}>
+                <div id="review-section" className={classes.mark} />
+            </div>
+
             {state.error
                 ? <Typography>Cannot get data</Typography>
                 : <ReviewSection

@@ -27,6 +27,9 @@ import useStyles from './styles'
 import categoryService from '../../services/category.service';
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
 import CloseIcon from '@material-ui/icons/Close'
+import BlockRoundedIcon from '@material-ui/icons/BlockRounded';
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
+import SaveRoundedIcon from '@material-ui/icons/SaveRounded';
 
 
 const CategoryBoard = () => {
@@ -105,6 +108,7 @@ const CategoryBoard = () => {
         setOpen(event.row);
     }
     const handleClose = () => {
+        setEditable(false);
         setOpen(false);
     };
     const handleSave = () => {
@@ -157,30 +161,27 @@ const CategoryBoard = () => {
         })
     }
 
-    const handleChange = (event) => {
-        const dic = {
-            Id: open.Id,
-            id: open.id,
-            Name: event.target.value
+    const handleChange = (type) => (event) => {
+        if (type === 'name') {
+            const dic = {
+                ...open,
+                Name: event.target.value
+            }
+            setOpen(dic);
+        } else if (type === 'parent') {
+            const dic = {
+                ...open,
+                Parent_Id: event.target.value
+            }
+            setOpen(dic);
         }
-        setOpen(dic);
+
     }
-    const [categoriesTree, setCategoriesTree] = useState([]);
-    const [isPendingCategory, setIsPendingCategory] = useState(false);
-    const handleLoadCategory = () => {
-        setIsPendingCategory(true)
-        categoryService.getAll().then(response => {
-            const categoriesArray = response.listAllResponse;
-            if (categoriesArray !== undefined) { setCategoriesTree(categoriesArray); }
-            setIsPendingCategory(false)
-        }).catch(error => {
-            setIsPendingCategory(false);
-        });
-    }
+
 
     const classes = useStyles();
     return (
-        <div style={{ height: 500, width: '100%' }}>
+        <div style={{ height: 520, width: '100%' }}>
             <DataGrid
                 rows={categories}
                 columns={categoriesColumns}
@@ -204,34 +205,67 @@ const CategoryBoard = () => {
                         <Typography variant="h6" className={classes.title}>
                             Detail
                         </Typography>
-                        {editable
-                            ? <Button autoFocus color="inherit" onClick={handleSave}>
-                                Save
+                        <div style={{ marginLeft: 'auto' }}>
+                            {editable
+                                ? <Button
+                                    color="inherit"
+                                    onClick={handleSave}
+                                    startIcon={<SaveRoundedIcon />}
+                                >
+                                    Save
+                                </Button>
+                                : <Button
+                                    color="inherit"
+                                    onClick={() => { setEditable(!editable) }}
+                                    startIcon={<EditRoundedIcon />}
+                                >
+                                    Edit
+                                </Button>
+                            }
+                            <Button
+                                color="inherit"
+                                onClick={handleDelete}
+                                startIcon={<BlockRoundedIcon />}
+                            >
+                                Delete
                             </Button>
-                            : <Button autoFocus color="inherit"
-                                onClick={() => { setEditable(!editable) }}>
-                                Edit
-                            </Button>}
-                        <Button autoFocus color="inherit" onClick={handleDelete}>
-                            Delete
-                        </Button>
+                        </div>
                     </Toolbar>
                 </AppBar>
                 <Grid container>
                     <TextField
-                        autoFocus
-                        margin="dense"
                         id="name"
                         label="Name"
                         type="text"
                         variant="outlined"
                         value={open ? open.Name : ''}
-                        onChange={handleChange}
+                        onChange={handleChange('name')}
                         disabled={!editable}
                         fullWidth
                         style={{ margin: 20 }}
                     />
-
+                    <FormControl
+                        className={classes.formControl}
+                        variant='outlined'
+                        style={{ width: '100%', margin: 20 }}
+                    >
+                        <InputLabel id="catg-label" >Category</InputLabel>
+                        <Select
+                            labelId='catg-select-label'
+                            id='catg-select'
+                            value={open ? open.Parent_Id : ''}
+                            onChange={handleChange('parent')}
+                            label='Category'
+                            disabled={!editable}
+                        >
+                            {isPending ? <Skeleton width='100%' height={50} />
+                                : categories.map(category => (
+                                    category.Id !== open.Id && <MenuItem key={category.Id} value={category.Id}>
+                                        {category.Name}
+                                    </MenuItem>
+                                ))}
+                        </Select>
+                    </FormControl>
                 </Grid>
             </Dialog>
             <Dialog open={openAdd} onClose={() => { setOpenAdd(false) }} className={classes.dialog}>
@@ -243,18 +277,21 @@ const CategoryBoard = () => {
                         <Typography variant="h6" className={classes.title}>
                             Add category
                         </Typography>
-                        <Button autoFocus color="inherit" onClick={handleAdd}>
-                            Save
+                        <Button
+                            color="inherit"
+                            onClick={handleAdd}
+                            startIcon={<AddCircleOutlineRoundedIcon />}
+                            style={{ marginLeft: 'auto' }}
+                        >
+                            Add
                         </Button>
                     </Toolbar>
                 </AppBar>
                 <Grid container>
                     <TextField
                         autoFocus
-                        margin="dense"
                         id="name"
                         label="Name"
-                        size='medium'
                         type="text"
                         variant="outlined"
                         value={name}
@@ -274,11 +311,10 @@ const CategoryBoard = () => {
                             value={parent}
                             onChange={(event) => setParent(event.target.value)}
                             label='Category'
-                            onOpen={handleLoadCategory}
                         >
-                            {isPendingCategory ? <Skeleton width='100%' height={50} />
-                                : categoriesTree.map(category => (
-                                    <MenuItem key={category.Id} value={category.Id}>
+                            {isPending ? <Skeleton width='100%' height={50} />
+                                : categories.map(category => (
+                                    category.Id !== open.Id && <MenuItem key={category.Id} value={category.Id}>
                                         {category.Name}
                                     </MenuItem>
                                 ))}

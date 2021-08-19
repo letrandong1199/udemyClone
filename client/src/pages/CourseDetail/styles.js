@@ -156,10 +156,16 @@ export const useStyles = makeStyles((theme) => ({
     },
     fade: {
         background: 'linear-gradient(to bottom,' +
-            'rgba(255, 255, 255, 0) 0%,' +
-            'rgba(255, 255, 255, 1) 75%)',
+            theme.palette.background.fade + ' 0%,' +
+            theme.palette.background.default + ' 75%)',
         height: 100,
         marginTop: -100,
         position: 'relative',
+    },
+    mark: {
+        top: -114,
+        position: 'absolute',
+        height: 20,
+        backgroundColor: theme.palette.background.acrylic,//'rgb(243, 243, 243)'
     }
 }));

@@ -29,7 +29,6 @@ export const wishlistSlice = createSlice({
         },
         removeWishlist(state, action) {
             const id = action.payload;
-            console.log('remove ', id);
             return state.filter((course) => course.Id !== id);
         },
     }

@@ -32,7 +32,6 @@ class AuthService {
     };
 
     logout() {
-        console.log('object');
         let user = localStorage.getItem("user");
         if (user) {
             const refreshToken = JSON.parse(user).refreshToken;

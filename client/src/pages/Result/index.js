@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Typography } from '@material-ui/core';
+import { Typography, Chip } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 
 import useGetParameter from '../../utils/useGetParameter'
 import AllCoursesSection from './AllCoursesSection';
 import HighlightSection from './HighlightSection';
 import { useStyles } from './styles';
+import { ROUTES } from '../../config/config';
+import { Link } from 'react-router-dom';
 
 function Result() {
     const classes = useStyles();
@@ -15,6 +17,7 @@ function Result() {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState(null);
     const [title, setTitle] = useState('Not found');
+    const [categories, setCategories] = useState([]);
 
 
     return (
@@ -28,18 +31,36 @@ function Result() {
                     : `Search result for: ${keyword}`
                 }
             </Typography>
-
-            {error ? <Typography>{error}</Typography>
-                : category && <HighlightSection
-                    setLoading={setIsPending}
-                    setTitle={setTitle}
-                    setError={setError}
-                />
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}>
+                {isPending ? <Skeleton />
+                    : categories.map((item) =>
+                        <Chip
+                            style={{ margin: 10 }}
+                            label={item.Name}
+                            component={Link}
+                            clickable
+                            to={`${ROUTES.course}?category=${item.Id}`}
+                        />)
+                }
+            </div>
+            {
+                error ? <Typography>{error}</Typography>
+                    : category && <HighlightSection
+                        setLoading={setIsPending}
+                        setTitle={setTitle}
+                        setError={setError}
+                        setCategories={setCategories}
+                    />
             }
-            {error ? <Typography setLoading={setIsPending}>{error}</Typography>
-                : <AllCoursesSection />
+            {
+                error ? <Typography setLoading={setIsPending}>{error}</Typography>
+                    : <AllCoursesSection />
             }
-        </div>
+        </div >
     )
 }
 

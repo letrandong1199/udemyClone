@@ -25,7 +25,6 @@ const CourseBoard = () => {
         setIsPending(true);
         courseService.getAll().then(response => {
             const list = response.listAllResponse;
-            console.log('a', response.listAllResponse);
             const resultArray = list.map(elm => {
                 elm['id'] = elm.Id;
                 elm['Author_Name'] = elm.Author.Name;

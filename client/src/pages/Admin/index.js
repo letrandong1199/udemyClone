@@ -14,7 +14,7 @@ import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
 import PeopleOutlineRoundedIcon from '@material-ui/icons/PeopleOutlineRounded';
 import ListAltRoundedIcon from '@material-ui/icons/ListAltRounded';
 
-import { useLocation, Route, Switch, useRouteMatch, Link } from 'react-router-dom';
+import { useLocation, Route, Switch, useRouteMatch, Link, Redirect } from 'react-router-dom';
 import { CssBaseline } from '@material-ui/core';
 
 import CourseBoard from './CourseBoard';
@@ -93,6 +93,7 @@ function Admin() {
 
             </Hidden>
             <Switch>
+                <Route path={`${path}`} exact><Redirect to={`${path}/users`} /></Route>
                 <Route path={`${path}/users`}>
                     <UserBoard />
                 </Route>
