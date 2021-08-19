@@ -28,9 +28,7 @@ const wishlistService = {
         User_Id: request.id,
         Course_Id: request.body.Course_Id,
       };
-      const ret = await _entityRepository("Wishlists").addEntity(
-        newWishlist
-      );
+      const ret = await wishlistRepository.addWishlist(newWishlist);
       if (ret === operatorType.FAIL.CREATE) {
         return { Code: createOneWishlistResponseEnum.SERVER_ERROR };
       }
@@ -43,15 +41,15 @@ const wishlistService = {
     try {
       const resultValidator = deleteOneWishlistValidator.validate(
         request.id,
-        request.body.Course_Id,
         request.params.id
       );
       if (!resultValidator.Isuccess) {
         return { Code: resultValidator.Code };
       }
-      const wishlist = await _entityRepository("Wishlists").getEntity(
-        request.params.id
-      );
+      const wishlist = await wishlistRepository.getWishlistByUserIdAndCourseId({
+        User_Id: request.id,
+        Course_Id: request.params.id,
+      });
       if (wishlist.length == 0) {
         return { Code: deleteOneWishlistResponseEnum.ID_IS_INVALID };
       }
@@ -62,9 +60,10 @@ const wishlistService = {
         return { Code: deleteOneWishlistResponseEnum.COURSE_ID_IS_INVALID };
       }
       if (
-        (await _entityRepository("Wishlists").deleteEntity(
-          request.params.id
-        )) === operatorType.FAIL.DELETE
+        (await wishlistRepository.deleteWishlistByUserIdAndCourseId({
+          User_Id: request.id,
+          Course_Id: request.params.id,
+        })) === operatorType.FAIL.DELETE
       ) {
         return { Code: deleteOneWishlistResponseEnum.SERVER_ERROR };
       }
@@ -88,6 +87,9 @@ const wishlistService = {
           let category = await _entityRepository("Categories").getEntity(
             course.Category_Id
           );
+          let promote = await _entityRepository("Promotes").getEntity(
+            course.Promote_Id
+          );
           let author = await _entityRepository("Users").getEntity(
             course.Author_Id
           );
@@ -101,6 +103,7 @@ const wishlistService = {
             Thumbnail_Medium: course.Thumbnail_Medium,
             Thumbnail_Large: course.Thumbnail_Large,
             Price: course.Price,
+            Promote_Rate: promote[0].Promote,
             Rating: course.Rating,
             Category: category[0],
             Author: author[0],
@@ -118,6 +121,5 @@ const wishlistService = {
       return { Code: getWishlistCourseResponseEnum.SERVER_ERROR };
     }
   },
-
 };
 module.exports = wishlistService;

@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const moment = require("moment");
 
 const operatorType = require("../../utils/enums/operatorType");
 const createOneUserValidator = require("../../api/validators/userValidators/createOneUserValidator");
@@ -23,6 +24,10 @@ const getOneUserValidator = require("../../api/validators/userValidators/getOneU
 const wishlistRepository = require("../../repositories/wishlist.repository");
 const changePasswordResponseEnum = require("../../api/validators/enums/userEnums/changePasswordResponseEnum");
 const changePasswordValidator = require("../../api/validators/userValidators/changePasswordValidator");
+const redisClient = require("../../api/extensions/redis");
+const { client } = require("../../api/extensions/redis");
+const blockOneCourseResponseEnum = require("../../api/validators/enums/courseEnums/blockOneCourseResponseEnum");
+const blockOneUserResponseEnum = require("../../api/validators/enums/userEnums/blockOneUserResponseEnum");
 require("dotenv").config();
 const tokenList = {};
 
@@ -99,9 +104,8 @@ const userService = {
       if (user.length == 0) {
         return { Code: updateOneUserResponseEnum.ID_IS_INVALID };
       }
-      console.log(new Date());
       user[0].Name = request.body.Name;
-      user[0].updated_at = new Date();
+      user[0].Updated_At = new Date();
       if (
         (await _entityRepository("Users").updateEntity(request.id, user[0])) ===
         operatorType.FAIL.UPDATE
@@ -133,7 +137,7 @@ const userService = {
       }
       console.log(new Date());
       user[0].Name = request.body.Name;
-      user[0].updated_at = new Date();
+      user[0].Updated_At = new Date();
       if (
         (await _entityRepository("Users").updateEntity(
           request.params.id,
@@ -166,6 +170,7 @@ const userService = {
             Email: user.Email,
             Name: user.Name,
             Role: roleOfUser[0].Name,
+            Is_Blocked: user.Is_Blocked,
           };
         })
       );
@@ -263,14 +268,14 @@ const userService = {
           pass: "Udemyclone1234", // generated ethereal password
         },
       });
-      const url = `http://localhost:3000/api/user-controller/confirm-email/${token}`;
+      const url = `https://udemy-apis.herokuapp.com/api/user-controller/confirm-email/${token}`;
       const mail = {
         from: "udemyclone2021@gmail.com",
         to: `${request.Name} <${request.Email}>`,
         subject: "Confirmation Email",
-        html: `<h1>Email Confirmation</h1>
+        html: `<h1>Welcome to Udemy Clone</h1>
         <h2>Hello ${request.Name}</h2>
-        <h3>This confirmation email is going to be invalid in 10 minutes</h3>
+        <h3>This confirmation email is going to be invalid in 5 minutes</h3>
         <p>Thank you for registering. Please confirm your email by clicking on the under button</p>
         <form action=${url} method="post">
           <button type="submit">Confirm</button>
@@ -300,9 +305,13 @@ const userService = {
         const newUser = {
           Email: decode.user.Email,
           Name: decode.user.Name,
-          Password: bcrypt.hashSync(decode.user.Password, 8),
+          Password: decode.user.Password,
           Role_Id: decode.user.Role_Id,
         };
+        var user = await userRepository.getUserByEmail(decode.user.Email);
+        if (user.length != 0) {
+          return { Code: createOneUserResponseEnum.EMAIL_IS_EXIST };
+        }
         ret = await _entityRepository("Users").addEntity(newUser);
         console.log(ret);
         // console.log(newUser);
@@ -372,6 +381,9 @@ const userService = {
       if (user.length == 0) {
         return { Code: signInResponseEnum.WRONG_EMAIL };
       }
+      if (user[0].Is_Blocked) {
+        return { Code: signInResponseEnum.IS_BLOCKED };
+      }
       if (!bcrypt.compareSync(request.Password, user[0].Password)) {
         return { Code: signInResponseEnum.WRONG_PASSWORD };
       }
@@ -382,17 +394,36 @@ const userService = {
       };
 
       const jwToken = await jwt.sign(payload, process.env.SECRET_KEY, {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 2,
       });
+      const refreshTokenLife = process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24;
       const refreshToken = await jwt.sign(
         payload,
         process.env.REFRESH_TOKEN_KEY,
         {
-          expiresIn: process.env.REFRESH_TOKEN_EXPIR || 60 * 60 * 24,
+          expiresIn: refreshTokenLife,
         }
       );
       // Store refresh token in ...
-      tokenList[refreshToken] = payload;
+      // Redis
+      try {
+        redisClient.set(refreshToken, JSON.stringify(payload), (err, reply) => {
+          if (err) throw err;
+          console.log(reply);
+          redisClient.expire(refreshToken, refreshTokenLife, (err, reply) => {
+            if (err) throw err;
+            console.log(reply);
+            redisClient.get(refreshToken, (err, reply) => {
+              if (err) throw err;
+              console.log(JSON.parse(reply));
+            });
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
+      // tokenList[refreshToken] = payload;
       console.log(jwToken);
       return {
         Code: signInResponseEnum.SUCCESS,
@@ -407,10 +438,22 @@ const userService = {
   async refreshToken(req) {
     const { refreshToken } = req.body;
     console.log("Client: ", refreshToken);
-    if (refreshToken && refreshToken in tokenList) {
+    let payload = null;
+
+    payload = await new Promise((resolve, reject) => {
+      try {
+        redisClient.get(refreshToken, (err, reply) => {
+          payload = JSON.parse(reply);
+          resolve(payload);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+    console.log("redis", payload);
+    if (refreshToken && payload) {
       try {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
-        const payload = tokenList[refreshToken];
         const token = await jwt.sign(payload, process.env.SECRET_KEY, {
           expiresIn: process.env.ACCESS_TOKEN_EXPIR || 60 * 5,
         });
@@ -420,7 +463,7 @@ const userService = {
           refreshToken: refreshToken,
         };
       } catch (error) {
-        console.error(err);
+        console.error(error);
         return {
           Code: "Invalid refresh token",
         };
@@ -431,6 +474,21 @@ const userService = {
       };
     }
   },
+  async rejectRefreshToken(req) {
+    const { refreshToken } = req.body;
+    console.log(req.body);
+    try {
+      redisClient.get(refreshToken, (err, reply) => {
+        if (err) throw err;
+        redisClient.del(refreshToken, (err, reply) => {
+          console.log("reject", reply);
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   async changePassword(request) {
     try {
       const resultValidator = changePasswordValidator.validate(
@@ -455,6 +513,28 @@ const userService = {
         return { Code: changePasswordResponseEnum.SERVER_ERROR };
       }
       return { Code: changePasswordResponseEnum.SUCCESS };
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async blockOneUser(request) {
+    try {
+      const user = await _entityRepository("Users").getEntity(
+        request.params.id
+      );
+      if (user.length == 0) {
+        return { Code: blockOneUserResponseEnum.USER_IS_NOT_EXITS };
+      }
+      user[0].Is_Blocked = !user[0].Is_Blocked;
+      if (
+        (await _entityRepository("Users").updateEntity(
+          request.params.id,
+          user[0]
+        )) === operatorType.FAIL.UPDATE
+      ) {
+        return { Code: blockOneUserResponseEnum.SERVER_ERROR };
+      }
+      return { Code: blockOneUserResponseEnum.SUCCESS };
     } catch (e) {
       console.log(e);
     }

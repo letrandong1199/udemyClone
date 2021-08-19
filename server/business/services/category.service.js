@@ -12,6 +12,7 @@ const updateOneCategoryValidator = require("../../api/validators/categoryValidat
 const categoryRepository = require("../../repositories/category.repository");
 const _entityRepository = require("../../repositories/entity.repository");
 const courseRepository = require("../../repositories/course.repository");
+const enrolledcourseRepository = require("../../repositories/enrolledcourse.repository");
 const categoryService = {
   // Update one category
   async updateOneCategory(request) {
@@ -33,7 +34,7 @@ const categoryService = {
       }
       const ret = await categoryRepository.getCategoryByName(request.body.Name);
 
-      if (ret.length != 0) {
+      if (ret.length != 0 && ret[0].Id != request.params.id) {
         return { Code: updateOneCategoryResponseEnum.CATEGORY_NAME_IS_EXIST };
       }
 
@@ -132,6 +133,7 @@ const categoryService = {
   },
   // Create one category
   async createOneCategory(request) {
+
     try {
       const resultValidator = createOneCategoryValidator.validate(request.Name);
       if (!resultValidator.IsSuccess) {
@@ -146,9 +148,11 @@ const categoryService = {
         const categoryParent = await _entityRepository("Categories").getEntity(
           request.Parent_Id
         );
-        if (category.length == 0) {
+
+        if (category.length == 0 && request.Parent_Id != '') {
           return { Code: createOneCategoryResponseEnum.PARENT_IS_NOT_EXIST };
         }
+        request.Parent_Id = null;
       }
       const newCategory = {
         Name: request.Name,
@@ -161,6 +165,30 @@ const categoryService = {
       return { Code: createOneCategoryResponseEnum.SUCCESS };
     } catch (e) {
       console.log(e);
+    }
+  },
+
+  async getMostRegister(request) {
+    try {
+      const listMostRegister =
+        await enrolledcourseRepository.getCategoriesMostRegister();
+      console.log(listMostRegister);
+      const listCategories = await Promise.all(
+        listMostRegister.map(async (item) => {
+          let course = await _entityRepository("Categories").getEntity(
+            item.Category_Id
+          );
+          return course[0];
+        })
+      );
+
+      return {
+        Code: getAllCategoryResponseEnum.SUCCESS,
+        listAllResponse: listCategories,
+      };
+    } catch (e) {
+      console.log(e);
+      return { Code: getAllCategoryResponseEnum.SERVER_ERROR };
     }
   },
 };

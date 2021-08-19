@@ -7,7 +7,7 @@ module.exports = updateOneCategoryValidator = {
         IsSuccess: false,
       };
     }
-    if (name == null || name == "") {
+    if (name == "") {
       return {
         Code: updateOneCategoryResponseEnum.CATEGORY_NAME_IS_EMPTY,
         IsSuccess: false,

@@ -6,5 +6,10 @@ const feedbackRepository = {
       .where("Course_Id", course_id)
       .catch(() => operatorType.FAIL.READ);
   },
+  getFeedbackByUserIdAndCourseId(query) {
+    return db("Feedbacks")
+      .where(query)
+      .catch(() => operatorType.FAIL.READ);
+  },
 };
 module.exports = feedbackRepository;

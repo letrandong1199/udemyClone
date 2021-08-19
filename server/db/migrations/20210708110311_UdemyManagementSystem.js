@@ -9,6 +9,7 @@ exports.up = function (knex) {
       table.string("Email").notNullable();
       table.string("Name").notNullable();
       table.string("Password").notNullable();
+      table.boolean("Is_Blocked").defaultTo(false);
       table.integer("Role_Id").unsigned().references("Id").inTable("Role");
       table.timestamp("Created_At").defaultTo(knex.fn.now());
       table.timestamp("Updated_At").defaultTo(knex.fn.now());
@@ -43,7 +44,9 @@ exports.up = function (knex) {
       table.string("Thumbnail_Medium").defaultTo("");
       table.string("Thumbnail_Large").defaultTo("");
       table.float("Price").defaultTo(0.0);
+      table.boolean("Is_Blocked").defaultTo(false);
       table.float("Rating");
+      table.integer("View").defaultTo(0);
       table
         .integer("Category_Id")
         .unsigned()
@@ -60,8 +63,8 @@ exports.up = function (knex) {
         .unsigned()
         .references("Id")
         .inTable("Languages");
-      table.timestamp("Update_At").defaultTo(knex.fn.now());
-      table.timestamp("Create_At").defaultTo(knex.fn.now());
+      table.timestamp("Updated_At").defaultTo(knex.fn.now());
+      table.timestamp("Created_At").defaultTo(knex.fn.now());
     })
 
     .createTable("Sections", function (table) {
@@ -97,23 +100,32 @@ exports.up = function (knex) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.text("Content");
+      table.timestamp("Created_At").defaultTo(knex.fn.now());
+      table.timestamp("Updated_At").defaultTo(knex.fn.now());
     })
     .createTable("Media_User", function (table) {
       table.integer("Media_Id").unsigned().references("Id").inTable("Media");
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.float("Played");
+      table.boolean("Is_Completed").defaultTo(false);
       table.primary(["Media_Id", "User_Id"]);
     })
     .createTable("Wishlists", function (table) {
-      table.increments("Id").primary();
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
+      table.primary(["User_Id", "Course_Id"]);
     })
     .createTable("Enrolled_Courses", function (table) {
       table.integer("User_Id").unsigned().references("Id").inTable("Users");
       table.integer("Course_Id").unsigned().references("Id").inTable("Courses");
       table.float("Rating");
+      table.timestamp("Enrolled_Date").defaultTo(knex.fn.now());
       table.primary(["User_Id", "Course_Id"]);
+    })
+    .createTable("Public_Information", function (table) {
+      table.integer("User_Id").unsigned().references("Id").inTable("Users");
+      table.text("Description").defaultTo("");
+      table.primary("User_Id");
     })
     .then(function (table) {
       if (knex.client.config.client == "pg") {
@@ -126,13 +138,6 @@ exports.up = function (knex) {
                           RETURN NEW;  
                           END; 
                           $BODY$ language plpgsql; `;
-
-        const triggerMysql = `CREATE TRIGGER calAvgRating AFTER INSERT ON enrolled_courses
-                              FOR EACH ROW
-                              UPDATE courses
-                              SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
-                              WHERE Course_Id = NEW.Course_Id)  
-                              WHERE Id = NEW.Course_Id; `;
 
         knex.raw(trigFunc).then(function (response) {
           var trigger = `CREATE TRIGGER calAvgRating  
@@ -154,7 +159,15 @@ exports.up = function (knex) {
                               WHERE Course_Id = NEW.Course_Id)  
                               WHERE Id = NEW.Course_Id; `;
         knex.raw(triggerMysql).then(function (response) {
-          console.log("defined rating trigger");
+          const triggerMysql_1 = `CREATE TRIGGER calAvgRating_1 AFTER UPDATE ON enrolled_courses
+                              FOR EACH ROW
+                              UPDATE courses
+                              SET Rating = (SELECT AVG(Rating) FROM enrolled_courses
+                              WHERE Course_Id = NEW.Course_Id)  
+                              WHERE Id = NEW.Course_Id; `;
+          knex.raw(triggerMysql_1).then(function (response) {
+            console.log("defined rating trigger");
+          });
         });
       }
     });
@@ -162,17 +175,18 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTable("Feedbacks")
-    .dropTable("Enrolled_Courses")
-    .dropTable("Media_User")
-    .dropTable("Media")
-    .dropTable("Lectures")
-    .dropTable("Sections")
-    .dropTable("Wishlists")
-    .dropTable("Courses")
-    .dropTable("Promotes")
-    .dropTable("Users")
-    .dropTable("Role")
-    .dropTable("Categories")
-    .dropTable("Languages");
+    .dropTableIfExists("Feedbacks")
+    .dropTableIfExists("Public_Information")
+    .dropTableIfExists("Enrolled_Courses")
+    .dropTableIfExists("Media_User")
+    .dropTableIfExists("Media")
+    .dropTableIfExists("Lectures")
+    .dropTableIfExists("Sections")
+    .dropTableIfExists("Wishlists")
+    .dropTableIfExists("Courses")
+    .dropTableIfExists("Promotes")
+    .dropTableIfExists("Users")
+    .dropTableIfExists("Role")
+    .dropTableIfExists("Categories")
+    .dropTableIfExists("Languages");
 };

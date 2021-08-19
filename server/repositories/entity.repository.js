@@ -6,6 +6,7 @@ module.exports = (nameEntity) => {
     addEntity(entity) {
       console.log(entity);
       return db(nameEntity)
+        .returning('Id')
         .insert(entity)
         .catch((e) => {
           console.log(e);

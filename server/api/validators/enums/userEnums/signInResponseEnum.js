@@ -5,4 +5,5 @@ module.exports = {
   WRONG_EMAIL: "wrong_email",
   WRONG_PASSWORD: "wrong_password",
   SERVER_ERROR: "server_error",
+  IS_BLOCKED: "is_blocked",
 };
