@@ -111,7 +111,6 @@ const courseService = {
     }
   },
   async getAllCourseQuery(request) {
-
     const query = request.query;
     console.log("Query", query);
     const keyToColName = {
@@ -128,30 +127,34 @@ const courseService = {
     const search = {};
     const sort = {};
     let listChildrenCatg;
-    let categoryName = '';
-    if (query['category']) {
+    let categoryName = "";
+    if (query["category"]) {
       if (typeof value === "object") {
         const temp = [];
-        for (item of query['category']) {
+        for (item of query["category"]) {
           listChildrenCatg = await categoryRepository.getCategoryByParent(item);
           temp.concat(listChildrenCatg);
           listChildrenCatg = listChildrenCatg.map((child) => {
-            return child.Id
-          })
+            return child.Id;
+          });
         }
-        query['category'].concat(temp);
+        query["category"].concat(temp);
       } else {
-        category = await _entityRepository("Categories").getEntity(query['category']);
+        category = await _entityRepository("Categories").getEntity(
+          query["category"]
+        );
         if (category.length > 0) {
           categoryName = category[0];
         }
-        listChildrenCatg = await categoryRepository.getCategoryByParent(query['category']);
-        categoryName['Children'] = listChildrenCatg;
+        listChildrenCatg = await categoryRepository.getCategoryByParent(
+          query["category"]
+        );
+        categoryName["Children"] = listChildrenCatg;
         if (listChildrenCatg.length > 0) {
           const res = listChildrenCatg.map((child) => {
-            return child.Id
-          })
-          query['category'] = res;
+            return child.Id;
+          });
+          query["category"] = res;
         }
       }
     }
@@ -159,6 +162,7 @@ const courseService = {
     for (const [key, value] of Object.entries(query)) {
       if (key === "search") {
         const category = await categoryRepository.getCategoryByQuery(value);
+        console.log("category_-------", category);
         if (category) {
           let categorySearch = category.map((item) => {
             return item.Id;
@@ -269,7 +273,7 @@ const courseService = {
         Code: getAllCourseResponseEnum.SUCCESS,
         listAllResponse: listAllCourseResponse,
         Count: count.Count,
-        Category: categoryName || '',
+        Category: categoryName || "",
       };
     } catch (e) {
       console.log(e);

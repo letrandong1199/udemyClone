@@ -39,12 +39,10 @@ const courseRepository = {
       (search.search || search.category)
     ) {
       console.log("aloaloalolao");
-      filtered = filtered
-        .whereRaw(
-          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
-          search.search
-        )
-        .orWhereIn("Category_Id", search.category);
+      filtered = filtered.whereRaw(
+        `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+        search.search
+      );
     }
 
     if (sort && sort.ColName && sort.Orderby) {
@@ -54,7 +52,10 @@ const courseRepository = {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
     }
     filtered = filtered.where("Is_Completed", true);
-    filtered = filtered.where("Is_Blocked", false);
+    filtered = filtered
+      .where("Is_Blocked", false)
+      .orWhereIn("Category_Id", search.category)
+      .andWhere("Is_Completed", true);
     console.log(filtered.toSQL().toNative());
     return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
@@ -70,19 +71,20 @@ const courseRepository = {
       search != null &&
       (search.search || search.category)
     ) {
-      filtered = filtered
-        .whereRaw(
-          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
-          search.search
-        )
-        .orWhereIn("Category_Id", search.category);
+      filtered = filtered.whereRaw(
+        `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+        search.search
+      );
     }
 
     if (sort && sort.ColName && sort.OrderBy) {
       filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
     }
     filtered = filtered.where("Is_Completed", true);
-    filtered = filtered.where("Is_Blocked", false);
+    filtered = filtered
+      .where("Is_Blocked", false)
+      .orWhereIn("Category_Id", search.category)
+      .andWhere("Is_Completed", true);
 
     return filtered.count("Id", { as: "Count" }).first();
   },
