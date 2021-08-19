@@ -3,6 +3,7 @@ const operatorType = require("../utils/enums/operatorType");
 const categoryRepository = require("./category.repository");
 const courseRepository = {
   getCourseByQuery(query, paging, search, sort) {
+    console.log(query);
     let filtered = db("Courses");
     filtered = filtered
       .from("Courses")
@@ -51,7 +52,7 @@ const courseRepository = {
     if (paging && paging.limit != null && paging.offset != null) {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
     }
-    if (search.category) {
+    if (search && search.category) {
       filtered = filtered
         .where("Is_Blocked", false)
         .orWhereIn("Category_Id", search.category)
@@ -85,7 +86,7 @@ const courseRepository = {
     if (sort && sort.ColName && sort.OrderBy) {
       filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
     }
-    if (search.category) {
+    if (search && search.category) {
       filtered = filtered
         .where("Is_Blocked", false)
         .orWhereIn("Category_Id", search.category)
