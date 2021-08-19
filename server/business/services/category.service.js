@@ -34,7 +34,7 @@ const categoryService = {
       }
       const ret = await categoryRepository.getCategoryByName(request.body.Name);
 
-      if (ret.length != 0) {
+      if (ret.length != 0 && ret[0].Id != request.params.id) {
         return { Code: updateOneCategoryResponseEnum.CATEGORY_NAME_IS_EXIST };
       }
 

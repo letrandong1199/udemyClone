@@ -127,9 +127,9 @@ const courseService = {
     const paging = {};
     const search = {};
     const sort = {};
-    let listChildrenCatg
+    let listChildrenCatg;
+    let categoryName = '';
     if (query['category']) {
-
       if (typeof value === "object") {
         const temp = [];
         for (item of query['category']) {
@@ -141,8 +141,12 @@ const courseService = {
         }
         query['category'].concat(temp);
       } else {
+        category = await _entityRepository("Categories").getEntity(query['category']);
+        if (category.length > 0) {
+          categoryName = category[0];
+        }
         listChildrenCatg = await categoryRepository.getCategoryByParent(query['category']);
-
+        categoryName['Children'] = listChildrenCatg;
         if (listChildrenCatg.length > 0) {
           const res = listChildrenCatg.map((child) => {
             return child.Id
@@ -265,6 +269,7 @@ const courseService = {
         Code: getAllCourseResponseEnum.SUCCESS,
         listAllResponse: listAllCourseResponse,
         Count: count.Count,
+        Category: categoryName || '',
       };
     } catch (e) {
       console.log(e);
