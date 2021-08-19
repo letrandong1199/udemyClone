@@ -69,6 +69,10 @@ const useStyles = makeStyles((theme) => ({
         marginTop: -12,
         marginLeft: -12,
     },
+    backdrop: {
+        zIndex: theme.zIndex.snackbar + 1,
+        color: '#fff',
+    },
 
 }))
 

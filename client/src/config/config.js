@@ -1,10 +1,19 @@
-const config = {
-    "HOST": "http://localhost",
+export const config = {
+    "HOST": "https://udemy-apis.herokuapp.com/api",
     "PORT": "8000",
-    "USER_CONTROLLER": "users",
-    "COURSE_CONTROLLER": "courses",
-    "CATEGORY_CONTROLLER": "categories",
-    "ENROLLED": "enrolled",
+    "USER_CONTROLLER": "user-controller",
+    "COURSE_CONTROLLER": "course-controller",
+    "CATEGORY_CONTROLLER": "category-controller",
+    "ENROLLED_CONTROLLER": "enrolled-course-controller",
+    "LANGUAGE_CONTROLLER": "language-controller",
+    "MEDIA_CONTROLLER": "media-controller",
+    "SECTION_CONTROLLER": "section-controller",
+    "LECTURE_CONTROLLER": "lecture-controller",
+    "PROMOTE_CONTROLLER": "promote-controller",
+    "WISHLIST_CONTROLLER": "wishlist-controller",
+    "FEEDBACK_CONTROLLER": "feedback-controller",
+    "MEDIA_USER_CONTROLLER": 'media-user-controller',
+    "PUBLIC_INFO_CONTROLLER": 'public-info-controller',
 };
 
 export const ROUTES = {
@@ -20,6 +29,7 @@ export const ROUTES = {
     search: "/search",
     course: "/course",
     learn: "/learn",
+    publicInfo: "/public-info",
 }
 
 export const GET_PARAMS = {
@@ -52,6 +62,7 @@ export const SIGN_IN = {
     WRONG_EMAIL: "wrong_email",
     WRONG_PASSWORD: "wrong_password",
     SERVER_ERROR: "server_error",
+    IS_BLOCKED: "is_blocked",
 }
 
 export const DELETE_CATEGORY = {
@@ -78,6 +89,17 @@ export const CREATE_CATEGORY = {
     SERVER_ERROR: "server_error",
     PARENT_IS_NOT_EXIST: "parent_is_not_exist",
 };
+
+export const GET_ALL_CATEGORIES = {
+    SUCCESS: "get_all_category_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ALL_LANGUAGES = {
+    SUCCESS: "get_all_language_success",
+    SERVER_ERROR: "server_error",
+};
+
 
 export const UPDATE_USER = {
     SUCCESS: "update_user_succsess",
@@ -115,10 +137,16 @@ export const ADD_WISHLIST = {
     SERVER_ERROR: "server_error",
 };
 
-export const GET_ENROLLED = {
-    SUCCESS: "get_all_course_success",
+export const UPDATE_ENROLLED = {
+    SUCCESS: "update_enrolled_course_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
+    EROLLED_COURSE_IS_NOT_EXIST: "enrolled_course_is_not_exist",
+    RATING_IS_INVALID: "rating_is_invalid",
     SERVER_ERROR: "server_error",
 };
+
 
 export const GET_WISHLIST = {
     SUCCESS: "get_all_course_success",
@@ -306,5 +334,97 @@ export const CREATE_COURSE = {
     SERVER_ERROR: "server_error",
 };
 
+export const GET_ALL_PROMOTES = {
+    SUCCESS: "get_all_promote_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ALL_ENROLLED = {
+    SUCCESS: "get_all_course_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const CREATE_FEEDBACK = {
+    SUCCESS: "add_feedback_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
+    CONTENT_IS_EMPTY: "content_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const UPDATE_FEEDBACK = {
+    SUCCESS: "update_feedback_success",
+    COURSE_ID_IS_INVALID: "course_id_is_invalid",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    CONTENT_IS_EMPTY: "content_is_empty",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    USER_IS_NOT_EXIST: "user_is_not_exist",
+    FEEDBACK_IS_NOT_EXIST: "feedback_is_not_exist",
+    ID_IS_INVALID: "id_is_invalid",
+    SERVER_ERROR: "server_error",
+};
+
+export const CREATE_MEDIA_USER = {
+    SUCCESS: "add_media_user_success",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    MEDIA_ID_IS_EMPTY: "media_id_is_empty",
+    MEDIA_IS_NOT_EXIST: "media_is_not_exist",
+    PLAYED_IS_INVALID: "played_is_invalid",
+    PLAYED_IS_EMPTY: "played_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_ONE_MEDIA_USER = {
+    SUCCESS: "get_media_user_success",
+    SERVER_ERROR: "server_error",
+    MEDIA_USER_IS_NOT_EXISTS: "media_user_is_not_exits",
+};
+export const GET_ALL_USER = {
+    SUCCESS: "get_all_user_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_USER = {
+    SUCCESS: "get_one_user_success",
+    SERVER_ERROR: "server_error",
+    ID_IS_INVALID: "id_is_invalid",
+    ID_IS_EMPTY: "id_is_empty",
+};
+
+export const DELETE_WISHLIST = {
+    SUCCESS: "delete_feedback_success",
+    COURSE_ID_IS_INVALID: "course_id_is_invalid",
+    COURSE_ID_IS_EMPTY: "course_id_is_empty",
+    USER_ID_IS_EMPTY: "user_id_is_empty",
+    USER_IS_NOT_EXIST: "user_is_not_exist",
+    ID_IS_INVALID: "id_is_invalid",
+    ID_IS_EMPTY: "id_is_empty",
+    SERVER_ERROR: "server_error",
+};
+
+export const UPDATE_PUBLIC_INFO = {
+    SUCCESS: "update_public_info_success",
+    SERVER_ERROR: "server_error",
+};
+
+export const GET_PUBLIC_INFO = {
+    SUCCESS: "get_public_info_success",
+    SERVER_ERROR: "server_error",
+    USER_IS_NOT_EXISTS: "user_is_not_exists",
+    PUBLIC_INFO_IS_NOT_EXISTS: "public_info_is_not_exists",
+};
+
+export const BLOCK_USER = {
+    SUCCESS: "block_is_success",
+    SERVER_ERROR: "server_error",
+    USER_IS_NOT_EXITS: "user_is_not_exist",
+};
+
+export const BLOCK_COURSE = {
+    SUCCESS: "block_is_success",
+    SERVER_ERROR: "server_error",
+    COURSE_IS_NOT_EXIST: "course_is_not_exist",
+};
 
 export default config;

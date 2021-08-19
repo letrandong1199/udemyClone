@@ -2,6 +2,7 @@ const listToTree = (list, { idCol, parentCol }) => {
     if (idCol === null) { idCol = 'id' }
     if (parentCol === null) { parentCol = 'parent' }
     var map = {}, node, roots = [], i;
+
     for (i = 0; i < list.length; i += 1) {
         map[list[i][idCol]] = i; // initialize the map
         list[i].children = []; // initialize the children

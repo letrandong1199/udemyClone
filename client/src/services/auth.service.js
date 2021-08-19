@@ -1,55 +1,91 @@
-import axios from "axios";
-import { SIGN_IN } from '../config/config';
+import axiosClient from './axiosClientSetup';
+import { CREATE_USER, SIGN_IN, config } from '../config/config';
 
-const API_URL = "http://localhost:8080/api/user-controller/";
-const USER = 3;
+const API_URL = `/${config.USER_CONTROLLER}`;
+
 const ADMIN = 1;
-const INSTRUCTOR = 1;
+const INSTRUCTOR = 2;
 
 class AuthService {
-    login(username, password) {
-        return axios
-            .post(API_URL + "authenticate-user", {
-                Email: username,
-                Password: password,
-            })
+    login(data) {
+        return axiosClient
+            .post(API_URL + '/authenticate-user', data)
             .then(response => {
-                if (response.data.message.token) {
-                    window.localStorage.setItem("user", JSON.stringify(response.data.message));
+                if (response.Code === SIGN_IN.WRONG_EMAIL) {
+                    throw Error('email-Email not exists')
                 }
-                if (response.data.message.Code !== SIGN_IN.SUCCESS) {
-                    throw Error(response.data.message.Code);
+                if (response.Code === SIGN_IN.WRONG_PASSWORD) {
+                    throw Error('password-Wrong password')
                 }
-                console.log('Successfully');
+                if (response.Code === SIGN_IN.IS_BLOCKED) {
+                    throw Error('email-Your account is blocked. Please contact admin.')
+                }
+                if (response.Code !== SIGN_IN.SUCCESS) {
+                    throw Error(response.Code);
+                }
+                if (response.token) {
+                    window.localStorage.setItem("user", JSON.stringify(response));
+                }
 
-                return response.data.message;
+                return response;
             });
     };
 
     logout() {
-        localStorage.removeItem("user");
+        let user = localStorage.getItem("user");
+        if (user) {
+            const refreshToken = JSON.parse(user).refreshToken;
+            return axiosClient.post(API_URL + "/reject-refresh-token", {
+                refreshToken: refreshToken
+            }).then(response => {
+                localStorage.removeItem("user");
+                return response;
+            });
+        }
     };
 
-    register(username, name, password) {
-        return axios.post(API_URL + "sign-up", {
-            Email: username,
-            Name: name,
-            Password: password,
-        });
+    register(data) {
+        return axiosClient.post(API_URL + "/sign-up", data).then(response => {
+            console.log(response);
+            if (response.Code === CREATE_USER.EMAIL_IS_EXIST) {
+                throw Error('Email already exists')
+            }
+            if (response.Code !== CREATE_USER.SUCCESS) {
+                throw Error(response.Code);
+            };
+            return response;
+        })
     };
 
     refreshToken() {
         let user = localStorage.getItem("user")
-        console.log("refreshToken");
-        return axios.post(API_URL + "refresh-token", {
-            refreshToken: user.refreshToken
-        }).then(response => {
-            return response.data.message;
-        });
+        if (user) {
+            console.log("refreshToken");
+            const refreshToken = JSON.parse(user).refreshToken;
+            return axiosClient.post(API_URL + "/refresh-token", {
+                refreshToken: refreshToken
+            }).then(response => {
+                return response;
+            });
+        }
+
     };
 
     getCurrentUser() {
-        return JSON.parse(localStorage.getItem('user'));
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const user_ = JSON.parse(atob(user.token.split('.')[1]));
+                return {
+                    email: user_.Email,
+                    name: user_.Name,
+                }
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return undefined;
     };
 
     getCurrentUserId() {
@@ -59,23 +95,47 @@ class AuthService {
     }
 
     isUser() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        return Boolean(user && user.token);
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                return Boolean(user && user.token);
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return false;
     };
 
     isInstructor() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        const role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
-        return Boolean(user && user.token && role === INSTRUCTOR);
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
+                return Boolean(user && user.token && role === INSTRUCTOR);
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return false;
     };
     isAdmin() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        let role = null;
-        if (user && user.token) {
-            role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
-        }
+        if (localStorage.getItem('user')) {
+            try {
+                const user = JSON.parse(localStorage.getItem('user'));
+                let role = null;
+                if (user && user.token) {
+                    role = JSON.parse(atob(user.token.split('.')[1])).Role_Id;
+                }
 
-        return Boolean(user && user.token && role === ADMIN);
+                return Boolean(user && user.token && role === ADMIN);
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+        return false;
     };
 }
 

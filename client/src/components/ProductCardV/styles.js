@@ -33,7 +33,6 @@ export const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold',
     },
     media: {
-
         position: 'relative',
         [theme.breakpoints.down('xs')]: {
             minWidth: 151,
@@ -85,5 +84,35 @@ export const useStyles = makeStyles((theme) => ({
     },
     expandOpen: {
         transform: 'rotate(180deg)',
+    },
+    rootCircular: {
+        position: 'relative',
+    },
+    bottomCircular: {
+        color: theme.palette.grey[theme.palette.type === 'light' ? 200 : 700],
+    },
+
+    topCircular: (props) => {
+        if (props.value < 100) {
+            return {
+                color: theme.palette.secondary.main,
+                position: 'absolute',
+                left: 0,
+            }
+        }
+
+        return {
+            color: theme.palette.success.main,
+            position: 'absolute',
+            left: 0,
+        }
+    },
+    circleCircular: {
+        strokeLinecap: 'round',
+    },
+    boxCircular: {
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        borderRadius: '50%',
+        color: 'rgba(0, 0, 0, 0.5)'
     },
 }))

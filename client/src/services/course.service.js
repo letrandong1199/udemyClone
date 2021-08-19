@@ -1,77 +1,124 @@
-import axios from 'axios';
-import authHeader from './authHeader.service.js';
-import { GET_ONE_COURSE, UPDATE_COURSE, GET_ALL_COURSE, CREATE_COURSE } from '../config/config';
+import axiosClient from './axiosClientSetup';
+import {
+    BLOCK_COURSE,
+    GET_ONE_COURSE,
+    UPDATE_COURSE,
+    GET_ALL_COURSE,
+    CREATE_COURSE,
+    config
+} from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/course-controller';
+const API_URL = `/${config.COURSE_CONTROLLER}`;
 
 class CourseService {
     getAll() {
-        return axios.get(API_URL + '/courses')
-    };
+        return axiosClient.get(API_URL + '/courses/manage').then(response => {
+            if (response.Code !== GET_ALL_COURSE.SUCCESS) {
+                throw Error(response.Code);
+            }
+            return response;
+        })
+    }
     getById(id) {
-        return axios.get(API_URL + '/courses/' + id);
+        return axiosClient.get(API_URL + '/courses/' + id).then(response => {
+            if (response.Code !== GET_ONE_COURSE.SUCCESS) {
+                throw Error(response.Code);
+            }
+            return response;
+        })
     };
     postOne(course) {
-        return axios
-            .post(API_URL + '/courses', course, { headers: authHeader() })
+        return axiosClient
+            .post(API_URL + '/courses', course)
             .then(response => {
-                if (response.data.message.Code !== CREATE_COURSE.SUCCESS) {
-                    throw Error(response.data.message.Code);
+                if (response.Code !== CREATE_COURSE.SUCCESS) {
+                    throw Error(response.Code);
                 }
-                return response.data.message;
+                return response;
             })
     }
     deleteOne(id) {
-        return axios.delete(API_URL + '/courses/' + id, { headers: authHeader() })
+        return axiosClient.delete(API_URL + '/courses/' + id)
     }
     getByQuery(query) {
-        // [{cateory: asda}, {dasdas: dasd}]
-        console.log('In service', query);
-        /*const queryString = query?.map(item =>
-            `${item.label}=${item.value}`
-        ).join('&')*/
-        //console.log('String', queryString);
-        return axios.get(API_URL + '/courses?' + query)
+        return axiosClient.get(API_URL + '/courses?' + query).then(response => {
+            if (response.Code !== GET_ALL_COURSE.SUCCESS) {
+                throw Error(response.Code);
+            }
+            return response;
+        })
     }
     getContentByCourseId(courseId) {
-        return axios.get(API_URL + '/my-learning/' + courseId, { headers: authHeader() })
+        return axiosClient.get(API_URL + '/my-learning/' + courseId)
             .then(response => {
-                if (response.data.message.Code !== GET_ONE_COURSE.SUCCESS) {
-                    throw Error(response.data.message.Code)
+                if (response.Code !== GET_ONE_COURSE.SUCCESS) {
+                    throw Error(response.Code)
                 }
-                return response.data.message;
+                return response;
             })
     }
     updateOne(id, data) {
-        console.log(data);
-        return axios.put(API_URL + '/courses/' + id, data, { headers: authHeader() })
+        return axiosClient.put(API_URL + '/courses/' + id, data)
             .then(response => {
-                if (response.data.message.Code !== UPDATE_COURSE.SUCCESS) {
-                    throw Error(response.data.message.Code);
+                if (response.Code !== UPDATE_COURSE.SUCCESS) {
+                    throw Error(response.Code);
                 }
-                return response.data.message;
+                return response;
             })
     }
     getCoursesOfInstructor() {
-        return axios.get(API_URL + '/my-courses', { headers: authHeader() }).then(response => {
-            if (response.data.message.Code !== GET_ALL_COURSE.SUCCESS) {
-                throw Error(response.data.message.Code);
+        return axiosClient.get(API_URL + '/my-courses').then(response => {
+            if (response.Code !== GET_ALL_COURSE.SUCCESS) {
+                throw Error(response.Code);
             }
 
-            return response.data.message;
+            return response;
         })
     }
 
     getOneCourseOfInstructor(id) {
-        return axios.get(API_URL + '/my-courses/' + id, { headers: authHeader() }).then(response => {
-            if (response.data.message.Code !== GET_ONE_COURSE.SUCCESS) {
-                throw Error(response.data.message.Code);
+        return axiosClient.get(API_URL + '/my-courses/' + id).then(response => {
+            if (response.Code !== GET_ONE_COURSE.SUCCESS) {
+                throw Error(response.Code);
             }
 
-            return response.data.message;
+            return response;
         })
     }
-
+    getMostViewedCourses() {
+        return axiosClient.get(API_URL + '/courses/most-view').then(response => {
+            if (response.Code !== GET_ALL_COURSE.SUCCESS) {
+                throw Error(response.Code);
+            }
+            return response;
+        })
+    }
+    getMostEnrollmentCourses() {
+        return axiosClient.get(API_URL + '/courses/most-register').then(response => {
+            if (response.Code !== GET_ALL_COURSE.SUCCESS) {
+                throw Error(response.Code);
+            }
+            return response;
+        })
+    }
+    getMostRecentCourses() {
+        return axiosClient.get(API_URL + '/courses/most-recent').then(response => {
+            if (response.Code !== GET_ALL_COURSE.SUCCESS) {
+                throw Error(response.Code);
+            }
+            return response;
+        })
+    }
+    updateStatus(id) {
+        return axiosClient
+            .put(API_URL + '/courses/is-blocked/' + id)
+            .then(response => {
+                if (response.Code !== BLOCK_COURSE.SUCCESS) {
+                    throw Error(response.Code)
+                }
+                return response;
+            })
+    }
 }
 
 export default new CourseService();

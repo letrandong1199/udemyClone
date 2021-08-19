@@ -90,4 +90,11 @@ export const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
     },
+    sectionCard: {
+        minHeight: 50,
+        minWidth: 700,
+        margin: 20,
+        background: theme.palette.background.acrylic,
+        position: 'relative'
+    }
 }));

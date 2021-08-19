@@ -35,7 +35,7 @@ export const useStyles = makeStyles((theme) => ({
         }
     },
     banner: (props) => {
-        if (props.isPending || props.loading) {
+        if (props.isPending || props.loading || props.error) {
             return { padding: 30 }
         }
         const color = theme.palette.type === 'dark' ? props.data?.darkMuted : props.data?.lightMuted;
@@ -48,7 +48,7 @@ export const useStyles = makeStyles((theme) => ({
     },
     bannerTitle: {
         fontWeight: 'bold',
-        color: theme.palette.text.primary, //'rgb(55, 51, 51)',
+        color: theme.palette.text.primary,
     },
     media: {
         height: 0,
@@ -115,6 +115,7 @@ export const useStyles = makeStyles((theme) => ({
     buttonGroup: {
         width: '100%',
         borderRadius: 0,
+        borderBottom: `1px solid ${theme.palette.divider}`,
         backgroundColor: theme.palette.background.default,
         paddingLeft: 10,
         zIndex: theme.zIndex.appBar,
@@ -133,12 +134,8 @@ export const useStyles = makeStyles((theme) => ({
             borderRadius: 0,
             '&:hover': {
                 backgroundColor: 'unset',
-                color: 'rgb(0, 86, 210)',
+                color: theme.palette.primary.main,
             },
-            '& active': {
-                backgroundColor: 'unset',
-                color: 'rgb(0, 86, 210)',
-            }
         },
     },
     listRoot: {
@@ -149,4 +146,26 @@ export const useStyles = makeStyles((theme) => ({
     nested: {
         paddingLeft: theme.spacing(4),
     },
+    backdrop: {
+        zIndex: theme.zIndex.snackbar + 1,
+        color: '#fff',
+    },
+    limit: {
+        overflow: 'hidden',
+        maxHeight: 200,
+    },
+    fade: {
+        background: 'linear-gradient(to bottom,' +
+            theme.palette.background.fade + ' 0%,' +
+            theme.palette.background.default + ' 75%)',
+        height: 100,
+        marginTop: -100,
+        position: 'relative',
+    },
+    mark: {
+        top: -114,
+        position: 'absolute',
+        height: 20,
+        backgroundColor: theme.palette.background.acrylic,//'rgb(243, 243, 243)'
+    }
 }));

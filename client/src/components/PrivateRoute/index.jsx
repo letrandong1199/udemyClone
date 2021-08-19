@@ -10,9 +10,7 @@ export const PrivateRouteUser = ({ component: Component, ...rest }) => {
         }
     });
 
-    console.log("Private", signInLink);
     const auth = authService.isUser();
-    console.log("auth", auth);
     return (
         <Route {...rest} render={(props) => (
             auth === true
@@ -27,7 +25,7 @@ export const PrivateRouteInstructor = ({ component: Component, ...rest }) => (
         authService.isInstructor(props) === true
             ? <Component {...props} />
             : <Redirect to={{
-                pathname: '/login',
+                pathname: '/404',
                 state: { from: props.location }
             }} />
     )} />

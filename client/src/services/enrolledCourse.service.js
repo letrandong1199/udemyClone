@@ -1,51 +1,41 @@
-import axios from 'axios';
-import authHeader from './authHeader.service.js';
+import axiosClient from './axiosClientSetup';
+import { ENROLLED, config, GET_ALL_ENROLLED, UPDATE_ENROLLED } from '../config/config';
 
-const API_URL = 'http://localhost:8080/api/enrolled-course-controller';
-
+const API_URL = `/${config.ENROLLED_CONTROLLER}`;
 class EnrolledCourseService {
-    constructor() {
-        axios.interceptors.response.use(
-            (response) => {
-                return response;
-            },
-            function (error) {
-                const originalRequest = error.config;
-                let user = JSON.parse(localStorage.getItem("user"));
-                if (user?.refreshToken && error.response.status === 401 && !originalRequest._retry) {
-                    originalRequest._retry = true;
-                    return axios
-                        .post(API_URL + '/refresh-token', { refreshToken: user.refreshToken })
-                        .then((res) => {
-                            if (res.status === 200) {
-                                user = res.data.message
-                                localStorage.setItem("user", JSON.stringify(user));
-                                console.log("Access token refreshed!");
-                                originalRequest.headers = authHeader();
-                                return axios(originalRequest);
-                            }
-                        })
-                        .catch(error => {
-
-                        })
-                }
-                return Promise.reject(error);
-            }
-        );
-    };
     getAll() {
-        console.log("Cal service");
-        return axios.get(API_URL + '/enrolled-courses', { headers: authHeader() })
+        return axiosClient.get(API_URL + '/enrolled-courses')
     };
     getById(id) {
-        return axios.get(API_URL + '/enrolled-courses/' + id);
+        return axiosClient.get(API_URL + '/enrolled-courses/' + id);
     };
     postOne(data) {
-        return axios
-            .post(API_URL + '/enrolled-courses', data, { headers: authHeader() })
+        return axiosClient
+            .post(API_URL + '/enrolled-courses', data)
             .then(response => {
-                console.log(response);
-                return response
+                if (response.Code !== ENROLLED.SUCCESS) {
+                    throw Error(response.Code);
+                }
+                return response;
+            })
+    }
+    updateOne(data) {
+        return axiosClient.put(API_URL + '/enrolled-courses', data)
+            .then(response => {
+                if (response.Code !== UPDATE_ENROLLED.SUCCESS) {
+                    throw Error(response.Code);
+                }
+                return response;
+            })
+    }
+    getEnrolledByUser() {
+        return axiosClient
+            .get(API_URL + '/enrolled-courses')
+            .then(response => {
+                if (response.Code !== GET_ALL_ENROLLED.SUCCESS) {
+                    throw Error(response.Code);
+                }
+                return response;
             })
     }
 }

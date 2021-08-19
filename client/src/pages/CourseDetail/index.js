@@ -1,497 +1,199 @@
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Footer from '../../components/Footer/Footer.jsx';
-import { Link } from 'react-router-dom';
-import { Breadcrumbs } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
-import Card from '@material-ui/core/Card';
-import { useState, useEffect, useRef, Fragment } from 'react';
-import Rating from '@material-ui/lab/Rating';
-import { usePalette } from 'react-palette'
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useStyles } from './styles';
-import { useParams } from 'react-router-dom';
-import Divider from '@material-ui/core/Divider';
-import FavoriteBorderRoundedIcon from '@material-ui/icons/FavoriteBorderRounded';
-import Avatar from '@material-ui/core/Avatar';
-import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
-import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
-import MyCarousel from '../../components/MyCarousel/MyCarousel.jsx';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import AppBar from '@material-ui/core/AppBar';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Toolbar from '@material-ui/core/Toolbar';
-import draftToHtml from 'draftjs-to-html';
+import { useState, useEffect, useReducer } from 'react';
+import {
+    Typography,
+    Backdrop,
+    Snackbar,
+    CircularProgress,
+} from '@material-ui/core';
+
+import {
+    Alert
+} from '@material-ui/lab';
+
+import { useParams, useHistory } from 'react-router-dom';
+
 import courseService from '../../services/course.service.js';
-import Skeleton from '@material-ui/lab/Skeleton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import { ListItemIcon, ListItemText } from '@material-ui/core';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import { Collapse } from '@material-ui/core';
-import PlayCircleFilledWhiteRoundedIcon from '@material-ui/icons/PlayCircleFilledWhiteRounded';
 import enrolledCourseService from '../../services/enrolledCourse.service';
-import wishlistService from '../../services/wishlist.service.js';
-import Backdrop from '@material-ui/core/Backdrop';
-import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
-import { ENROLLED, ADD_WISHLIST } from '../../config/config';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import wishlistService from '../../services/wishlist.service';
 
-const Banner = ({ course, isPending }) => {
+import Footer from '../../components/Footer';
+import Banner from './Banner';
+import Description from './Description';
+import PageNavigation from './PageNavigation';
+import InstructorSection from './InstructorSection';
+import Content from './Content';
+import RecommendSection from './RecommendSection';
+import ReviewSection from './ReviewSection';
+import { useStyles } from './styles';
+import dataFetchReducer from '../../utils/dataFetchReducer';
+import usePrepareLink from '../../utils/usePrepareLink';
+import { GET_ENUMS, GET_PARAMS, ROUTES } from '../../config/config';
 
-    const { data, loading, error: error2 } = usePalette(course?.Thumbnail_Small);
-    const classes = useStyles({ data, thumbnail: course?.Thumbnail_Large, isPending, loading });
+import { useSelector, useDispatch } from 'react-redux';
+import {
+    addWishlist,
+    removeWishlist,
+} from '../../store/features/wishlist/wishlistSlice';
 
-    const [isProcessing, setIsProcessing] = useState(false);
-
-    const [openSnack, setOpenSnack] = useState(false);
-    const [snackContent, setSnackContent] = useState(null);
-    const [snackType, setSnackType] = useState('success');
-
-    const handleCloseSnack = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setOpenSnack(false);
-    };
-
-
-    const handleClick = (link) => (event) => {
-        event.preventDefault();
+const snackbarReducer = (state, action) => {
+    switch (action.type) {
+        case "SNACK_INIT":
+            return {
+                ...state,
+                isLoading: true,
+                open: false,
+            };
+        case "SNACK_SUCCESS":
+            return {
+                ...state,
+                isLoading: false,
+                error: false,
+                snackContent: 'Success',
+                snackType: 'success',
+                open: true,
+            };
+        case "SNACK_ERROR":
+            return {
+                ...state,
+                isLoading: false,
+                snackContent: action.payload,
+                snackType: 'error',
+                open: true,
+            };
+        case 'CLOSE_SNACK':
+            return {
+                ...state,
+                open: false,
+            };
+        default:
+            throw new Error('Action is invalid');
     }
-
-    const categories = (categories_tree) => categories_tree?.map((category, index) => {
-        return <Link key={index} index={index} onClick={handleClick(category)}>{category}</Link>
-    });
-
-    const handleEnroll = () => {
-        setIsProcessing(true);
-        console.log(course);
-        enrolledCourseService.postOne({ Course_Id: course.Id }).then(response => {
-            if (response.data.message.Code !== ENROLLED.SUCCESS) {
-                throw Error(response.data.message.Code);
-            }
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            setIsProcessing(false)
-        }).catch(error => {
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            setIsProcessing(false)
-            console.log(error);
-        })
-    }
-    const handleAddWishlist = () => {
-        setIsProcessing(true);
-        console.log(course);
-        wishlistService.postOne({ Course_Id: course.Id }).then(response => {
-            if (response.data.message.Code !== ADD_WISHLIST.SUCCESS) {
-                throw Error(response.data.message.Code);
-            }
-            setSnackContent('Added');
-            setSnackType('success');
-            setOpenSnack(true);
-            setIsProcessing(false)
-        }).catch(error => {
-            setSnackContent(error.message);
-            setSnackType('error');
-            setOpenSnack(true);
-            setIsProcessing(false)
-            console.log(error);
-        })
-    }
-
-    return (
-        <Container className={classes.outerBanner}>
-            <Card className={classes.banner}>
-                <Grid container style={{ marginTop: 20, justifyContent: 'space-around' }} direction="column">
-                    <Breadcrumbs separator='>' style={{ fontWeight: 'lighter' }} aria-label="breadcrumb">
-                        {course?.categories_tree && categories(course?.categories_tree)}
-                    </Breadcrumbs>
-                    <Grid item container style={{ marginTop: 20, marginBottom: 20, alignItems: 'flex-start' }}>
-                        <Grid item container xs={7} direction="column">
-                            {isPending
-                                ? <Skeleton variat='h4' />
-                                : <Typography variant='h4' className={classes.bannerTitle}>
-                                    {course?.Title}
-                                </Typography>}
-                            {isPending
-                                ? <Skeleton variant='subtitle1' />
-                                : <Typography variant='subtitle1'>
-                                    {course?.Sub_Description}
-                                </Typography>}
-                            {isPending
-                                ? <Skeleton width='100px' />
-                                : <Grid item container direction="row" alignItems="center">
-                                    <Typography
-                                        variant="subtitle1"
-                                        style={{ fontWeight: 'bold' }}
-                                    >
-                                        {course?.rating?.toFixed(1)}
-                                    </Typography>
-                                    <Rating
-                                        name="rating-banner"
-                                        readOnly
-                                        className={classes.rating}
-                                        value={course?.Rating || 0}
-                                        precision={0.5}
-                                        size="small"
-                                        style={{ color: 'rgb(247, 187, 86)' }}
-                                    />
-                                </Grid>}
-                            {isPending
-                                ? <Skeleton width='100px' />
-                                : <Typography variant="body2">
-                                    <span style={{ fontWeight: 'bold' }}>{course?.Number_Of_Enrolled || 0}</span>
-                                    &nbsp;already enrolled
-                                </Typography>}
-                            {isPending
-                                ? <Skeleton width='100px' />
-                                : <Typography variant="body2">
-                                    <span style={{ fontWeight: 'bold' }}>Instructor(s): </span>
-                                    &nbsp;{course?.Author?.Name}
-                                </Typography>}
-                            {isPending
-                                ? <Skeleton width='100px' />
-                                : <Typography variant="body2">
-                                    <span style={{ fontWeight: 'bold' }}>Languages: </span>
-                                    &nbsp;{course?.Language_Name}
-                                </Typography>}
-                        </Grid>
-
-                        <Grid item xs={3}>
-
-
-                            {isPending
-                                ? <Skeleton variant="rect" width={200} height={50} />
-                                :
-                                <Fragment>
-                                    <Typography variant="subtitle1">Offered By</Typography>
-                                    <img
-                                        alt="offered"
-                                        style={{ width: '100%', filter: 'contrast(200%)' }}
-                                        src='/assets/logo-fit.png'
-                                    />
-                                </Fragment>
-                            }
-                        </Grid>
-                    </Grid>
-                    <Divider />
-                    <Grid item style={{ marginTop: 20 }}>
-                        {isPending
-                            ? <Skeleton><Button /></Skeleton>
-                            : <Fragment>
-                                <Button
-                                    color="primary"
-                                    size="large"
-                                    variant="outlined"
-                                    style={{ marginRight: 20, textTransform: 'none' }}
-                                    onClick={handleEnroll}
-                                >
-                                    Enroll for {course?.price ? course?.price + '$' : 'free'}
-                                </Button>
-                                <Button
-                                    color="primary"
-                                    size="large"
-                                    variant="outlined"
-                                    startIcon={<FavoriteBorderRoundedIcon />}
-                                    style={{ marginRight: 20, textTransform: 'none' }}
-                                    onClick={handleAddWishlist}
-                                >
-                                    Wishlist
-                                </Button>
-                            </Fragment>
-                        }
-                    </Grid>
-                </Grid>
-            </Card >
-            <Backdrop className={classes.backdrop} open={isProcessing}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
-            <Snackbar
-                open={openSnack}
-                autoHideDuration={4000}
-                onClose={handleCloseSnack}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnack} severity={snackType}>
-                    {snackContent}
-                </Alert>
-            </Snackbar>
-        </Container>
-
-
-    )
-}
-
-const Description = ({ course, isPending }) => {
-    const classes = useStyles();
-    let description = '';
-    try {
-        description = draftToHtml(JSON.parse(course.Description))
-    } catch (error) {
-        console.log(error);
-    }
-
-    return (
-        <Container className={classes.padding}>
-            <Grid container style={{ justifyContent: 'space-between' }}>
-                {/*<Grid item xs={8}>*/}
-                <Typography variant='h5' className={classes.title}>
-                    {/*<span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>About this course</span>*/}
-                    About this Course
-                </Typography>
-                {isPending
-                    ? <Skeleton variant='h6' />
-                    : <Typography component="div" dangerouslySetInnerHTML={{
-                        __html: description
-                    }} >
-                    </Typography>
-                }
-            </Grid>
-        </Container >
-    )
-}
-
-const PageNavigation = ({ course, isPending }) => {
-    const classes = useStyles();
-    const trigger = useScrollTrigger({ threshold: 640 });
-    return (
-        <Fragment>
-            <AppBar className={trigger ? `${classes.titleBar} ${classes.show}` : `${classes.titleBar} ${classes.hide}`}>
-                <Toolbar>
-                    <Grid container alignItems="center" style={{ justifyContent: 'space-between' }}>
-                        {isPending
-                            ? <Skeleton variant='h6' />
-                            :
-                            <Fragment>
-                                <Typography variant="h6">{course?.Title}</Typography>
-                                <Grid>
-                                    <Button color="primary" size="large" variant="outlined" style={{ marginRight: 20, textTransform: 'none' }} >Enroll for {course?.price ? course?.price + '$' : 'free'}</Button>
-                                    <Button color="primary" size="large" variant="outlined" startIcon={<FavoriteBorderRoundedIcon />} style={{ marginRight: 20, textTransform: 'none' }} >{'Wishlist'}</Button>
-                                </Grid>
-                            </Fragment>
-                        }
-
-                    </Grid>
-
-                </Toolbar>
-            </AppBar>
-            <ButtonGroup disableFocusRipple disableRipple elevation={1} variant="contained" aria-label="large button group" className={classes.buttonGroup}>
-                <Button disableElevation href="#description-section">About</Button>
-                <Button disableElevation><a alt="instructor" href="#instructor-section" >Instructor</a></Button>
-                <Button disableElevation><a alt="content" href="#content-section" >Content</a></Button>
-                <Button disableElevation>Review</Button>
-                <Button disableElevation>FAQ</Button>
-            </ButtonGroup>
-        </Fragment>
-    )
-}
-
-const InstructorSection = ({ course, isPending }) => {
-    const classes = useStyles();
-    return (
-        <Container className={`${classes.vibrant} ${classes.padding}`}>
-            <Typography variant="h5" className={classes.title}>
-                {/*<span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>Course content</span>*/}
-                Instructor
-            </Typography>
-            <Divider />
-            {isPending
-                ? <Skeleton width='100px' />
-                : <Grid item container direction="row" alignItems="center">
-                    <Typography variant="subtitle2">Rating: </Typography>
-                    <Rating
-                        name="hover-feedback"
-                        className={classes.rating}
-                        value={0}
-                        precision={0.5}
-                        size="small"
-                        style={{ color: 'rgb(247, 187, 86)' }}
-                    />
-                    <Typography variant="subtitle2">100</Typography>
-                </Grid>
-            }
-            <Grid container style={{ marginTop: 32 }} direction="row">
-                <Grid item>
-                    {isPending
-                        ? <Skeleton><Avatar /></Skeleton>
-                        : <Avatar
-                            style={{ height: 128, width: 128 }}
-                            src={course.Author.Thumbnail} size="large">
-                            AV
-                        </Avatar>
-                    }
-                </Grid>
-
-                <Grid item xs={4} container direction="column" style={{ marginLeft: 32 }} >
-                    {isPending
-                        ? <Skeleton variant='h6' />
-                        :
-                        <Fragment>
-                            <Typography variant="h6">{course.Author.Name}</Typography>
-                            {/*<Typography variant="subtitle2">Ths.author</Typography>*/}
-                            <Grid container alignItems="center">
-                                <PeopleAltRoundedIcon />
-                                <Typography variant="body2">
-                                    &nbsp;&nbsp;4500 learners
-                                </Typography>
-                            </Grid>
-                            <Grid container alignItems="center">
-                                <MenuBookRoundedIcon />
-                                <Typography variant="body2">
-                                    &nbsp;&nbsp;45 courses
-                                </Typography>
-                            </Grid>
-                        </Fragment>
-                    }
-                </Grid>
-            </Grid>
-
-        </Container>
-    )
-}
-
-const Content = ({ course, isPending }) => {
-    const classes = useStyles();
-    const [expanded, setExpanded] = useState(false);
-    const [expandedList, setExpandedList] = useState([]);
-
-    const handleChange = (panel) => (event, isExpanded) => {
-        setExpanded(isExpanded ? panel : false);
-        return event;
-    };
-
-    const handleOpenList = (list) => (event, isExpanded) => {
-        console.log('open, ', list, expandedList);
-        if (expandedList.includes(list)) {
-            console.log('Click w');
-            let temp = expandedList;
-            temp.pop(temp.indexOf(list))
-            setExpanded(temp)
-        } else {
-            setExpandedList([list, ...expandedList])
-        }
-
-
-        return event;
-    };
-
-    return (
-        <Container className={`${classes.vibrant} ${classes.padding}`}>
-            <Typography variant="h5" className={classes.title} style={{ textAlign: 'center' }}>
-                {/*<span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>Course content</span>*/}
-                Course content
-            </Typography>
-            <Grid container>
-                <Card className={classes.cardContent}>
-                    {!isPending && course && course?.Content.map((section, index) => (
-                        <Accordion
-                            Accordion
-                            expanded={expanded === `panel-${index}`}
-                            onChange={handleChange(`panel-${index}`)}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls={`panel-${index}-content`}
-                                id={`panel-${index}-header`}
-                            >
-                                <Typography className={classes.heading}>Chapter
-                                    <br /><span>{index + 1}</span>
-                                </Typography>
-                                <Grid container direction="column">
-                                    <Grid container alignItems="center">
-                                        <AccessTimeIcon color="secondary" />
-                                        <Typography variant="subtitle1">&nbsp;&nbsp;{`${section.Lectures.length} lectures`}</Typography>
-                                    </Grid>
-                                    <Typography variant="h4">{section.Name}</Typography>
-                                    <Typography className={classes.secondaryHeading}>I am an accordion</Typography>
-                                </Grid>
-
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <List
-                                    component="nav"
-                                    aria-labelledby="nested-list-subheader"
-                                    className={classes.listRoot}
-                                >
-                                    {section?.Lectures.map((lecture, index) => (
-                                        <Fragment>
-                                            <ListItem button onClick={handleOpenList(`item-${index}`)}>
-                                                <ListItemIcon>
-                                                    <PlayCircleFilledWhiteRoundedIcon />
-                                                </ListItemIcon>
-                                                <ListItemText primary={lecture.Title} />
-                                                {expandedList.includes(`item-${index}`) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                                            </ListItem>
-                                            <Collapse in={expandedList.includes(`item-${index}`)} timeout="auto" unmountOnExit>
-                                                <List component="div" disablePadding>
-                                                    <ListItem button className={classes.nested}>
-                                                        <ListItemIcon>
-                                                            <PlayCircleFilledWhiteRoundedIcon />
-                                                        </ListItemIcon>
-                                                        <ListItemText primary="Starred" />
-                                                    </ListItem>
-                                                </List>
-                                            </Collapse>
-                                        </Fragment>
-                                    ))
-                                    }
-
-
-                                </List>
-                            </AccordionDetails>
-                        </Accordion>))
-                    }
-                </Card>
-            </Grid>
-        </Container >
-    )
-}
-const RecommendSection = ({ course, isPending }) => {
-    const classes = useStyles();
-
-    return (
-        <Container style={{ padding: 20 }}>
-            <Typography variant="h5" className={classes.title} style={{ textAlign: 'center' }}>
-                People interested in this course also viewed
-            </Typography>
-            {isPending ? <Skeleton width='100%' height='100px'></Skeleton>
-                : <MyCarousel courses={course.Similar_Courses} />}
-        </Container >
-    )
 }
 
 function DetailCourse() {
+    const classes = useStyles();
     // Get id by url params
     const { id } = useParams();
+    const history = useHistory();
+    const reduxDispatch = useDispatch();
+    const wishlist = useSelector((state) => state.wishlist);
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const [isWishlist, setIsWishlist] = useState(false);
+    const [isEnrolled, setIsEnrolled] = useState(false);
 
-    const [course, setCourse] = useState(null);
-    const [isPending, setIsPending] = useState(true);
-    const [error, setError] = useState(null);
+
+    const [state, dispatch] = useReducer(dataFetchReducer, {
+        data: [],
+        isLoading: false,
+        error: null,
+    });
+
+    const signInLink = usePrepareLink({
+        keepOldQuery: true,
+        query: {
+            [GET_PARAMS.popup]: GET_ENUMS.popup.signIn
+        }
+    });
 
     useEffect(() => {
-        setIsPending(true);
-        setTimeout(() => { console.log('test'); }, 5000);
+        const inWishlist = wishlist.map(
+            e => { return e?.Id; }).indexOf(state.data?.Id) !== -1
+
+        setIsWishlist(inWishlist);
+    }, [wishlist, state.data]);
+
+    const [stateEnrollment, dispatchEnrollment] = useReducer(dataFetchReducer, {
+        data: [],
+        isLoading: false,
+        error: null,
+    });
+
+    const [snackState, dispatchSnackState] = useReducer(snackbarReducer, {
+        isLoading: false,
+        open: false,
+    })
+
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return event;
+        }
+        dispatchSnackState({ type: 'CLOSE_SNACK' })
+    };
+
+    const handleEnroll = () => {
+        if (!isLoggedIn) {
+            return history.push(signInLink);
+        }
+        dispatchSnackState({ type: 'SNACK_INIT' })
+        enrolledCourseService.postOne({ Course_Id: state.data.Id }).then(response => {
+            dispatchSnackState({ type: 'SNACK_SUCCESS' })
+            history.push(`${ROUTES.profile}${ROUTES.myLearning}/${id}`)
+            return response;
+        }).catch(error => {
+            dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
+            console.log(error);
+        })
+    };
+
+    const handleAddWishlist = () => {
+        if (!isLoggedIn) {
+            return history.push(signInLink);
+        }
+        if (isWishlist) {
+            dispatchSnackState({ type: 'SNACK_INIT' })
+            wishlistService.deleteOne(state.data.Id).then(response => {
+                dispatchSnackState({ type: 'SNACK_SUCCESS' });
+                reduxDispatch(removeWishlist(state.data.Id));
+                return response;
+            }).catch(error => {
+                dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
+                console.log(error);
+            })
+        } else {
+            dispatchSnackState({ type: 'SNACK_INIT' })
+            wishlistService.postOne({ Course_Id: state.data.Id }).then(response => {
+                dispatchSnackState({ type: 'SNACK_SUCCESS' });
+                reduxDispatch(addWishlist(state.data));
+                return response;
+            }).catch(error => {
+                dispatchSnackState({ type: 'SNACK_ERROR', payload: error.message })
+                console.log(error);
+            })
+        }
+    };
+
+    const handleLearn = (id) => () => {
+        history.push(`${ROUTES.course}${ROUTES.learn}/${id}`)
+    };
+
+    useEffect(() => {
+        dispatch({ type: 'FETCH_INIT' });
         courseService.getById(id)
             .then(response => {
-                console.log('Get', response.data.message.resultResponse);
-                setCourse(response.data.message.resultResponse);
-                setIsPending(false);
+                const courseRes = response.resultResponse;
+                dispatch({ type: 'FETCH_SUCCESS', payload: courseRes });
             }).catch(error => {
-                setError(error);
-                setIsPending(false);
+                history.push('/500')
+                dispatch({ type: 'FETCH_ERROR', payload: error.message })
             })
+        dispatchEnrollment({ type: 'FETCH_INIT' });
+        enrolledCourseService.getEnrolledByUser().then(response => {
+            const enrolled = response.listAllResponse;
+
+            dispatchEnrollment({ type: 'FETCH_SUCCESS', payload: enrolled });
+        }).catch(error => {
+            dispatchEnrollment({ type: 'FETCH_ERROR', payload: error.message })
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id])
 
-    const bannerAnchor = useRef();
+    useEffect(() => {
+
+        if (state.data && stateEnrollment.data.length > 0) {
+
+            setIsEnrolled(!stateEnrollment.data.every(x => x.Id !== state.data.Id));
+        }
+    }, [state, stateEnrollment])
 
     useEffect(() => {
         const scrollOptions = {
@@ -502,47 +204,99 @@ function DetailCourse() {
         window.scrollTo(scrollOptions);
     }, [])
 
-
-    const classes = useStyles();
-
     return (
         <div>
-            {error
+            {state.error
                 ? <Typography>Cannot get data</Typography>
-                : <Banner ref={bannerAnchor} course={course} isPending={isPending} />
+                : <Banner
+                    course={state.data}
+                    isPending={state.isLoading}
+                    handleEnroll={handleEnroll}
+                    handleAddWishlist={handleAddWishlist}
+                    handleLearn={handleLearn(state.data?.Id)}
+                    isEnrolled={isEnrolled}
+                    isWishlist={isWishlist}
+                />
             }
-            <PageNavigation course={course} isPending={isPending} />
-            <div id="description-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
+            <PageNavigation
+                course={state.data}
+                isPending={state.isLoading}
+                handleEnroll={handleEnroll}
+                handleAddWishlist={handleAddWishlist}
+                handleLearn={handleLearn(state.data?.Id)}
+                isEnrolled={isEnrolled}
+                isWishlist={isWishlist}
+            />
+            <div style={{ position: 'relative' }}>
+                <div id="description-section" className={classes.mark}></div>
+            </div>
+
+            {state.error
                 ? <Typography>Cannot get data</Typography>
-                : <Description course={course} isPending={isPending} />
+                : <Description
+                    course={state.data}
+                    isPending={state.isLoading}
+                />
+            }
+            <div style={{ position: 'relative' }}>
+                <div id="instructor-section" className={classes.mark}></div>
+            </div>
+            {state.error
+                ? <Typography>Cannot get data</Typography>
+                : <InstructorSection
+                    course={state.data}
+                    isPending={state.isLoading}
+                />
+            }
+            <div style={{ position: 'relative' }}>
+                <div id="recommend-section" className={classes.mark} />
+            </div>
+
+            {state.error
+                ? <Typography>Cannot get data</Typography>
+                : <RecommendSection
+                    course={state.data}
+                    isPending={state.isLoading}
+                />
+            }
+            <div style={{ position: 'relative' }}>
+                < div id="content-section" className={classes.mark} />
+            </div>
+
+            {state.error
+                ? <Typography>Cannot get data</Typography>
+                : <Content
+                    course={state.data}
+                    isPending={state.isLoading}
+                />
+            }
+            <div style={{ position: 'relative' }}>
+                <div id="review-section" className={classes.mark} />
+            </div>
+
+            {state.error
+                ? <Typography>Cannot get data</Typography>
+                : <ReviewSection
+                    course={state.data}
+                    isPending={state.isLoading}
+                />
             }
 
-            <div id="instructor-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
-                ? <Typography>Cannot get data</Typography>
-                : <InstructorSection course={course} isPending={isPending} />
-            }
-            <div id="recommend-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
-                ? <Typography>Cannot get data</Typography>
-                : <RecommendSection course={course} isPending={isPending} />
-            }
-            < div id="content-section" style={{ height: 20, backgroundColor: 'rgb(243, 243, 243)' }}></div>
-            {error
-                ? <Typography>Cannot get data</Typography>
-                : <Content course={course} isPending={isPending} />
-            }
 
-
-            <Container className={`${classes.padding}`} style={{ height: 500 }}>
-                <Typography variant="h5" className={classes.title}>
-                    {/*<span style={{ backgroundImage: 'linear-gradient(transparent 25px, #F243B3 50%, #FFCA47 100%)' }}>Course content</span>*/}
-                    Review
-                </Typography>
-
-            </Container>
-            <Footer />
+            <Backdrop className={classes.backdrop} open={snackState.isLoading}>
+                <CircularProgress color='primary' />
+            </Backdrop>
+            <Snackbar
+                open={snackState.open}
+                autoHideDuration={3000}
+                onClose={handleCloseSnack}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnack} severity={snackState.snackType}>
+                    {snackState.snackContent}
+                </Alert>
+            </Snackbar>
+            <Footer style={{ marginTop: 20 }} />
         </div >
     )
 }

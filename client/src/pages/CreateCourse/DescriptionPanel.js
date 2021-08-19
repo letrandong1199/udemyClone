@@ -13,8 +13,9 @@ import {
 } from '@material-ui/core';
 import {
     Alert,
+    Skeleton,
 } from '@material-ui/lab'
-import { Editor } from 'react-draft-wysiwyg';
+import { Editor } from '@nick4fake/react-draft-wysiwyg';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw, convertFromRaw, } from 'draft-js';
 import { useStyles } from './styles';
@@ -45,16 +46,11 @@ const DescriptionPanel = ({ id, course, loading, setCourse }) => {
     useEffect(() => {
         setIsPending(false);
         if (course.Description) {
-            console.log('object', course.Description);
             const contentState = EditorState.createWithContent(convertFromRaw(JSON.parse(course.Description)));
             setEditorState(contentState);
         }
 
     }, [loading, course]);
-
-    useEffect(() => {
-
-    }, [isPending])
 
 
     const handleCancel = () => {
@@ -97,20 +93,22 @@ const DescriptionPanel = ({ id, course, loading, setCourse }) => {
             <Typography variant="body1" className={classes.caption}>
                 {"This description will show in detail course page."}
             </Typography>
-            <div style={{ position: 'relative' }}>
-                <Editor
-                    editorState={editorState}
-                    toolbarClassName={classes.toolbarEditor}
-                    wrapperClassName={classes.wrapperEditor}
-                    editorClassName={classes.editorEditor}
-                    onEditorStateChange={handleEditorStateChange}
-                    readOnly={!editable}
-                    toolbar={{
-                        options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image', 'remove', 'history'],
-                    }}
-                />
+            {loading
+                ? <Skeleton width='500' height='200' />
+                : <div style={{ position: 'relative' }}>
+                    <Editor
+                        editorState={editorState}
+                        toolbarClassName={classes.toolbarEditor}
+                        wrapperClassName={classes.wrapperEditor}
+                        editorClassName={classes.editorEditor}
+                        onEditorStateChange={handleEditorStateChange}
+                        readOnly={!editable}
+                        toolbar={{
+                            options: ['inline', 'blockType', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image', 'remove', 'history'],
+                        }}
+                    />
 
-            </div>
+                </div>}
 
             {!isPending && editable
                 ? <Fragment>
@@ -146,7 +144,7 @@ const DescriptionPanel = ({ id, course, loading, setCourse }) => {
                     {snackContent}
                 </Alert>
             </Snackbar>
-            <Backdrop in={isPending} className={classes.backdrop} >
+            <Backdrop open={isPending} className={classes.backdrop} >
                 <CircularProgress color='primary' />
             </Backdrop>
         </Container>
