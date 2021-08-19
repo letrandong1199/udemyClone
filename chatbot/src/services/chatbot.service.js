@@ -1,5 +1,7 @@
 const request = require('request')
+const axios = require('axios');
 require('dotenv').config();
+
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
@@ -85,7 +87,7 @@ async function callSendAPI(sender_psid, response) {
     await handleTypingOn(sender_psid);
     // Send the HTTP request to the Messenger Platform
     request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
+        "uri": "https://graph.facebook.com/v10.0/me/messages",
         "qs": { "access_token": PAGE_ACCESS_TOKEN },
         "method": "POST",
         "json": request_body
@@ -99,28 +101,36 @@ async function callSendAPI(sender_psid, response) {
 }
 
 function returnCategories() {
-    let response = {
-        "text": "Pick a category:",
-        "quick_replies": [
-            {
-                "content_type": "text",
-                "title": "Web development",
-                "payload": "CATEGORIES",
-            }, {
-                "content_type": "text",
-                "title": "Mobile development",
-                "payload": "CATEGORIES",
-            }
-        ]
-    };
-    return response;
+    return new Promise(function (resolve, reject) {
+        try {
+            axios.get(`${process.env.API_HOST}/category-controller/categories`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.listAllResponse;
+                    let listCategories = await Promise.all(data.map(category => {
+                        return {
+                            "content_type": "text",
+                            "title": category.Name,
+                            "payload": `CATEGORY-${category.Id}`,
+                        }
+                    }))
+                    let response = {
+                        "text": "Pick a category:",
+                        "quick_replies": listCategories
+                    };
+                    resolve(response);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
 }
 
 function handleListCategories(sender_psid) {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = returnCategories();
-
+            let response = await returnCategories();
+            await handleMarkSeen(sender_psid);
+            await handleTypingOn(sender_psid);
             await callSendAPI(sender_psid, response);
 
             resolve('OK');
@@ -140,7 +150,7 @@ function returnTemplate() {
                 "elements": [
                     {
                         "title": "Welcome!",
-                        "image_url": "https://www.studytienganh.vn/upload/2021/06/106293.jpg",
+                        "image_url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/106293_mqhwic.jpg",
                         "subtitle": "What's next?",
                         "buttons": [
                             {
@@ -179,25 +189,128 @@ function handleGetStarted(sender_psid) {
     })
 };
 
-function returnMessageAskingKeyword() {
-    let response = {
-        "text": "What do you want to search?",
-        "quick_replies": [
-            {
-                "content_type": "user_email",
-            }
-        ]
-    };
-    return response;
-};
+function returnTemplateCourse(categoryId) {
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(`${process.env.API_HOST}/course-controller/courses?category=${categoryId}&page=1&limit=9`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.listAllResponse;
+                    let dataTemplate = await Promise.all(data.map(course => {
+                        return {
+                            "title": course.Title,
+                            "image_url": course.Thumbnail_Small,
+                            "subtitle": `${course.Price}$`,
+                            "default_action": {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
+                                "webview_height_ratio": "tall",
+                            },
+                            "buttons": [
+                                {
+                                    "type": "postback",
+                                    "title": "View detail",
+                                    "payload": `DETAIL-${course.Id}`
+                                },
+                                {
+                                    "type": "web_url",
+                                    "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
+                                    "title": "View on Website"
+                                }
+                            ]
+                        }
+                    }))
+                    dataTemplate.push({
+                        "title": "What else?",
+                        "image_url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/what-career-logo-v2_vfxwjo.jpg",
+                        "buttons": [
+                            {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course?category=${categoryId}`,
+                                "title": "Show more"
+                            },
+                            {
+                                "type": "postback",
+                                "payload": "LIST_CATEGORIES",
+                                "title": "Go back"
+                            }
+                        ]
+                    })
+                    console.log(data);
+                    let response = {
+                        "attachment": {
+                            "type": "template",
+                            "payload": {
+                                "template_type": "generic",
+                                "elements": dataTemplate
+                            }
+                        }
+                    };
+                    resolve(response);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 
-function handleSearch(sender_psid) {
+function returnTemplateMedia(course) {
+    return new Promise((resolve, reject) => {
+        try {
+            const response = {
+                "attachment": {
+                    "type": "template",
+                    "payload": {
+                        "template_type": "generic",
+                        "elements": [
+                            {
+                                "title": "Welcome!",
+                                "image_url": course.Thumbnail_Small,
+                                "buttons": [
+                                    {
+                                        "type": "web_url",
+                                        "title": course.Price === 0 ? "Enroll for Free" : `Enroll for ${course.Price}$`,
+                                        "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
+
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            };
+            console.log(response.attachment.payload.elements);
+            resolve(response);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+function getCourseDetail(courseId) {
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(`${process.env.API_HOST}/course-controller/courses/${courseId}`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.resultResponse;
+                    resolve(data);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+function handleViewDetail(sender_psid, courseId,) {
     return new Promise(async (resolve, reject) => {
         try {
-            let response = returnMessageAskingKeyword();
-
+            const course = await getCourseDetail(courseId)
+            let response = await returnTemplateMedia(course);
+            console.log(response);
             await callSendAPI(sender_psid, response);
-
+            let response2 = {
+                "text": `This course is created by ${course.Author.Name}. Course is about "${course.Sub_Description}"`
+            };
+            await callSendAPI(sender_psid, response2);
             resolve('OK');
         } catch (error) {
             console.log(error);
@@ -206,4 +319,106 @@ function handleSearch(sender_psid) {
     })
 }
 
-module.exports = { handleGetStarted, handleListCategories, handleSearch };
+async function handleGetCoursesByCategory(sender_psid, categoryId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = { "text": `List courses.` };
+            let response2 = await returnTemplateCourse(categoryId);
+            await callSendAPI(sender_psid, response);
+            await callSendAPI(sender_psid, response2);
+
+            resolve('OK');
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+};
+
+function returnTemplateCourseSearch(keyword) {
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(`${process.env.API_HOST}/course-controller/courses?search=${keyword}&page=1&limit=9`)
+                .then(async apiResponse => {
+                    let data = apiResponse.data.message.listAllResponse;
+                    let dataTemplate = await Promise.all(data.map(course => {
+                        return {
+                            "title": course.Title,
+                            "image_url": course.Thumbnail_Small,
+                            "subtitle": `${course.Price}$`,
+                            "default_action": {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                "webview_height_ratio": "tall",
+                            },
+                            "buttons": [
+                                {
+                                    "type": "postback",
+                                    "title": "View detail",
+                                    "payload": `DETAIL-${course.Id}`
+                                },
+                                {
+                                    "type": "web_url",
+                                    "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                    "title": "View on Website"
+                                }
+                            ]
+                        }
+                    }))
+                    dataTemplate.push({
+                        "title": "What else?",
+                        "image_url": "https://res.cloudinary.com/dlupxhne4/image/upload/v1628146733/udemy/what-career-logo-v2_vfxwjo.jpg",
+                        "buttons": [
+                            {
+                                "type": "web_url",
+                                "url": `https://udemy-client.herokuapp.com/course?search=${keyword}`,
+                                "title": "Show more"
+                            },
+                            {
+                                "type": "postback",
+                                "payload": "SEARCH",
+                                "title": "Go back"
+                            }
+                        ]
+                    })
+                    console.log(data);
+                    let response = {
+                        "attachment": {
+                            "type": "template",
+                            "payload": {
+                                "template_type": "generic",
+                                "elements": dataTemplate
+                            }
+                        }
+                    };
+                    resolve(response);
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
+function handleSearch(sender_psid, keyword) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let response = { "text": `List courses.` };
+            let response2 = await returnTemplateCourseSearch(keyword);
+            await callSendAPI(sender_psid, response);
+            await callSendAPI(sender_psid, response2);
+            resolve('OK');
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
+
+module.exports = {
+    handleGetStarted,
+    handleListCategories,
+    handleSearch,
+    handleGetCoursesByCategory,
+    handleViewDetail
+};

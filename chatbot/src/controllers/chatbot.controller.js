@@ -5,26 +5,37 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const chatbotService = require('../services/chatbot.service');
 
+const searchMode = [];
+
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message) {
     let response;
+    console.log(searchMode);
 
     // Check if the message contains text
-    if (received_message.text) {
-        console.log(received_message)
-        if (received_message.quick_replies && received_message.quick_replies.payload) {
-            if (message.quick_reply.payload !== " ") {
-                console.log(message.quick_replies.payload);
+    if (searchMode.includes(sender_psid)) {
+        searchMode.splice(searchMode.indexOf(sender_psid), 1);
+        const keyword = received_message.text
+        await chatbotService.handleSearch(sender_psid, keyword);
+    }
+    else if (received_message.text) {
+        if (received_message.quick_reply && received_message.quick_reply.payload) {
+            const prefix = received_message.quick_reply.payload.split("-");
+            if (prefix[0] === "CATEGORY") {
+                await chatbotService.handleGetCoursesByCategory(sender_psid, prefix[1]);
             }
         }
         // Create the payload for a basic text message
-        response = {
-            "text": `You sent the message: "${received_message.text}". Now send me an image!`
+        else {
+            response = {
+                "text": `:( :( :(. Sorry, I currently can perform your "${received_message.text}" request.`
+            }
+            // Sends the response message
+            callSendAPI(sender_psid, response);
         }
     }
 
-    // Sends the response message
-    callSendAPI(sender_psid, response);
+
 }
 
 // Handles messaging_postbacks events
@@ -33,7 +44,8 @@ async function handlePostback(sender_psid, received_postback) {
 
     // Get the payload for the postback
     let payload = received_postback.payload;
-
+    let prefix = payload.split('-')
+    console.log('pay', payload);
     // Set the response based on the postback payload
     if (payload === 'LIST_CATEGORIES') {
         await chatbotService.handleListCategories(sender_psid);
@@ -42,10 +54,16 @@ async function handlePostback(sender_psid, received_postback) {
     } else if (payload === 'GET_STARTED' || payload === 'RESTART') {
         await chatbotService.handleGetStarted(sender_psid);
     } else if (payload === 'SEARCH') {
-        await chatbotService.handleSearch(sender_psid);
+        searchMode.push(sender_psid);
+        response = {
+            "text": 'What do you want to do learn?'
+        }
+        // Sends the response message
+        callSendAPI(sender_psid, response);
+    } else if (prefix[0] === 'DETAIL') {
+        await chatbotService.handleViewDetail(sender_psid, prefix[1]);
+
     }
-    // Send the message to acknowledge the postback
-    callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
@@ -57,9 +75,10 @@ function callSendAPI(sender_psid, response) {
         },
         "message": response
     }
+    console.log('body', request_body);
     // Send the HTTP request to the Messenger Platform
     request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
+        "uri": "https://graph.facebook.com/v10.0/me/messages",
         "qs": { "access_token": PAGE_ACCESS_TOKEN },
         "method": "POST",
         "json": request_body
