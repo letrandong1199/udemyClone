@@ -721,14 +721,16 @@ const courseService = {
                     });
                   if (listMediaUser.length != 0) {
                     media.Played = listMediaUser[0].Played;
+                    media.Is_Completed = listMediaUser[0].Is_Completed;
                   } else {
                     media.Played = 0;
+                    media.Is_Completed = false;
                   }
                   return {
                     Id: media.Id,
                     Video_URL: media.Video_URL,
                     Played: media.Played,
-                    Is_Completed: listMediaUser[0].Is_Completed,
+                    Is_Completed: media.Is_Completed,
                   };
                 })
               );
