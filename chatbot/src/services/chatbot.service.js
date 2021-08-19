@@ -202,7 +202,7 @@ function returnTemplateCourse(categoryId) {
                             "subtitle": `${course.Price}$`,
                             "default_action": {
                                 "type": "web_url",
-                                "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
                                 "webview_height_ratio": "tall",
                             },
                             "buttons": [
@@ -213,7 +213,7 @@ function returnTemplateCourse(categoryId) {
                                 },
                                 {
                                     "type": "web_url",
-                                    "url": `https://udemy-client.herokuapp.com/course/detail${course.Id}`,
+                                    "url": `https://udemy-client.herokuapp.com/course/detail/${course.Id}`,
                                     "title": "View on Website"
                                 }
                             ]
