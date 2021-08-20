@@ -33,7 +33,7 @@ const courseRepository = {
     if (search && search.category) {
       filtered = filtered
         .where("Is_Blocked", false)
-        .orWhereIn("Category_Id", search.category)
+        .andWhereIn("Category_Id", search.category)
         .andWhere("Is_Completed", true);
     } else {
       filtered = filtered
