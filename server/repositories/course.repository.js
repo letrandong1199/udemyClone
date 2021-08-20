@@ -48,7 +48,7 @@ const courseRepository = {
       );
     }
     
-    if (search && search.category) {
+    if (search && search.category && search.category.length > 0) {
       filtered = filtered.orWhereIn("Category_Id", search.category)
     } 
 
