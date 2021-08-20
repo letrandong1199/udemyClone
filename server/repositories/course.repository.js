@@ -72,8 +72,14 @@ const courseRepository = {
         qb.whereIn(key, value);
       }
     });
-    filtered = filtered.andWhere((qb) => {
-        qb = qb.whereRaw(
+     if (
+      search != undefined &&
+      search != null &&
+      (search.search || search.category)
+    ) {
+      console.log("aloaloalolao");
+      filtered = filtered.andWhere((qb) => {
+         qb = qb.whereRaw(
           `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
           search.search
         );
@@ -83,7 +89,7 @@ const courseRepository = {
         return qb;
       })
      
-    };
+    }
  
     return filtered.count("Id", { as: "Count" }).first();
   },
