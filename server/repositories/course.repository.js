@@ -30,6 +30,16 @@ const courseRepository = {
       )
       .count("User_Id", { as: "NumberOfEnrolled" })
       .groupBy("Id");
+    if (search && search.category) {
+      filtered = filtered
+        .where("Is_Blocked", false)
+        .orWhereIn("Category_Id", search.category)
+        .andWhere("Is_Completed", true);
+    } else {
+      filtered = filtered
+        .where("Is_Blocked", false)
+        .andWhere("Is_Completed", true);
+    }
     for (const [key, value] of Object.entries(query)) {
       filtered = filtered.whereIn(key, value);
     }
@@ -52,6 +62,11 @@ const courseRepository = {
     if (paging && paging.limit != null && paging.offset != null) {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
     }
+    console.log(filtered.toSQL().toNative());
+    return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
+  },
+  getCountCourses(query, search, sort) {
+    let filtered = db("Courses");
     if (search && search.category) {
       filtered = filtered
         .where("Is_Blocked", false)
@@ -62,11 +77,6 @@ const courseRepository = {
         .where("Is_Blocked", false)
         .andWhere("Is_Completed", true);
     }
-    console.log(filtered.toSQL().toNative());
-    return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
-  },
-  getCountCourses(query, search, sort) {
-    let filtered = db("Courses");
     filtered.where((qb) => {
       for (const [key, value] of Object.entries(query)) {
         qb.whereIn(key, value);
@@ -85,16 +95,6 @@ const courseRepository = {
 
     if (sort && sort.ColName && sort.OrderBy) {
       filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
-    }
-    if (search && search.category) {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .orWhereIn("Category_Id", search.category)
-        .andWhere("Is_Completed", true);
-    } else {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .andWhere("Is_Completed", true);
     }
     return filtered.count("Id", { as: "Count" }).first();
   },
