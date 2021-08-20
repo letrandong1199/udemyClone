@@ -34,18 +34,27 @@ const courseRepository = {
     for (const [key, value] of Object.entries(query)) {
       filtered = filtered.whereIn(key, value)     
     }
+   
     if (
       search != undefined &&
       search != null &&
       (search.search || search.category)
     ) {
       console.log("aloaloalolao");
-      filtered = filtered.whereRaw(
-        `to_tsvector("Title") @@ websearch_to_tsquery(?) or where "Category_Id" in (?)`,
-        [search.search, search.category]
-      );
+      filtered = filtered.andWhere((qb) => {
+         qb = qb.whereRaw(
+          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+          search.search
+        );
+        if (search && search.category && search.category.length > 0) {
+          qb = qb.orWhereIn("Category_Id", search.category)
+        }
+        return qb;
+      })
+     
     }
-    
+   
+
     if (sort && sort.ColName && sort.Orderby) {
       filtered = filtered.orderBy(sort.ColName, sort.Orderby);
     }
