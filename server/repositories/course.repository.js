@@ -72,19 +72,18 @@ const courseRepository = {
         qb.whereIn(key, value);
       }
     });
-    if (
-      search != undefined &&
-      search != null &&
-      (search.search || search.category)
-    ) {
-      filtered = filtered.whereRaw(
-        `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
-        search.search
-      );
-    }
-    if (search && search.category && search.category.length > 0) {
-      filtered = filtered.orWhereIn("Category_Id", search.category)
-    } 
+    filtered = filtered.andWhere((qb) => {
+        qb = qb.whereRaw(
+          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+          search.search
+        );
+        if (search && search.category && search.category.length > 0) {
+          qb = qb.orWhereIn("Category_Id", search.category)
+        }
+        return qb;
+      })
+     
+    };
  
     return filtered.count("Id", { as: "Count" }).first();
   },
