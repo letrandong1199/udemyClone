@@ -32,8 +32,7 @@ const courseRepository = {
       .groupBy("Id");
     filtered = filtered.where("Is_Blocked", false).andWhere("Is_Completed", true)
     for (const [key, value] of Object.entries(query)) {
-      filtered = filtered.whereIn(key, value)
-      
+      filtered = filtered.whereIn(key, value)     
     }
     if (
       search != undefined &&
@@ -42,15 +41,11 @@ const courseRepository = {
     ) {
       console.log("aloaloalolao");
       filtered = filtered.whereRaw(
-        `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
-        search.search
+        `to_tsvector("Title") @@ websearch_to_tsquery(?) or where `Category_Id` in (?)`,
+        [search.search, search.category]
       );
     }
     
-    if (search && search.category && search.category.length > 0) {
-      filtered = filtered.orWhereIn("Category_Id", search.category)
-    } 
-
     if (sort && sort.ColName && sort.Orderby) {
       filtered = filtered.orderBy(sort.ColName, sort.Orderby);
     }
