@@ -41,7 +41,7 @@ const courseRepository = {
     ) {
       console.log("aloaloalolao");
       filtered = filtered.whereRaw(
-        `to_tsvector("Title") @@ websearch_to_tsquery(?) or where `Category_Id` in (?)`,
+        `to_tsvector("Title") @@ websearch_to_tsquery(?) or where "Category_Id" in (?)`,
         [search.search, search.category]
       );
     }
