@@ -30,20 +30,12 @@ const courseRepository = {
       )
       .count("User_Id", { as: "NumberOfEnrolled" })
       .groupBy("Id");
-    if (search && search.category) {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .whereIn("Category_Id", search.category)
-        .andWhere("Is_Completed", true);
-    } else {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .andWhere("Is_Completed", true);
-    }
     for (const [key, value] of Object.entries(query)) {
-      filtered = filtered.whereIn(key, value);
+      filtered = filtered.whereIn(key, value)
+      .where("Is_Blocked", false)
+      .andWhere("Is_Completed", true)
     }
-
+  
     if (
       search != undefined &&
       search != null &&
@@ -55,6 +47,10 @@ const courseRepository = {
         search.search
       );
     }
+    
+    if (search && search.category) {
+      filtered = filtered.orWhereIn("Category_Id", search.category)
+    } 
 
     if (sort && sort.ColName && sort.Orderby) {
       filtered = filtered.orderBy(sort.ColName, sort.Orderby);
