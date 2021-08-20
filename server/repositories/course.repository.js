@@ -30,12 +30,11 @@ const courseRepository = {
       )
       .count("User_Id", { as: "NumberOfEnrolled" })
       .groupBy("Id");
+    filtered = filtered.where("Is_Blocked", false).andWhere("Is_Completed", true)
     for (const [key, value] of Object.entries(query)) {
       filtered = filtered.whereIn(key, value)
-      .where("Is_Blocked", false)
-      .andWhere("Is_Completed", true)
+      
     }
-  
     if (
       search != undefined &&
       search != null &&
@@ -63,16 +62,7 @@ const courseRepository = {
   },
   getCountCourses(query, search, sort) {
     let filtered = db("Courses");
-    if (search && search.category) {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .orWhereIn("Category_Id", search.category)
-        .andWhere("Is_Completed", true);
-    } else {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .andWhere("Is_Completed", true);
-    }
+    filtered = filtered.where("Is_Blocked", false).andWhere("Is_Completed", true)
     filtered.where((qb) => {
       for (const [key, value] of Object.entries(query)) {
         qb.whereIn(key, value);
@@ -88,10 +78,10 @@ const courseRepository = {
         search.search
       );
     }
-
-    if (sort && sort.ColName && sort.OrderBy) {
-      filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
-    }
+    if (search && search.category && search.category.length > 0) {
+      filtered = filtered.orWhereIn("Category_Id", search.category)
+    } 
+ 
     return filtered.count("Id", { as: "Count" }).first();
   },
 
