@@ -30,21 +30,30 @@ const courseRepository = {
       )
       .count("User_Id", { as: "NumberOfEnrolled" })
       .groupBy("Id");
+    filtered = filtered.where("Is_Blocked", false).andWhere("Is_Completed", true)
     for (const [key, value] of Object.entries(query)) {
-      filtered = filtered.whereIn(key, value);
+      filtered = filtered.whereIn(key, value)     
     }
-
+   
     if (
       search != undefined &&
       search != null &&
       (search.search || search.category)
     ) {
       console.log("aloaloalolao");
-      filtered = filtered.whereRaw(
-        `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
-        search.search
-      );
+      filtered = filtered.andWhere((qb) => {
+         qb = qb.whereRaw(
+          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+          search.search
+        );
+        if (search && search.category && search.category.length > 0) {
+          qb = qb.orWhereIn("Category_Id", search.category)
+        }
+        return qb;
+      })
+     
     }
+   
 
     if (sort && sort.ColName && sort.Orderby) {
       filtered = filtered.orderBy(sort.ColName, sort.Orderby);
@@ -52,50 +61,36 @@ const courseRepository = {
     if (paging && paging.limit != null && paging.offset != null) {
       filtered = filtered.limit(paging.limit).offset(paging.offset);
     }
-    if (search && search.category) {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .orWhereIn("Category_Id", search.category)
-        .andWhere("Is_Completed", true);
-    } else {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .andWhere("Is_Completed", true);
-    }
     console.log(filtered.toSQL().toNative());
     return filtered.catch(() => operatorType.FAIL.NOT_EXIST);
   },
   getCountCourses(query, search, sort) {
     let filtered = db("Courses");
+    filtered = filtered.where("Is_Blocked", false).andWhere("Is_Completed", true)
     filtered.where((qb) => {
       for (const [key, value] of Object.entries(query)) {
         qb.whereIn(key, value);
       }
     });
-    if (
+     if (
       search != undefined &&
       search != null &&
       (search.search || search.category)
     ) {
-      filtered = filtered.whereRaw(
-        `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
-        search.search
-      );
+      console.log("aloaloalolao");
+      filtered = filtered.andWhere((qb) => {
+         qb = qb.whereRaw(
+          `to_tsvector("Title") @@ websearch_to_tsquery(?)`,
+          search.search
+        );
+        if (search && search.category && search.category.length > 0) {
+          qb = qb.orWhereIn("Category_Id", search.category)
+        }
+        return qb;
+      })
+     
     }
-
-    if (sort && sort.ColName && sort.OrderBy) {
-      filtered = filtered.orderBy(sort.ColName, sort.OrderBy);
-    }
-    if (search && search.category) {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .orWhereIn("Category_Id", search.category)
-        .andWhere("Is_Completed", true);
-    } else {
-      filtered = filtered
-        .where("Is_Blocked", false)
-        .andWhere("Is_Completed", true);
-    }
+ 
     return filtered.count("Id", { as: "Count" }).first();
   },
 
