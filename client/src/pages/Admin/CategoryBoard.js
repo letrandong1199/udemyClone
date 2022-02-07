@@ -336,7 +336,9 @@ const CategoryBoard = () => {
                     {snackContent}
                 </Alert>
             </Snackbar>
-        </div >
+<div></div>        
+</div >
+        
     )
 };
 
